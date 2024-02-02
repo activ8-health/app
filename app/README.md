@@ -1,3 +1,3 @@
-# CS 125
+# Activ8
 
 A new Flutter project.

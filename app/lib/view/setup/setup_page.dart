@@ -1,9 +1,10 @@
 import 'package:activ8/view/setup/subpages/1_welcome.dart';
-import 'package:activ8/view/setup/subpages/2_permission.dart';
-import 'package:activ8/view/setup/subpages/3_profile.dart';
-import 'package:activ8/view/setup/subpages/5_handshake.dart';
+import 'package:activ8/view/setup/subpages/2_health_permission.dart';
+import 'package:activ8/view/setup/subpages/3_location_permission.dart';
+import 'package:activ8/view/setup/subpages/4_profile.dart';
+import 'package:activ8/view/setup/subpages/6_handshake.dart';
 import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/subpages/4_core_hours.dart';
+import 'package:activ8/view/setup/subpages/5_core_hours.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +31,8 @@ class _SetupPageState extends State<SetupPage> {
   void initState() {
     pages = [
       SetupWelcomePage(setupState: setupState, pageController: pageController),
-      SetupPermissionPage(setupState: setupState, pageController: pageController),
+      SetupHealthPermissionPage(setupState: setupState, pageController: pageController),
+      SetupLocationPermissionPage(setupState: setupState, pageController: pageController),
       SetupProfilePage(setupState: setupState, pageController: pageController),
       SetupCoreHoursPage(setupState: setupState, pageController: pageController),
       SetupHandshakePage(setupState: setupState, pageController: pageController, accountExists: false),
@@ -79,7 +81,7 @@ class _PageIndicator extends StatefulWidget {
 }
 
 class _PageIndicatorState extends State<_PageIndicator> {
-  int currentPage = 1;
+  int currentPage = 0;
 
   @override
   void initState() {

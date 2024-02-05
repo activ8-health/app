@@ -27,11 +27,24 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSHealthShareUsageDescription</key>
-	<string>We will sync your data with the Apple Health app to give you better insights</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>We will sync your data with the Apple Health app to give you better insights</string>
+	<string>We will read your Apple Health data to give you the best recommendations</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We will use your location to give you context-driven recommendations.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We will use your location to give you context-driven recommendations.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>location</string>
+		<string>processing</string>
+	</array>
+    <key>NSLocationTemporaryUsageDescriptionDictionary</key>
+    <dict>
+      <key>WeatherKey</key>
+      <string>We need your device&apos;s precise location to get your weather.</string>
+    </dict>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

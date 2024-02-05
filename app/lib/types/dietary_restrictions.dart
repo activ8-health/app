@@ -1,0 +1,15 @@
+enum DietaryRestriction {
+  vegan,
+  vegetarian,
+  kosher,
+  halal,
+  pescetarian,
+  sesameFree,
+  soyFree,
+  glutenFree,
+  lactoseIntolerance,
+  nutAllergy,
+  peanutAllergy,
+  shellfishAllergy,
+  wheatAllergy,
+}

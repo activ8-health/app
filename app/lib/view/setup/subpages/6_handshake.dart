@@ -46,7 +46,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     loading = true;
     setState(() {});
 
-    print(widget.setupState);
+    print(widget.setupState.isComplete);
 
     // TODO make register/login request to the server
     await Future.delayed(const Duration(seconds: 2));

@@ -49,7 +49,7 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
       padding(48),
 
       // Icon
-      LargeIcon(icon: Icons.bedtime, color: Colors.blue.shade900),
+      LargeIcon(icon: Icons.business_center, color: Colors.orange.shade500),
       padding(16),
 
       // Title
@@ -58,13 +58,21 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
 
       // Description
       const Text(
-        "Select the times you think you'll be busy",
+        "Select the times you think you'll be busy"
+        "\nWe will avoid these hours when suggesting sleep",
         textAlign: TextAlign.center,
       ),
-      padding(16),
+      padding(4),
 
       // Time Range Picker
       _createTimeRangePicker(),
+      padding(4),
+
+      const Text(
+        "We will remind you to sleep 30 minutes"
+        "\nbefore your recommended sleep time",
+        textAlign: TextAlign.center,
+      ),
     ];
   }
 
@@ -86,7 +94,7 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
     }
 
     return SizedBox(
-      width: 370,
+      width: 320,
       child: TimeRangePicker(
         handlerColor: Color.alphaBlend(Colors.pinkAccent.shade100.withOpacity(0.3), Colors.white),
         strokeColor: Theme.of(context).colorScheme.primary.withOpacity(0.5),
@@ -112,7 +120,7 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
         },
         backgroundWidget: Text(
             "${widget.setupState.coreStart.format(context)} to ${widget.setupState.coreEnd.format(context)}",
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white)),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white)),
       ),
     );
   }

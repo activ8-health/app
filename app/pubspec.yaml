@@ -18,6 +18,7 @@ dependencies:
   email_validator: ^2.1.17
   google_fonts: ^6.1.0
   health: ^8.1.0
+  geolocator: ^10.1.0
   shared_preferences: ^2.2.2
   time_range_picker: ^2.2.0
   units_converter: ^3.0.0

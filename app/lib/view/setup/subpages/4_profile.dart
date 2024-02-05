@@ -1,3 +1,4 @@
+import 'package:activ8/types/gender.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
@@ -107,15 +108,36 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
               onChanged: (String value) => formFieldManager.name = value,
               validator: (String value) => value.length >= 2 && value.length <= 35,
             ),
-            CustomTextField(
-              label: "Age",
-              inputType: TextInputType.number,
-              suffix: "years old",
-              initialValue: formFieldManager.age,
-              onChanged: (String value) => formFieldManager.age = value,
-              validator: (String value) => (int.tryParse(value) ?? 0) >= 14 && (int.parse(value)) <= 120,
+            Row(
+              children: [
+                Flexible(
+                  child: CustomTextField(
+                    label: "Age",
+                    inputType: TextInputType.number,
+                    suffix: "years",
+                    initialValue: formFieldManager.age,
+                    onChanged: (String value) {
+                      if (int.tryParse(value) != null) formFieldManager.age = value;
+                    },
+                    validator: (String value) => (int.tryParse(value) ?? 0) >= 14 && (int.parse(value)) <= 120,
+                  ),
+                ),
+                padding(8),
+                Flexible(
+                  child: DropdownButtonFormField(
+                    decoration: createInputDecoration(context, "Sex"),
+                    value: formFieldManager.sex,
+                    items: const [
+                      DropdownMenuItem(value: Sex.male, child: Text("Male")),
+                      DropdownMenuItem(value: Sex.female, child: Text("Female")),
+                      DropdownMenuItem(value: Sex.indeterminate, child: Text("Other")),
+                    ],
+                    onChanged: (Sex? sex) => formFieldManager.sex = sex,
+                    validator: (Sex? sex) => sex != null ? null : "",
+                  ),
+                ),
+              ],
             ),
-            // TODO add gender
             Row(
               children: [
                 // Height (ft)
@@ -129,6 +151,8 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                     validator: (String value) => (double.tryParse(value) ?? 0) >= 3 && (double.parse(value)) <= 8,
                   ),
                 ),
+
+                padding(8),
 
                 // Height (in)
                 Flexible(
@@ -170,6 +194,10 @@ class _FormFieldManager {
   String get age => setupState.age?.toString() ?? "";
 
   set age(String age) => setupState.age = int.parse(age);
+
+  Sex? get sex => setupState.sex;
+
+  set sex(Sex? sex) => setupState.sex = sex;
 
   // Height, cm <=> ft/in
 

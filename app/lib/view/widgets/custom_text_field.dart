@@ -31,14 +31,7 @@ class CustomTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: TextFormField(
-        decoration: InputDecoration(
-          labelText: label,
-          suffix: (suffix == null) ? null : Text(suffix!),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          errorStyle: const TextStyle(height: 0),
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.07),
-        ),
+        decoration: createInputDecoration(context, label, suffix: suffix),
         initialValue: initialValue,
         autocorrect: false,
         keyboardType: inputType,
@@ -62,4 +55,15 @@ class CustomTextField extends StatelessWidget {
       ),
     );
   }
+}
+
+InputDecoration createInputDecoration(context, String label, {String? suffix}) {
+  return InputDecoration(
+    labelText: label,
+    suffix: (suffix == null) ? null : Text(suffix),
+    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    errorStyle: const TextStyle(height: 0),
+    filled: true,
+    fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.07),
+  );
 }

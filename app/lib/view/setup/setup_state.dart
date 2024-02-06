@@ -22,12 +22,12 @@ class SetupState {
   TimeOfDay coreEnd = const TimeOfDay(hour: 20, minute: 0);
 
   // Exercise
-  int? stepGoal;
-  TimeOfDay? reminderTime;
+  int stepGoal = 10000;
+  TimeOfDay reminderTime = const TimeOfDay(hour: 19, minute: 0);
 
   // Food
   WeightGoal? weightGoal;
-  List<DietaryRestriction>? dietaryRestrictions;
+  List<DietaryRestriction> dietaryRestrictions = [];
 
   bool get isComplete =>
       name != null &&
@@ -39,8 +39,7 @@ class SetupState {
       sleepPoints != null &&
       stepGoal != null &&
       reminderTime != null &&
-      weightGoal != null &&
-      dietaryRestrictions != null;
+      weightGoal != null;
 
   @override
   String toString() {
@@ -54,6 +53,10 @@ class SetupState {
         "sleeps: $sleepPoints, "
         "coreStart: $coreStart, "
         "coreEnd: $coreEnd, "
+        "stepGoal: $stepGoal, "
+        "reminderTime: $reminderTime, "
+        "weightGoal: $weightGoal, "
+        "dietaryRestrictions: $dietaryRestrictions, "
         "isComplete: $isComplete)";
   }
 }

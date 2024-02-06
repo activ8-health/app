@@ -1,10 +1,12 @@
+import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/subpages/1_welcome.dart';
 import 'package:activ8/view/setup/subpages/2_health_permission.dart';
 import 'package:activ8/view/setup/subpages/3_location_permission.dart';
 import 'package:activ8/view/setup/subpages/4_profile.dart';
-import 'package:activ8/view/setup/subpages/6_handshake.dart';
-import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/subpages/5_core_hours.dart';
+import 'package:activ8/view/setup/subpages/5_exercise.dart';
+import 'package:activ8/view/setup/subpages/6_nutrition.dart';
+import 'package:activ8/view/setup/subpages/7_core_hours.dart';
+import 'package:activ8/view/setup/subpages/8_handshake.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 
@@ -31,10 +33,20 @@ class _SetupPageState extends State<SetupPage> {
   void initState() {
     pages = [
       SetupWelcomePage(setupState: setupState, pageController: pageController),
+
+      // Permissions
       SetupHealthPermissionPage(setupState: setupState, pageController: pageController),
       SetupLocationPermissionPage(setupState: setupState, pageController: pageController),
+
+      // Information
       SetupProfilePage(setupState: setupState, pageController: pageController),
+
+      // Preferences
+      SetupExercisePage(setupState: setupState, pageController: pageController),
+      SetupNutritionPage(setupState: setupState, pageController: pageController),
       SetupCoreHoursPage(setupState: setupState, pageController: pageController),
+
+      // Log in
       SetupHandshakePage(setupState: setupState, pageController: pageController, accountExists: false),
     ];
     super.initState();
@@ -53,7 +65,7 @@ class _SetupPageState extends State<SetupPage> {
             children: pages,
           ),
           Positioned(
-            bottom: 50,
+            bottom: 35,
             left: 0,
             right: 0,
             child: _PageIndicator(

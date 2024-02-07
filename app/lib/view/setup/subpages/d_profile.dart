@@ -1,4 +1,5 @@
 import 'package:activ8/types/gender.dart';
+import 'package:activ8/utils/logger.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
@@ -35,6 +36,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
     // Check to validate the form shortly after opening this page
     Future.delayed(const Duration(milliseconds: 300), () {
       enableNext = (formKey.currentState?.validate() ?? false);
+      logger.i("Can go to next page: $enableNext");
       setState(() {});
     });
   }
@@ -98,6 +100,7 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
         onChanged: () {
           // Check to validate the form
           enableNext = (formKey.currentState?.validate() ?? false);
+          logger.i("Can go to next page: $enableNext");
           setState(() {});
         },
         child: Column(
@@ -190,15 +193,24 @@ class _FormFieldManager {
 
   String get name => setupState.name ?? "";
 
-  set name(String name) => setupState.name = name.trim();
+  set name(String name) {
+    setupState.name = name.trim();
+    logger.i('Name set to "$name"');
+  }
 
   String get age => setupState.age?.toString() ?? "";
 
-  set age(String age) => setupState.age = int.parse(age);
+  set age(String age) {
+    setupState.age = int.tryParse(age);
+    logger.i('Age set to "$age"');
+  }
 
   Sex? get sex => setupState.sex;
 
-  set sex(Sex? sex) => setupState.sex = sex;
+  set sex(Sex? sex) {
+    setupState.sex = sex;
+    logger.i("Sex set to $sex");
+  }
 
   // Height, cm <=> ft/in
 
@@ -215,6 +227,7 @@ class _FormFieldManager {
     if (int.tryParse(heightFt) == null) return;
     int heightIn = int.tryParse(this.heightIn) ?? 0;
     setupState.height = (heightIn + int.parse(heightFt) * 12).convertFromTo(LENGTH.inches, LENGTH.centimeters);
+    logger.i("Height set to ${setupState.height} cm, converted from $heightFt ft $heightIn in");
   }
 
   set heightIn(String heightIn) {
@@ -222,11 +235,15 @@ class _FormFieldManager {
     if (int.tryParse(heightIn) == null) return;
     int heightFt = int.tryParse(this.heightFt) ?? 0;
     setupState.height = (int.parse(heightIn) + heightFt * 12).convertFromTo(LENGTH.inches, LENGTH.centimeters);
+    logger.i("Height set to ${setupState.height} cm, converted from $heightFt ft $heightIn in");
   }
 
   // Weight, kg <=> lb
 
   String get weight => setupState.weight?.convertFromTo(MASS.kilograms, MASS.pounds)?.toStringAsFixed(2) ?? "";
 
-  set weight(String weight) => setupState.weight = double.parse(weight).convertFromTo(MASS.pounds, MASS.kilograms);
+  set weight(String weight) {
+    setupState.weight = double.tryParse(weight)?.convertFromTo(MASS.pounds, MASS.kilograms);
+    logger.i("Weight set to ${setupState.weight} kg, converted from $weight lb");
+  }
 }

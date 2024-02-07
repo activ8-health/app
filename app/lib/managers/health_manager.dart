@@ -1,5 +1,5 @@
+import 'package:activ8/utils/logger.dart';
 import 'package:activ8/utils/pair.dart';
-import 'package:flutter/foundation.dart';
 import 'package:health/health.dart';
 
 class HealthManager {
@@ -32,12 +32,12 @@ class HealthManager {
     bool? permission = await health.hasPermissions(dataTypes);
 
     if (permission == null) {
-      if (kDebugMode) print("Failed to get permission status, trying fallback");
+      logger.w("Failed to get permission status, trying fallback");
       List<HealthDataPoint> dataPoints = await _retrieveDataPoints(90, []);
       permission = dataPoints.isNotEmpty;
     }
 
-    if (kDebugMode) print("Has Permissions: $permission");
+    logger.d("Has Permissions: $permission");
 
     return permission;
   }
@@ -51,6 +51,8 @@ class HealthManager {
       endTime,
       (dataTypes.isNotEmpty) ? dataTypes : HealthManager.dataTypes,
     );
+
+    logger.i("Retrieved ${dataPoints.length} datapoints for types $dataTypes");
 
     return dataPoints;
   }

@@ -2,8 +2,10 @@ import 'package:activ8/extensions/time_of_day.dart';
 import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
 import 'package:activ8/types/food/dietary_restrictions.dart';
-import 'package:activ8/types/health_data_points.dart';
-import 'package:activ8/types/user_structures.dart';
+import 'package:activ8/types/health_data.dart';
+import 'package:activ8/types/user_preferences.dart';
+import 'package:activ8/types/user_profile.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' show Response;
 
 String _endpoint = "/v1/register";
@@ -19,13 +21,14 @@ Future<V1RegisterResponse> v1register(V1RegisterBody body, Auth auth) async {
 class V1RegisterBody {
   final UserProfile userProfile;
   final HealthData healthData;
-
   final UserPreferences userPreferences;
+  final Position? location;
 
   V1RegisterBody({
     required this.userProfile,
     required this.healthData,
     required this.userPreferences,
+    this.location,
   });
 
   Map<String, dynamic> toJson() {
@@ -57,6 +60,7 @@ class V1RegisterBody {
         "reminder_time": userPreferences.exerciseReminderTime.minutesSinceMidnight,
         "step_goal": userPreferences.stepGoal,
       },
+      "location": (location == null) ? null : [location!.latitude, location!.longitude],
     };
   }
 }

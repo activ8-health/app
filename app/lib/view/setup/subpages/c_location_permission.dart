@@ -1,3 +1,4 @@
+import 'package:activ8/utils/logger.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
@@ -26,6 +27,7 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
 
   void requestPermissionsAction() async {
     if (!(await Geolocator.isLocationServiceEnabled())) {
+      logger.w("Location services is off");
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -42,19 +44,25 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
     Future<bool> grantedPermissions() async =>
         [LocationPermission.always, LocationPermission.whileInUse].contains(await Geolocator.requestPermission());
     hasPermissions = await currentlyHasPermissions() || await grantedPermissions();
+    logger.i("Has location permissions: $hasPermissions");
 
+    if (hasPermissions) {
+      showHint = false;
+      Position location = await Geolocator.getLastKnownPosition() ??
+          await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      widget.setupState.location = location;
+      logger.i("Got location: $location");
+    }
     // Show failed message
-    if (!hasPermissions) {
+    else {
       showHint = true;
+      logger.w("Failed to get location");
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Please grant location permissions in settings."),
         ));
       }
-
-      setState(() {});
-      return;
     }
 
     setState(() {});

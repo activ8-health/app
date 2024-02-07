@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:activ8/utils/logger.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
@@ -115,10 +116,12 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
         end: widget.setupState.coreHours.end,
         onStartChange: (TimeOfDay start) {
           widget.setupState.coreHours.start = start;
+          logger.i("Set core hour start time to ${start.format(context)}");
           setState(() {});
         },
         onEndChange: (TimeOfDay end) {
           widget.setupState.coreHours.end = end;
+          logger.i("Set core hour end time to ${end.format(context)}");
           setState(() {});
         },
         backgroundWidget: Text("$startHourText to $endHourText",

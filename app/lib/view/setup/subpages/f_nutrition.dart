@@ -1,5 +1,5 @@
-import 'package:activ8/types/dietary_restrictions.dart';
-import 'package:activ8/types/weight_goal.dart';
+import 'package:activ8/types/food/dietary_restrictions.dart';
+import 'package:activ8/types/food/weight_goal.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/checkable_entry.dart';
@@ -105,17 +105,18 @@ class _SetupNutritionPageState extends State<SetupNutritionPage> {
 
   Widget _createWeightGoalSelector(context) {
     Color thumbColor = Theme.of(context).colorScheme.primary.withOpacity(0.2);
+
     return SizedBox(
       width: 350,
       child: CupertinoSlidingSegmentedControl(
         children: const {
-          0: IconWithLabel(icon: Icons.monitor_weight_outlined, label: "Lose"),
-          1: IconWithLabel(icon: Icons.how_to_reg, label: "Maintain"),
-          2: IconWithLabel(icon: Icons.monitor_weight, label: "Gain"),
+          WeightGoal.lose: IconWithLabel(icon: Icons.monitor_weight_outlined, label: "Lose"),
+          WeightGoal.maintain: IconWithLabel(icon: Icons.how_to_reg, label: "Maintain"),
+          WeightGoal.gain: IconWithLabel(icon: Icons.monitor_weight, label: "Gain"),
         },
-        groupValue: widget.setupState.weightGoal?.index,
-        onValueChanged: (int? value) {
-          if (value != null) widget.setupState.weightGoal = WeightGoal.values[value];
+        groupValue: widget.setupState.weightGoal,
+        onValueChanged: (WeightGoal? value) {
+          if (value != null) widget.setupState.weightGoal = value;
           setState(() {});
         },
         thumbColor: thumbColor,

@@ -93,6 +93,9 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
       ));
     }
 
+    String startHourText = widget.setupState.coreHours.start.format(context);
+    String endHourText = widget.setupState.coreHours.end.format(context);
+
     return SizedBox(
       width: 320,
       child: TimeRangePicker(
@@ -108,18 +111,17 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
         labels: labels,
         snap: true,
         ticks: 24,
-        start: widget.setupState.coreStart,
-        end: widget.setupState.coreEnd,
-        onStartChange: (start) {
-          widget.setupState.coreStart = start;
+        start: widget.setupState.coreHours.start,
+        end: widget.setupState.coreHours.end,
+        onStartChange: (TimeOfDay start) {
+          widget.setupState.coreHours.start = start;
           setState(() {});
         },
-        onEndChange: (end) {
-          widget.setupState.coreEnd = end;
+        onEndChange: (TimeOfDay end) {
+          widget.setupState.coreHours.end = end;
           setState(() {});
         },
-        backgroundWidget: Text(
-            "${widget.setupState.coreStart.format(context)} to ${widget.setupState.coreEnd.format(context)}",
+        backgroundWidget: Text("$startHourText to $endHourText",
             style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white)),
       ),
     );

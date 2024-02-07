@@ -1,3 +1,7 @@
+import 'package:activ8/managers/api/api_auth.dart';
+import 'package:activ8/managers/api/api_worker.dart';
+import 'package:activ8/managers/api/v1_register.dart';
+import 'package:activ8/view/home_page.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
@@ -15,7 +19,7 @@ class SetupHandshakePage extends StatefulWidget {
 
   const SetupHandshakePage({
     super.key,
-    required this.setupState, // not used when logging in
+    required this.setupState, // not used when signing in
     required this.pageController,
     required this.accountExists,
   });
@@ -44,17 +48,75 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
   /// Submits the [widget.setupState] using [registerData]
   void submitAction() async {
     loading = true;
+    // setState(() {});
+
+    if (!widget.setupState.isComplete) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("ERROR: Form incomplete"),
+        ),
+      );
+    }
+
+    // Set up API host
+    ApiWorker.instance.address = registerData.address;
+
+    Future<bool> Function() action = (widget.accountExists) ? signinAction : registerAction;
+    bool success = await action();
+
+    if (success && context.mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (BuildContext context) => const HomePage(),
+        ),
+      );
+    }
+
     setState(() {});
+  }
 
-    print(widget.setupState.isComplete);
+  Future<bool> registerAction() async {
+    // Make registration request
+    V1RegisterBody body = V1RegisterBody(
+      userProfile: widget.setupState.userProfile,
+      healthData: widget.setupState.healthData!,
+      userPreferences: widget.setupState.userPreferences,
+    );
 
-    // TODO make register/login request to the server
-    await Future.delayed(const Duration(seconds: 2));
+    Auth auth = Auth(email: registerData.email, password: registerData.password);
 
-    // TODO set the profile state
+    V1RegisterResponse response = await v1register(body, auth);
 
-    loading = false;
-    setState(() {});
+    if (!context.mounted) {
+      return false;
+    }
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    switch (response.status) {
+      case V1RegisterStatus.success:
+        return true;
+      case V1RegisterStatus.emailInUse:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("ERROR: Email already exists"),
+          ),
+        );
+        return false;
+      case V1RegisterStatus.badRequest:
+      case V1RegisterStatus.unknown:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("ERROR: Something went wrong"),
+          ),
+        );
+        return false;
+    }
+  }
+
+  Future<bool> signinAction() async {
+    // TODO implement sign-in action
+    return false;
   }
 
   @override
@@ -83,7 +145,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
                   padding(16),
 
                   // Title
-                  Text(widget.accountExists ? "Log In" : "Register", style: headingTheme),
+                  Text(widget.accountExists ? "Sign In" : "Register", style: headingTheme),
                   padding(8),
 
                   // Description
@@ -124,16 +186,20 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
             CustomTextField(
               label: "Email",
               initialValue: registerData.email,
-              onChanged: (String value) => registerData.email = value,
-              validator: (String value) => EmailValidator.validate(value),
+              onChanged: (String value) => registerData.email = value.trim(),
+              validator: (String value) => EmailValidator.validate(value.trim()),
               readOnly: loading,
             ),
             CustomTextField(
               label: "Password",
               obscureText: true,
               initialValue: registerData.password,
-              onChanged: (String value) => registerData.password = value,
-              validator: (String value) => value.length >= 4 && value.length <= 35,
+              onChanged: (String value) => registerData.password = value.trim(),
+              validator: (String value) {
+                late bool isGoodLength = value.trim().length >= 4 && value.trim().length <= 35;
+                late bool hasWhitespaces = value.trim().contains(RegExp("\\s"));
+                return isGoodLength && !hasWhitespaces;
+              },
               readOnly: loading,
             ),
             CustomTextField(

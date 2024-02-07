@@ -1,5 +1,5 @@
 enum WeightGoal {
-  gain,
   maintain,
   lose,
+  gain,
 }

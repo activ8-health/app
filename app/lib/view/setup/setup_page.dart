@@ -1,12 +1,12 @@
 import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/subpages/1_welcome.dart';
-import 'package:activ8/view/setup/subpages/2_health_permission.dart';
-import 'package:activ8/view/setup/subpages/3_location_permission.dart';
-import 'package:activ8/view/setup/subpages/4_profile.dart';
-import 'package:activ8/view/setup/subpages/5_exercise.dart';
-import 'package:activ8/view/setup/subpages/6_nutrition.dart';
-import 'package:activ8/view/setup/subpages/7_core_hours.dart';
-import 'package:activ8/view/setup/subpages/8_handshake.dart';
+import 'package:activ8/view/setup/subpages/a_welcome.dart';
+import 'package:activ8/view/setup/subpages/b_health_permission.dart';
+import 'package:activ8/view/setup/subpages/c_location_permission.dart';
+import 'package:activ8/view/setup/subpages/d_profile.dart';
+import 'package:activ8/view/setup/subpages/e_exercise.dart';
+import 'package:activ8/view/setup/subpages/f_nutrition.dart';
+import 'package:activ8/view/setup/subpages/g_core_hours.dart';
+import 'package:activ8/view/setup/subpages/h_handshake.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 

@@ -82,8 +82,8 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
 
   /// Sets the steps and sleep in [widget.setupState]
   void _updateStepsAndSleep() async {
-    // Retrieve health points from the last 30 years
-    int days = 365 * 30;
+    // Retrieve health points from the last 90 days
+    int days = 90;
 
     List<SleepPoint> sleepData = (await HealthManager.instance.retrieveSleepData(days: days))
         .map((point) => SleepPoint(dateFrom: point.dateFrom, dateTo: point.dateTo))
@@ -96,8 +96,10 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
             steps: (point.value as NumericHealthValue).numericValue.toInt()))
         .toList();
 
-    widget.setupState.sleepPoints = sleepData;
-    widget.setupState.stepPoints = stepData;
+    widget.setupState.healthData = HealthData(
+      stepData: stepData,
+      sleepData: sleepData,
+    );
   }
 
   @override

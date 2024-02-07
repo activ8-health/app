@@ -116,8 +116,9 @@ class _SetupProfilePageState extends State<SetupProfilePage> {
                     inputType: TextInputType.number,
                     suffix: "years",
                     initialValue: formFieldManager.age,
-                    onChanged: (String value) {
-                      if (int.tryParse(value) != null) formFieldManager.age = value;
+                    onChanged: (String age) {
+                      age = age.trim();
+                      if (int.tryParse(age) != null) formFieldManager.age = age;
                     },
                     validator: (String value) => (int.tryParse(value) ?? 0) >= 14 && (int.parse(value)) <= 120,
                   ),
@@ -189,7 +190,7 @@ class _FormFieldManager {
 
   String get name => setupState.name ?? "";
 
-  set name(String name) => setupState.name = name;
+  set name(String name) => setupState.name = name.trim();
 
   String get age => setupState.age?.toString() ?? "";
 
@@ -210,12 +211,14 @@ class _FormFieldManager {
   }
 
   set heightFt(String heightFt) {
+    heightFt = heightFt.trim();
     if (int.tryParse(heightFt) == null) return;
     int heightIn = int.tryParse(this.heightIn) ?? 0;
     setupState.height = (heightIn + int.parse(heightFt) * 12).convertFromTo(LENGTH.inches, LENGTH.centimeters);
   }
 
   set heightIn(String heightIn) {
+    heightIn = heightIn.trim();
     if (int.tryParse(heightIn) == null) return;
     int heightFt = int.tryParse(this.heightFt) ?? 0;
     setupState.height = (int.parse(heightIn) + heightFt * 12).convertFromTo(LENGTH.inches, LENGTH.centimeters);

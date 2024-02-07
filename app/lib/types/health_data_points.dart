@@ -5,9 +5,12 @@ class StepPoint {
 
   StepPoint({required this.dateFrom, required this.dateTo, required this.steps});
 
-  @override
-  String toString() {
-    return "StepPoint(dateFrom: $dateFrom, dateTo: $dateTo, steps: $steps)";
+  Map<String, dynamic> toJson() {
+    return {
+      "date_from": dateFrom.toIso8601String(),
+      "date_to": dateTo.toIso8601String(),
+      "steps": steps,
+    };
   }
 }
 
@@ -17,8 +20,24 @@ class SleepPoint {
 
   SleepPoint({required this.dateFrom, required this.dateTo});
 
-  @override
-  String toString() {
-    return "SleepPoint(dateFrom: $dateFrom, dateTo: $dateTo)";
+  Map<String, dynamic> toJson() {
+    return {
+      "date_from": dateFrom.toIso8601String(),
+      "date_to": dateTo.toIso8601String(),
+    };
+  }
+}
+
+class HealthData {
+  final List<StepPoint> stepData;
+  final List<SleepPoint> sleepData;
+
+  HealthData({required this.stepData, required this.sleepData});
+
+  Map<String, dynamic> toJson() {
+    return {
+      "step_data": stepData.map((e) => e.toJson()).toList(),
+      "sleep_data": sleepData.map((e) => e.toJson()).toList(),
+    };
   }
 }

@@ -1,3 +1,4 @@
+import 'package:activ8/utils/logger.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
@@ -116,6 +117,7 @@ class _SetupExercisePageState extends State<SetupExercisePage> {
                 inactiveColor: Colors.white.withOpacity(0.35),
                 onChanged: (double value) {
                   widget.setupState.stepGoal = value.toInt();
+                  logger.i("Step goal set to ${widget.setupState.stepGoal}");
                   setState(() {});
                 },
               ),
@@ -127,13 +129,17 @@ class _SetupExercisePageState extends State<SetupExercisePage> {
   }
 
   Future<void> _selectTimeOfDayAction() async {
+    logger.i("Opening time picker dialog");
     await Navigator.of(context).push(
       showPicker(
         context: context,
+        iosStylePicker: true,
         value: Time.fromTimeOfDay(widget.setupState.reminderTime, 0),
-        duskSpanInMinutes: 120, // optional
+        duskSpanInMinutes: 120,
+        // optional
         onChange: (Time time) {
           widget.setupState.reminderTime = time.toTimeOfDay();
+          logger.i("Reminder time set to ${widget.setupState.reminderTime.format(context)}");
         },
       ),
     );

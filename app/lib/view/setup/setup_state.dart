@@ -1,22 +1,26 @@
 import 'package:activ8/types/food/dietary_restrictions.dart';
 import 'package:activ8/types/food/weight_goal.dart';
 import 'package:activ8/types/gender.dart';
-import 'package:activ8/types/health_data_points.dart';
+import 'package:activ8/types/health_data.dart';
 import 'package:activ8/types/sleep/core_hours.dart';
-import 'package:activ8/types/user_structures.dart';
+import 'package:activ8/types/user_preferences.dart';
+import 'package:activ8/types/user_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 // Blueprint for Profile objects and all information sent during registration
 class SetupState {
-  // Profile
+  // UserProfile
   String? name;
   int? age;
   Sex? sex;
   double? height; // in cm
   double? weight; // in kg
 
-  // Health Data
+  // HealthData
   HealthData? healthData;
+
+  // UserPreferences
 
   // Sleep
   CoreHours coreHours = CoreHours(
@@ -30,8 +34,12 @@ class SetupState {
 
   // Food
   WeightGoal weightGoal = WeightGoal.maintain;
-  List<DietaryRestriction> dietaryRestrictions = [];
+  Set<DietaryRestriction> dietaryRestrictions = {};
 
+  // Location
+  Position? location; // NOTE: this may remain null, even after going through the registration workflow
+
+  // Utility & Data Extraction
   bool get isComplete =>
       name != null && age != null && sex != null && height != null && weight != null && healthData != null;
 

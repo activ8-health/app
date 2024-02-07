@@ -17,10 +17,11 @@ dependencies:
   day_night_time_picker: ^1.3.0+1
   dots_indicator: ^3.0.0
   email_validator: ^2.1.17
+  geolocator: ^10.1.0
   google_fonts: ^6.1.0
   health: ^8.1.0
   http: ^1.2.0
-  geolocator: ^10.1.0
+  logger: ^2.0.2+1
   shared_preferences: ^2.2.2
   time_range_picker: ^2.2.0
   units_converter: ^3.0.0

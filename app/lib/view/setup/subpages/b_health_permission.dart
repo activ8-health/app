@@ -1,5 +1,6 @@
 import 'package:activ8/managers/health_manager.dart';
-import 'package:activ8/types/health_data_points.dart';
+import 'package:activ8/types/health_data.dart';
+import 'package:activ8/utils/logger.dart';
 import 'package:activ8/utils/pair.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
@@ -29,10 +30,18 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
 
   void requestPermissionsAction() async {
     hasPermissions = await HealthManager.instance.requestPermissions();
+    logger.i("Has health permissions: $hasPermissions");
 
+    // Update the height and weight
+    if (hasPermissions) {
+      showHint = false;
+      _updateHeightWeight();
+      _updateStepsAndSleep();
+    }
     // Show failed message
-    if (!hasPermissions) {
+    else {
       showHint = true;
+      logger.w("Failed to get health permissions");
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -42,15 +51,6 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
           ),
         );
       }
-
-      setState(() {});
-      return;
-    }
-
-    // Update the height and weight
-    if (hasPermissions) {
-      _updateHeightWeight();
-      _updateStepsAndSleep();
     }
 
     setState(() {});
@@ -69,6 +69,7 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
       // m -> cm
       height *= 100;
       widget.setupState.height = height;
+      logger.i("Got height: $height");
     }
 
     // Weight
@@ -77,6 +78,7 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
       double weight = value.numericValue.toDouble();
 
       widget.setupState.weight = weight;
+      logger.i("Got weight: $weight");
     }
   }
 

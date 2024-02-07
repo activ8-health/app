@@ -1,6 +1,7 @@
 import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
 import 'package:activ8/managers/api/v1_register.dart';
+import 'package:activ8/utils/logger.dart';
 import 'package:activ8/view/home_page.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
@@ -83,6 +84,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
       userProfile: widget.setupState.userProfile,
       healthData: widget.setupState.healthData!,
       userPreferences: widget.setupState.userPreferences,
+      location: widget.setupState.location,
     );
 
     Auth auth = Auth(email: registerData.email, password: registerData.password);
@@ -186,7 +188,10 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
             CustomTextField(
               label: "Email",
               initialValue: registerData.email,
-              onChanged: (String value) => registerData.email = value.trim(),
+              onChanged: (String value) {
+                registerData.email = value.trim();
+                logger.i("Email set to ${registerData.email}");
+              },
               validator: (String value) => EmailValidator.validate(value.trim()),
               readOnly: loading,
             ),

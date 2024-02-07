@@ -20,6 +20,7 @@ class ApiWorker {
   }
 
   Future<http.Response> post(String endpoint, Map<String, dynamic> body, Auth auth) async {
+    // TODO deal with ClientException with SocketException here
     http.Response response = await http.post(
       _getUri(endpoint),
       body: jsonEncode(body),

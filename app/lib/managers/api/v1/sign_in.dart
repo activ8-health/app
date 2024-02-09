@@ -1,11 +1,8 @@
 import 'dart:convert';
 
 import 'package:activ8/extensions/position.dart';
-import 'package:activ8/extensions/set_dietary_restriction.dart';
 import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
-import 'package:activ8/types/food/weight_goal.dart';
-import 'package:activ8/types/sleep/core_hours.dart';
 import 'package:activ8/types/user_preferences.dart';
 import 'package:activ8/types/user_profile.dart';
 import 'package:geolocator/geolocator.dart';
@@ -49,13 +46,7 @@ class V1SignInResponse {
   V1SignInResponse.fromJson(Map<String, dynamic> json, {required this.status}) : errorMessage = json["error_message"] {
     if (status != V1SignInStatus.success) return;
     userProfile = UserProfile.fromJson(json["user_profile"]);
-    userPreferences = UserPreferences(
-      coreHours: CoreHours.fromJson(json["sleep_preferences"]["core_hours"]),
-      dietaryRestrictions: DietaryRestrictionJson.fromJson(json["food_preferences"]["dietary"]),
-      weightGoal: WeightGoal.fromIndex(json["food_preferences"]["weight_goal"]),
-      stepGoal: json["exercise_preferences"]["step_goal"],
-      exerciseReminderTime: json["exercise_preferences"]["reminder_time"],
-    );
+    userPreferences = UserPreferences.fromJson(json); // UserPreferences is not stored in its own field
   }
 }
 

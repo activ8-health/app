@@ -2,6 +2,7 @@ import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
 import 'package:activ8/managers/api/v1/register.dart';
 import 'package:activ8/managers/api/v1/sign_in.dart';
+import 'package:activ8/managers/app_state.dart';
 import 'package:activ8/utils/logger.dart';
 import 'package:activ8/utils/snackbar.dart';
 import 'package:activ8/view/home_page.dart';
@@ -98,7 +99,12 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
 
     switch (response.status) {
       case V1RegisterStatus.success:
-        // TODO register profile
+        await AppState.instance.registerUser(
+          email: registerData.email,
+          password: registerData.password,
+          userProfile: widget.setupState.userProfile,
+          userPreferences: widget.setupState.userPreferences,
+        );
         return true;
       case V1RegisterStatus.emailInUse:
         showSnackBar(context, "ERROR: Email already exists");
@@ -130,7 +136,12 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
 
     switch (response.status) {
       case V1SignInStatus.success:
-        // TODO register profile
+        await AppState.instance.registerUser(
+          email: registerData.email,
+          password: registerData.password,
+          userProfile: response.userProfile!,
+          userPreferences: response.userPreferences!,
+        );
         return true;
       case V1SignInStatus.incorrectCredentials:
         showSnackBar(context, "ERROR: Incorrect credentials");

@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:activ8/extensions/position.dart';
-import 'package:activ8/extensions/set_dietary_restriction.dart';
-import 'package:activ8/extensions/time_of_day.dart';
 import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
 import 'package:activ8/types/health_data.dart';
@@ -39,17 +37,7 @@ class V1RegisterBody {
     return {
       "user_profile": userProfile.toJson(),
       "health_data": healthData.toJson(),
-      "sleep_preferences": {
-        "core_hours": userPreferences.coreHours.toJson(),
-      },
-      "food_preferences": {
-        "weight_goal": userPreferences.weightGoal.index,
-        "dietary": userPreferences.dietaryRestrictions.toJson(),
-      },
-      "exercise_preferences": {
-        "reminder_time": userPreferences.exerciseReminderTime.minutesSinceMidnight,
-        "step_goal": userPreferences.stepGoal,
-      },
+      ...userPreferences.toJson(), // UserPreferences is not stored in its own field
       "location": location?.asLatLonList(),
     };
   }

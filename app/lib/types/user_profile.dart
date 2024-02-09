@@ -28,7 +28,7 @@ class UserProfile {
   UserProfile.fromJson(Map<String, dynamic> json)
       : name = json["name"],
         age = json["age"],
-        height = json["height"],
-        weight = json["weight"],
+        height = json["height"].toDouble(),
+        weight = json["weight"].toDouble(),
         sex = Sex.fromIndex(json["sex"]);
 }

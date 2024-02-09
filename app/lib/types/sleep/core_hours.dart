@@ -13,4 +13,8 @@ class CoreHours {
       "end": end.minutesSinceMidnight,
     };
   }
+
+  CoreHours.fromJson(Map<String, dynamic> json)
+      : start = TimeOfDay(hour: (json["start"] / 60).toInt(), minute: json["start"] % 60),
+        end = TimeOfDay(hour: (json["end"] / 60).toInt(), minute: json["end"] % 60);
 }

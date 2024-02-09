@@ -1,14 +1,17 @@
+import 'package:activ8/view/setup/setup_state.dart';
+import 'package:activ8/view/setup/sign_in_subflow.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:activ8/view/widgets/styles.dart';
 import 'package:flutter/material.dart';
 
 class SetupWelcomePage extends StatelessWidget {
+  final SetupState setupState;
   final PageController pageController;
 
   const SetupWelcomePage({
     super.key,
-    setupState, // unused
+    required this.setupState,
     required this.pageController,
   });
 
@@ -16,6 +19,16 @@ class SetupWelcomePage extends StatelessWidget {
     pageController.nextPage(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOutQuart,
+    );
+  }
+
+  void signInAction(context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return const SignInSubflow();
+        },
+      ),
     );
   }
 
@@ -52,6 +65,11 @@ class SetupWelcomePage extends StatelessWidget {
         icon: const Icon(Icons.flight_takeoff),
         label: const Text("Let's Go!"),
         style: filledElevatedButtonStyle(context),
+      ),
+      padding(8),
+      TextButton(
+        onPressed: () => signInAction(context),
+        child: const Text("Already have an account? Sign in!"),
       ),
     ];
   }

@@ -1,4 +1,5 @@
 import 'package:activ8/utils/logger.dart';
+import 'package:activ8/utils/snackbar.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
@@ -29,10 +30,7 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
     if (!(await Geolocator.isLocationServiceEnabled())) {
       logger.w("Location services is off");
       if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Please turn on location services."),
-        ));
+        showSnackBar(context, "Please turn on location services.");
       }
 
       return;
@@ -58,10 +56,7 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
       showHint = true;
       logger.w("Failed to get location");
       if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Please grant location permissions in settings."),
-        ));
+        showSnackBar(context, "Please grant location permissions in settings.");
       }
     }
 
@@ -146,23 +141,26 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
 
   /// Creates the hint & actions that appear when permissions are not found
   Widget _createHint(PageController pageController) {
-    return AnimatedOpacity(
-      opacity: showHint ? 1 : 0,
-      duration: const Duration(milliseconds: 600),
-      child: Column(
-        children: [
-          padding(16),
-          const Text(
-            "To grant permissions manually"
-            "\nSettings > Activ8 > Location > While Using the App",
-            textAlign: TextAlign.center,
-          ),
-          padding(8),
-          const TextButton(
-            onPressed: AppSettings.openAppSettings,
-            child: Text("Open Settings"),
-          ),
-        ],
+    return IgnorePointer(
+      ignoring: !showHint,
+      child: AnimatedOpacity(
+        opacity: showHint ? 1 : 0,
+        duration: const Duration(milliseconds: 600),
+        child: Column(
+          children: [
+            padding(16),
+            const Text(
+              "To grant permissions manually"
+              "\nSettings > Activ8 > Location > While Using the App",
+              textAlign: TextAlign.center,
+            ),
+            padding(8),
+            const TextButton(
+              onPressed: AppSettings.openAppSettings,
+              child: Text("Open Settings"),
+            ),
+          ],
+        ),
       ),
     );
   }

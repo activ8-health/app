@@ -21,7 +21,7 @@ class CustomNavigationBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _createBackButton(),
+          _createBackButton(context),
           if (showNext) _createForwardButton(context),
         ],
       ),
@@ -29,9 +29,12 @@ class CustomNavigationBar extends StatelessWidget {
   }
 
   /// Creates an [IconButton] that goes back a page
-  Widget _createBackButton() {
+  Widget _createBackButton(context) {
     return IconButton(
-      onPressed: () {
+      onPressed: () async {
+        if (pageController.page != null && pageController.page! < 0.5) {
+          Navigator.of(context).pop();
+        }
         pageController.previousPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutQuart,
@@ -47,8 +50,9 @@ class CustomNavigationBar extends StatelessWidget {
 
     // Determine whether the button should be available
     if (enableNext) {
-      action = () {
+      action = () async {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
         pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutQuart,

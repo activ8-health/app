@@ -1,7 +1,10 @@
+import 'dart:convert';
+
+import 'package:activ8/extensions/position.dart';
+import 'package:activ8/extensions/set_dietary_restriction.dart';
 import 'package:activ8/extensions/time_of_day.dart';
 import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
-import 'package:activ8/types/food/dietary_restrictions.dart';
 import 'package:activ8/types/health_data.dart';
 import 'package:activ8/types/user_preferences.dart';
 import 'package:activ8/types/user_profile.dart';
@@ -12,10 +15,11 @@ String _endpoint = "/v1/register";
 
 Future<V1RegisterResponse> v1register(V1RegisterBody body, Auth auth) async {
   Response response = await ApiWorker.instance.post(_endpoint, body.toJson(), auth);
-  V1RegisterStatus status =
-      V1RegisterStatus.values.where((e) => e.statusCode == response.statusCode).firstOrNull ?? V1RegisterStatus.unknown;
 
-  return V1RegisterResponse(status: status, errorMessage: response.body);
+  V1RegisterStatus status = V1RegisterStatus.fromStatusCode(response.statusCode);
+
+  Map<String, dynamic> json = jsonDecode(response.body);
+  return V1RegisterResponse(status: status, errorMessage: json["error_message"]);
 }
 
 class V1RegisterBody {
@@ -40,27 +44,13 @@ class V1RegisterBody {
       },
       "food_preferences": {
         "weight_goal": userPreferences.weightGoal.index,
-        "dietary": {
-          "vegan": userPreferences.dietaryRestrictions.contains(DietaryRestriction.vegan),
-          "vegetarian": userPreferences.dietaryRestrictions.contains(DietaryRestriction.vegetarian),
-          "kosher": userPreferences.dietaryRestrictions.contains(DietaryRestriction.kosher),
-          "halal": userPreferences.dietaryRestrictions.contains(DietaryRestriction.halal),
-          "pescetarian": userPreferences.dietaryRestrictions.contains(DietaryRestriction.pescetarian),
-          "sesame_free": userPreferences.dietaryRestrictions.contains(DietaryRestriction.sesameFree),
-          "soy_free": userPreferences.dietaryRestrictions.contains(DietaryRestriction.soyFree),
-          "gluten_free": userPreferences.dietaryRestrictions.contains(DietaryRestriction.glutenFree),
-          "lactose_intolerance": userPreferences.dietaryRestrictions.contains(DietaryRestriction.lactoseIntolerance),
-          "nut_allergy": userPreferences.dietaryRestrictions.contains(DietaryRestriction.nutAllergy),
-          "peanut_allergy": userPreferences.dietaryRestrictions.contains(DietaryRestriction.peanutAllergy),
-          "shellfish_allergy": userPreferences.dietaryRestrictions.contains(DietaryRestriction.shellfishAllergy),
-          "wheat_allergy": userPreferences.dietaryRestrictions.contains(DietaryRestriction.wheatAllergy),
-        },
+        "dietary": userPreferences.dietaryRestrictions.toJson(),
       },
       "exercise_preferences": {
         "reminder_time": userPreferences.exerciseReminderTime.minutesSinceMidnight,
         "step_goal": userPreferences.stepGoal,
       },
-      "location": (location == null) ? null : [location!.latitude, location!.longitude],
+      "location": location?.asLatLonList(),
     };
   }
 }
@@ -80,6 +70,15 @@ enum V1RegisterStatus {
   ;
 
   const V1RegisterStatus({this.statusCode});
+
+  factory V1RegisterStatus.fromStatusCode(int statusCode) {
+    for (V1RegisterStatus status in V1RegisterStatus.values) {
+      if (status.statusCode == statusCode) {
+        return status;
+      }
+    }
+    return V1RegisterStatus.unknown;
+  }
 
   final int? statusCode;
 }

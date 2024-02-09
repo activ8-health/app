@@ -2,6 +2,7 @@ import "dart:convert";
 import "dart:io";
 
 import "package:activ8/managers/api/api_auth.dart";
+import "package:activ8/utils/logger.dart";
 import "package:http/http.dart" as http;
 
 class ApiWorker {
@@ -20,12 +21,14 @@ class ApiWorker {
   }
 
   Future<http.Response> post(String endpoint, Map<String, dynamic> body, Auth auth) async {
-    // TODO deal with ClientException with SocketException here
     http.Response response = await http.post(
       _getUri(endpoint),
       body: jsonEncode(body),
       headers: {HttpHeaders.authorizationHeader: auth.toHeader()},
-    );
+    ).catchError((error) {
+      logger.e("Error calling function: $error");
+      return http.Response('{"error_message": "Cannot connect to the server."}', 600);
+    });
     return response;
   }
 
@@ -33,7 +36,10 @@ class ApiWorker {
     http.Response response = await http.get(
       _getUri(endpoint).replace(queryParameters: parameters),
       headers: {HttpHeaders.authorizationHeader: auth.toHeader()},
-    );
+    ).catchError((error) {
+      logger.e("Error calling function: $error");
+      return http.Response('{"error_message": "Cannot connect to the server."}', 600);
+    });
     return response;
   }
 

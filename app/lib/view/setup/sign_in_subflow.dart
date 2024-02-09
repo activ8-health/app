@@ -1,31 +1,26 @@
 import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/subpages/a_welcome.dart';
 import 'package:activ8/view/setup/subpages/b_health_permission.dart';
 import 'package:activ8/view/setup/subpages/c_location_permission.dart';
-import 'package:activ8/view/setup/subpages/d_profile.dart';
-import 'package:activ8/view/setup/subpages/e_exercise.dart';
-import 'package:activ8/view/setup/subpages/f_nutrition.dart';
-import 'package:activ8/view/setup/subpages/g_core_hours.dart';
 import 'package:activ8/view/setup/subpages/h_handshake.dart';
 import 'package:activ8/view/widgets/page_indicator.dart';
 import 'package:flutter/material.dart';
 
-class SetupPage extends StatefulWidget {
-  const SetupPage({super.key});
+class SignInSubflow extends StatefulWidget {
+  const SignInSubflow({super.key});
 
   @override
-  State<SetupPage> createState() => _SetupPageState();
+  State<SignInSubflow> createState() => _SignInSubflowState();
 }
 
-class _SetupPageState extends State<SetupPage> {
+class _SignInSubflowState extends State<SignInSubflow> {
   final SetupState setupState = SetupState();
   final PageController pageController = PageController();
 
   late final List<Widget> pages;
 
-  // uiGradients Lawrencium
+  // uiGradients Starfall (darker)
   static const LinearGradient backgroundGradient = LinearGradient(
-    colors: [Color(0xFF0f0c29), Color(0xFF302b63), Color(0xFF24243e)],
+    colors: [Color(0xFF4B1248), Color(0xFF856B44)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -33,22 +28,10 @@ class _SetupPageState extends State<SetupPage> {
   @override
   void initState() {
     pages = [
-      SetupWelcomePage(setupState: setupState, pageController: pageController),
-
-      // Permissions
+      // Log in
       SetupHealthPermissionPage(setupState: setupState, pageController: pageController),
       SetupLocationPermissionPage(setupState: setupState, pageController: pageController),
-
-      // Information
-      SetupProfilePage(setupState: setupState, pageController: pageController),
-
-      // Preferences
-      SetupExercisePage(setupState: setupState, pageController: pageController),
-      SetupNutritionPage(setupState: setupState, pageController: pageController),
-      SetupCoreHoursPage(setupState: setupState, pageController: pageController),
-
-      // Log in
-      SetupHandshakePage(setupState: setupState, pageController: pageController, accountExists: false),
+      SetupHandshakePage(setupState: setupState, pageController: pageController, accountExists: true),
     ];
     super.initState();
   }

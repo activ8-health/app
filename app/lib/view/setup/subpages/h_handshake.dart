@@ -1,7 +1,9 @@
 import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
-import 'package:activ8/managers/api/v1_register.dart';
+import 'package:activ8/managers/api/v1/register.dart';
+import 'package:activ8/managers/api/v1/sign_in.dart';
 import 'package:activ8/utils/logger.dart';
+import 'package:activ8/utils/snackbar.dart';
 import 'package:activ8/view/home_page.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
@@ -15,14 +17,14 @@ import 'package:flutter/material.dart';
 // Facilitates for signing up or signing in, handshaking with the server
 class SetupHandshakePage extends StatefulWidget {
   final bool accountExists; // differentiates a sign-in from a register
-  final SetupState setupState;
+  final SetupState setupState; // only location field is used when signing in
   final PageController pageController;
 
   const SetupHandshakePage({
     super.key,
-    required this.setupState, // not used when signing in
-    required this.pageController,
+    required this.setupState,
     required this.accountExists,
+    required this.pageController,
   });
 
   @override
@@ -49,21 +51,16 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
   /// Submits the [widget.setupState] using [registerData]
   void submitAction() async {
     loading = true;
-    // setState(() {});
+    setState(() {});
 
-    if (!widget.setupState.isComplete) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("ERROR: Form incomplete"),
-        ),
-      );
+    if (!widget.accountExists && !(widget.setupState.isComplete)) {
+      showSnackBar(context, "ERROR: Form incomplete");
     }
 
     // Set up API host
     ApiWorker.instance.address = registerData.address;
 
-    Future<bool> Function() action = (widget.accountExists) ? signinAction : registerAction;
+    Future<bool> Function() action = (widget.accountExists) ? signInAction : registerAction;
     bool success = await action();
 
     if (success && context.mounted) {
@@ -91,34 +88,58 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
 
     V1RegisterResponse response = await v1register(body, auth);
 
-    if (!context.mounted) {
+    if (!context.mounted) return false;
+
+    // In case a custom message was provided
+    if (response.errorMessage != null && response.errorMessage!.isNotEmpty) {
+      showSnackBar(context, "ERROR: ${response.errorMessage!}");
       return false;
     }
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
     switch (response.status) {
       case V1RegisterStatus.success:
+        // TODO register profile
         return true;
       case V1RegisterStatus.emailInUse:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("ERROR: Email already exists"),
-          ),
-        );
+        showSnackBar(context, "ERROR: Email already exists");
         return false;
       case V1RegisterStatus.badRequest:
       case V1RegisterStatus.unknown:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("ERROR: Something went wrong"),
-          ),
-        );
+        showSnackBar(context, "ERROR: Something went wrong");
         return false;
     }
   }
 
-  Future<bool> signinAction() async {
-    // TODO implement sign-in action
-    return false;
+  Future<bool> signInAction() async {
+    // Make registration request
+    V1SignInBody body = V1SignInBody(
+      location: widget.setupState.location,
+    );
+
+    Auth auth = Auth(email: registerData.email, password: registerData.password);
+
+    V1SignInResponse response = await v1signIn(body, auth);
+
+    if (!context.mounted) return false;
+
+    // In case a custom message was provided
+    if (response.errorMessage != null && response.errorMessage!.isNotEmpty) {
+      showSnackBar(context, "ERROR: ${response.errorMessage!}");
+      return false;
+    }
+
+    switch (response.status) {
+      case V1SignInStatus.success:
+        // TODO register profile
+        return true;
+      case V1SignInStatus.incorrectCredentials:
+        showSnackBar(context, "ERROR: Incorrect credentials");
+        return false;
+      case V1SignInStatus.badRequest:
+      case V1SignInStatus.unknown:
+        showSnackBar(context, "ERROR: Something went wrong");
+        return false;
+    }
   }
 
   @override

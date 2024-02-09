@@ -2,6 +2,7 @@ import 'package:activ8/managers/health_manager.dart';
 import 'package:activ8/types/health_data.dart';
 import 'package:activ8/utils/logger.dart';
 import 'package:activ8/utils/pair.dart';
+import 'package:activ8/utils/snackbar.dart';
 import 'package:activ8/view/setup/setup_state.dart';
 import 'package:activ8/view/setup/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
@@ -43,13 +44,7 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
       showHint = true;
       logger.w("Failed to get health permissions");
       if (context.mounted) {
-        ScaffoldMessenger.of(context).hideCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Failed to get all permissions. Please try granting "
-                "them in system settings."),
-          ),
-        );
+        showSnackBar(context, "Failed to get all permissions. Please try granting them in system settings.");
       }
     }
 
@@ -183,33 +178,36 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
 
   /// Creates the hint & actions that appear when permissions are not found
   Widget _createHint(PageController pageController) {
-    return AnimatedOpacity(
-      opacity: showHint ? 1 : 0,
-      duration: const Duration(milliseconds: 600),
-      child: Column(
-        children: [
-          padding(16),
-          const Text(
-            "To grant permissions manually"
-            "\nSettings > Health > Data Access > Activ8",
-            textAlign: TextAlign.center,
-          ),
-          padding(8),
-          const TextButton(
-            onPressed: AppSettings.openAppSettings,
-            child: Text("Open Settings"),
-          ),
-          TextButton(
-            onPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              pageController.nextPage(
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOutQuart,
-              );
-            },
-            child: const Text("I'm sure I granted permissions"),
-          ),
-        ],
+    return IgnorePointer(
+      ignoring: !showHint,
+      child: AnimatedOpacity(
+        opacity: showHint ? 1 : 0,
+        duration: const Duration(milliseconds: 600),
+        child: Column(
+          children: [
+            padding(16),
+            const Text(
+              "To grant permissions manually"
+              "\nSettings > Health > Data Access > Activ8",
+              textAlign: TextAlign.center,
+            ),
+            padding(8),
+            const TextButton(
+              onPressed: AppSettings.openAppSettings,
+              child: Text("Open Settings"),
+            ),
+            TextButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutQuart,
+                );
+              },
+              child: const Text("I'm sure I granted permissions"),
+            ),
+          ],
+        ),
       ),
     );
   }

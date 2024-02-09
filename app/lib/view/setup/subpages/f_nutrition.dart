@@ -112,89 +112,29 @@ class _SetupNutritionPageState extends State<SetupNutritionPage> {
   }
 
   Widget _createDietaryRestrictionSelection() {
+    BorderRadius getBorderRadius(DietaryRestriction restriction) {
+      if (restriction == DietaryRestriction.values.first) {
+        return const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(8));
+      } else if (restriction == DietaryRestriction.values.last) {
+        return const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(8));
+      } else {
+        return BorderRadius.zero;
+      }
+    }
+
     return SizedBox(
       width: 350,
       child: Column(
         children: [
-          CheckableEntry(
-            label: "Vegan",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.vegan),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.vegan, value),
-            borderRadius: const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(8)),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Vegetarian",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.vegetarian),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.vegetarian, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Kosher",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.kosher),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.kosher, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Halal",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.halal),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.halal, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Pescetarian",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.pescetarian),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.pescetarian, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Sesame Free",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.sesameFree),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.sesameFree, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Soy Free",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.soyFree),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.soyFree, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Gluten Free",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.glutenFree),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.glutenFree, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Lactose Intolerance",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.lactoseIntolerance),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.lactoseIntolerance, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Nut Allergy",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.nutAllergy),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.nutAllergy, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Peanut Allergy",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.peanutAllergy),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.peanutAllergy, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Shellfish Allergy",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.shellfishAllergy),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.shellfishAllergy, value),
-          ),
-          divider,
-          CheckableEntry(
-            label: "Wheat Allergy",
-            value: widget.setupState.dietaryRestrictions.contains(DietaryRestriction.wheatAllergy),
-            onChanged: (bool value) => _updateDietaryRestriction(DietaryRestriction.wheatAllergy, value),
-            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(8)),
-          ),
+          for (DietaryRestriction restriction in DietaryRestriction.values) ...[
+            CheckableEntry(
+              label: restriction.displayName,
+              value: widget.setupState.dietaryRestrictions.contains(restriction),
+              onChanged: (bool value) => _updateDietaryRestriction(restriction, value),
+              borderRadius: getBorderRadius(restriction),
+            ),
+            if (restriction != DietaryRestriction.values.last) divider,
+          ],
         ],
       ),
     );

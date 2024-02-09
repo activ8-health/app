@@ -1,11 +1,9 @@
-import 'package:activ8/managers/app_state.dart';
-import 'package:activ8/view/setup/setup_page.dart';
+import 'package:activ8/view/entry_point.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  AppState.instance.initialize();
   runApp(const MyApp());
 }
 
@@ -34,7 +32,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const SetupPage(),
+      home: const EntryPoint(),
     );
   }
 }

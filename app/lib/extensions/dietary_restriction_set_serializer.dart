@@ -1,6 +1,6 @@
 import 'package:activ8/types/food/dietary_restrictions.dart';
 
-extension DietaryRestrictionJson on Set<DietaryRestriction> {
+extension DietaryRestrictionSerializer on Set<DietaryRestriction> {
   Map<String, dynamic> toJson() {
     Map<String, bool> values = {};
     for (DietaryRestriction restriction in DietaryRestriction.values) {

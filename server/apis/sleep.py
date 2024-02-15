@@ -1,29 +1,36 @@
 import datetime
 from dateutil import parser
+import json
 
 IDEAL_SLEEP_RANGE = 8
 IDEAL_SLEEP_RANGE_IN_MINS = 8 * 60
-data = {
-    1: [1,2,3],
-    2: [2,3,4],
-    3: [3,4,5],
-    4: [4,5,6],
-    5: [5,6,7],
-    6: [6.7,1],
-    7: [7,1,2] 
-}
+DAY_OF_WEEK_CONVERT = {1: 'Monday',
+                       2: 'Tuesday',
+                       3: 'Wednesday',
+                       4: 'Thursday',
+                       5: 'Friday', 
+                       6: 'Saturday',
+                       7: 'Sunday'}
 
-def get_core_hours():
-    return {"start": 8*60, "end": 17*60}
+data = []
 
-def get_day_of_week_data(date):
+def get_data():
+    user_file = open('user_profile.json', 'r')
+    user_data = json.load(user_file)
+    return user_data['sleep']
+
+def get_core_hours(user_data):
+    # return user_data['core_hours']
+    return {"start": 12*60, "end": 17*60}
+
+def get_day_of_week_data(date, user_data):
     # assuming date is a string that is in iso format
     # convert to datetime 
     # get day of week as int
     day_of_week = parser.isoparse(date).isoweekday()
     # find the list of sleep points associated with this day
     # and return it
-    return data[day_of_week]
+    return user_data['sleep_data'][DAY_OF_WEEK_CONVERT[day_of_week]]
 
 def convert_to_time_of_day(date):
     time = parser.isoparse(date).time()
@@ -60,8 +67,8 @@ def get_avg_sleep_times(sleep_data):
     start_data = []
     end_data = []
     for i in range(len(sleep_data)):
-        start_date = sleep_data[i]['start']
-        end_date = sleep_data[i]['end']
+        start_date = sleep_data[i]['date_from']
+        end_date = sleep_data[i]['date_to']
         day_diff = get_day_diff(start_date, end_date)
         start = convert_to_time_of_day(start_date)
         end = convert_to_time_of_day(end_date)
@@ -78,7 +85,7 @@ def get_recommended_sleep_time(time, time2):
     # avg_start, avg_end = get_avg_sleep_times(sleep_data)
     avg_start, avg_end = time, time2
     # check with core and adjust
-    core_hours = get_core_hours()
+    core_hours = get_core_hours(data)
     print('core horus')
     print(core_hours)
     print('start', avg_start, 'end', avg_end)
@@ -89,7 +96,7 @@ def get_recommended_sleep_time(time, time2):
     else:
         core_start = core_hours['start']
         core_end = core_hours['end']
-    if avg_start < remove_all_day_diff(core_end):
+    if avg_start < core_end and avg_start > core_start:
         avg_start = remove_all_day_diff(core_end)
     if avg_end > core_start:
         avg_end = core_start
@@ -119,7 +126,6 @@ def get_recommended_sleep_time(time, time2):
         print(remove_all_day_diff(core_end))
         print(core_start)
         if avg_start < core_end and avg_start > core_start:
-            print('sounds abt right')
             avg_start = remove_all_day_diff(core_end)
         sleep_time = calculate_sleeptime(avg_start, avg_end)
         if sleep_time == IDEAL_SLEEP_RANGE_IN_MINS:
@@ -195,19 +201,21 @@ def get_recommended_sleep_time(time, time2):
 
 
 
-print(get_day_of_week_data(datetime.datetime.now().isoformat()))
+# print(get_day_of_week_data(datetime.datetime.now().isoformat()))
+day_of_week = parser.isoparse('2024-02-18 02:00:00.000').isoweekday()
+print(day_of_week)
 print(convert_to_time_of_day(datetime.datetime.now().isoformat()))
-test = '2022-09-27 02:00:00.000'
+test = '2022-09-27 05:00:00.000'
 test2 = '2022-09-27 10:00:00.000'
 day_diff = get_day_diff(test, test2)
 print(day_diff)
-print(convert_to_hours(calculate_sleeptime(convert_to_time_of_day(test), (day_diff*24*60 + convert_to_time_of_day(test2)))))
-print(remove_all_day_diff(day_diff*24*60 + convert_to_time_of_day(test2)))
+print(convert_to_hours(calculate_sleeptime(convert_to_time_of_day(test), (convert_to_time_of_day(test2)))))
+print(remove_all_day_diff(convert_to_time_of_day(test2)))
 print('core hours')
-print(convert_to_hours(get_core_hours()['start']))
-print(convert_to_hours(get_core_hours()['end']))
+print(convert_to_hours(get_core_hours(data)['start']))
+print(convert_to_hours(get_core_hours(data)['end']))
 print('get')
-start, end = get_recommended_sleep_time(convert_to_time_of_day(test),(day_diff*24*60 + convert_to_time_of_day(test2)))
+start, end = get_recommended_sleep_time(convert_to_time_of_day(test),(convert_to_time_of_day(test2)))
 print(start)
 print(convert_to_hours(start))
 print(end)

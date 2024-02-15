@@ -4,6 +4,8 @@ import 'package:activ8/utils/logger.dart';
 import 'package:activ8/utils/snackbar.dart';
 import 'package:activ8/view/entry_point.dart';
 import 'package:activ8/view/home_page/home_view/lifestyle_score_widget.dart';
+import 'package:activ8/view/home_page/home_view/message_widget.dart';
+import 'package:activ8/view/home_page/home_view/suggestion_selector_widget.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -35,6 +37,22 @@ class _HomePageState extends State<HomePage> {
     return response;
   }
 
+  Future<void> signOutAction() async {
+    logger.i("Signing out and restarting app");
+    await AppState.instance.signOut();
+
+    if (!context.mounted) return;
+
+    // Pop all pages
+    Navigator.of(context).popUntil((route) => route.isFirst);
+
+    // Open new page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const EntryPoint()),
+    );
+  }
+
   @override
   void initState() {
     assert(AppState.instance.userProfile != null, "User profile does not exist, perhaps we aren't logged in?");
@@ -53,52 +71,104 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final String name = AppState.instance.userProfile!.name;
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: backgroundGradient),
-        alignment: Alignment.center,
-        child: SafeArea(
-          child: SizedBox(
-            width: 350,
-            child: Column(
-              children: [
-                padding(48),
+      body: Scrollbar(
+        thickness: 4,
+        child: Container(
+          decoration: const BoxDecoration(gradient: backgroundGradient),
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            child: SizedBox(
+              width: 370,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  padding(72),
 
-                // FittedBox allows the text to shrink to fit the container
-                FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Text(
-                    "Welcome, $name",
-                    style: Theme.of(context).textTheme.headlineLarge,
+                  // Title
+                  // FittedBox allows the text to shrink to fit the container
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Text(
+                      "Welcome, $name",
+                      style: Theme.of(context).textTheme.headlineLarge,
+                    ),
                   ),
-                ),
-                padding(12),
+                  padding(20),
 
-                // Lifestyle Score
-                LifestyleScoreWidget(homeViewResponse: homeViewResponse),
-                padding(36),
+                  // Overview Category
+                  const _CategoryMarker(label: "OVERVIEW"),
 
-                // TODO do something with the sign-out workflow
-                ElevatedButton(
-                  onPressed: () async {
-                    logger.i("Signing out and restarting app");
-                    await AppState.instance.signOut();
+                  // Lifestyle Score
+                  LifestyleScoreWidget(homeViewResponse: homeViewResponse),
+                  padding(6),
 
-                    if (!context.mounted) return;
+                  MessageWidget(homeViewResponse: homeViewResponse),
+                  padding(20),
 
-                    // Pop all pages
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                  // Suggestion Category
+                  const _CategoryMarker(label: "SUGGESTIONS"),
+                  const SuggestionSelectorWidget(),
+                  padding(12),
 
-                    // Open new page
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const EntryPoint()),
-                    );
-                  },
-                  child: const Text("Sign Out"),
-                ),
-              ],
+                  // Sign-out Button
+                  _SignOutButton(action: signOutAction),
+                  padding(24),
+                ],
+              ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The small text above each section
+class _CategoryMarker extends StatelessWidget {
+  final String label;
+
+  const _CategoryMarker({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 24.0, bottom: 2.0),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: Colors.white.withOpacity(0.5),
+              ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SignOutButton extends StatelessWidget {
+  final Function() action;
+
+  const _SignOutButton({required this.action});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: ElevatedButton.icon(
+        onPressed: action,
+        icon: const Icon(Icons.logout),
+        label: const Text("Sign Out"),
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+            side: BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
+          ),
+          backgroundColor: Colors.white.withOpacity(0.12),
+          foregroundColor: Colors.white,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
       ),
     );

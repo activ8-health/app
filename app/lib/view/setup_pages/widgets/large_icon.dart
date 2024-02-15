@@ -1,3 +1,4 @@
+import 'package:activ8/constants.dart';
 import 'package:flutter/material.dart';
 
 class LargeIcon extends StatelessWidget {
@@ -20,11 +21,11 @@ class LargeIcon extends StatelessWidget {
         width: 128,
         height: 128,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: largeIconBorderRadius,
           color: color,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: largeIconBorderRadius,
           child: childWidget,
         ));
   }

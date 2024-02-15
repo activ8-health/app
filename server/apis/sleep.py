@@ -2,7 +2,6 @@ import datetime
 from dateutil import parser
 import json
 
-IDEAL_SLEEP_RANGE = 8
 IDEAL_SLEEP_RANGE_IN_MINS = 8 * 60
 DAY_OF_WEEK_CONVERT = {1: 'Monday',
                        2: 'Tuesday',
@@ -12,7 +11,7 @@ DAY_OF_WEEK_CONVERT = {1: 'Monday',
                        6: 'Saturday',
                        7: 'Sunday'}
 
-data = []
+data = {'core_hours': {"start": 7*60, "end": 1*60}}
 
 def get_data():
     user_file = open('user_profile.json', 'r')
@@ -20,8 +19,7 @@ def get_data():
     return user_data['sleep']
 
 def get_core_hours(user_data):
-    # return user_data['core_hours']
-    return {"start": 12*60, "end": 17*60}
+    return user_data['core_hours']
 
 def get_day_of_week_data(date, user_data):
     # assuming date is a string that is in iso format
@@ -39,7 +37,7 @@ def convert_to_time_of_day(date):
     return hour * 60 + mins
 
 def avg(times):
-    return sum(times)/len(times)
+    return sum(times) // len(times)
 
 def calculate_sleeptime(start_time, end_time):
     if start_time > end_time:
@@ -52,7 +50,7 @@ def convert_to_hours(time):
 def get_day_diff(date1, date2):
     datetime1 = parser.isoparse(date1).date()
     datetime2 = parser.isoparse(date2).date()
-    diff = datetime2-datetime1
+    diff = datetime2 - datetime1
     return diff.days
 
 def remove_one_day_diff(time):
@@ -79,125 +77,104 @@ def get_avg_sleep_times(sleep_data):
     avg_end = avg(end_data)
     return avg_start, avg_end
 
+def less_than_adjustment(avg_start, avg_end, sleep_time):
+    diff = IDEAL_SLEEP_RANGE_IN_MINS - sleep_time
+    avg_start -= diff
+    if avg_start < 0:
+        avg_start = (24 * 60) + avg_start
+    elif avg_start == 0:
+        avg_start = 0
+    return avg_start, avg_end
+
+def greater_than_adjustment(avg_start, avg_end, sleep_time):
+    diff = sleep_time - IDEAL_SLEEP_RANGE_IN_MINS
+    avg_start += diff
+    if avg_start >= (24 * 60):
+        avg_start -= (24 * 60)
+        avg_end = remove_one_day_diff(avg_end)
+    return avg_start, avg_end
+
+def core_hours_check(avg_start, avg_end, core_start, core_end):
+    if avg_start < core_end and avg_start > core_start:
+        avg_start = remove_all_day_diff(core_end)
+
+    sleep_time = calculate_sleeptime(avg_start, avg_end)
+
+    if sleep_time == IDEAL_SLEEP_RANGE_IN_MINS:
+        return avg_start, remove_all_day_diff(avg_end)
+    
+    elif sleep_time > IDEAL_SLEEP_RANGE_IN_MINS:
+        diff = sleep_time - IDEAL_SLEEP_RANGE_IN_MINS
+        avg_end -= diff
+
+        if avg_end < 0:
+            avg_end = (24 * 60) + avg_end
+
+        elif avg_end == 0:
+            avg_end = 0
+
+    elif sleep_time < IDEAL_SLEEP_RANGE_IN_MINS:
+        diff = IDEAL_SLEEP_RANGE_IN_MINS - sleep_time
+        avg_end += diff 
+
+        if remove_all_day_diff(avg_end) > core_start:
+            avg_end = core_start
+
+        if avg_start > avg_end:
+            avg_end += (24*60)
+
+    return avg_start, avg_end
+
 def get_recommended_sleep_time(time, time2):
-# def get_recommended_sleep_time(date):
-    # sleep_data = get_day_of_week_data(date)
-    # avg_start, avg_end = get_avg_sleep_times(sleep_data)
     avg_start, avg_end = time, time2
     # check with core and adjust
     core_hours = get_core_hours(data)
-    print('core horus')
-    print(core_hours)
-    print('start', avg_start, 'end', avg_end)
-    print('start', convert_to_hours(avg_start), 'end', convert_to_hours(remove_all_day_diff(avg_end)))
+
     if core_hours['start'] > core_hours['end']:
         core_end = core_hours['end'] + (24 * 60)
         core_start = core_hours['start']
     else:
         core_start = core_hours['start']
         core_end = core_hours['end']
+
     if avg_start < core_end and avg_start > core_start:
         avg_start = remove_all_day_diff(core_end)
     if avg_end > core_start:
         avg_end = core_start
         if avg_start > avg_end:
             avg_end += (24*60)
-    print(core_start, core_end)
+
     sleep_time = calculate_sleeptime(avg_start, avg_end)
-    print('before adjustment')
-    print('start', avg_start, 'end', avg_end)
-    print('start', convert_to_hours(avg_start), 'end', convert_to_hours(remove_all_day_diff(avg_end)))
-    print('time', convert_to_hours(sleep_time))
+
     if sleep_time == IDEAL_SLEEP_RANGE_IN_MINS:
         return avg_start, remove_all_day_diff(avg_end)
     elif sleep_time < IDEAL_SLEEP_RANGE_IN_MINS:
         if avg_start == remove_all_day_diff(core_end) and remove_all_day_diff(avg_end) == core_start:
             return avg_start, remove_all_day_diff(avg_end)
         # adjust only start then check with core and adjust if needed
-        print('less')
-        diff = IDEAL_SLEEP_RANGE_IN_MINS - sleep_time
-        avg_start -= diff
-        if avg_start < 0:
-            avg_start = (24 * 60) + avg_start
-        elif avg_start == 0:
-            avg_start = 0
-        print('start',avg_start)
-        print(core_end)
-        print(remove_all_day_diff(core_end))
-        print(core_start)
-        if avg_start < core_end and avg_start > core_start:
-            avg_start = remove_all_day_diff(core_end)
-        sleep_time = calculate_sleeptime(avg_start, avg_end)
-        if sleep_time == IDEAL_SLEEP_RANGE_IN_MINS:
-            return avg_start, remove_all_day_diff(avg_end)
+
+        avg_start, avg_end = less_than_adjustment(avg_start, avg_end, sleep_time)
+
         # check with core hours
-        if avg_start < core_end and avg_start > core_start:
-            print('end', remove_all_day_diff(core_end))
-            avg_start = remove_all_day_diff(core_end)
-        if sleep_time == IDEAL_SLEEP_RANGE_IN_MINS:
-            return avg_start, remove_all_day_diff(avg_end)
-        elif sleep_time > IDEAL_SLEEP_RANGE_IN_MINS:
-            diff = sleep_time - IDEAL_SLEEP_RANGE_IN_MINS
-            avg_end -= diff
-            if avg_end < 0:
-                avg_end = (24 * 60) + avg_end
-            elif avg_end == 0:
-                avg_end = 0
-        elif sleep_time < IDEAL_SLEEP_RANGE_IN_MINS:
-            diff = IDEAL_SLEEP_RANGE_IN_MINS - sleep_time
-            avg_end += diff 
-            if remove_all_day_diff(avg_end) > core_start:
-                avg_end = core_start
-            if avg_start > avg_end:
-                avg_end += (24*60)
-        # return avg_start, remove_all_day_diff(avg_end)
+        avg_start, avg_end = core_hours_check(avg_start, avg_end, core_start, core_end)
+
     elif sleep_time > IDEAL_SLEEP_RANGE_IN_MINS:
         # adjust only start then check with core and adjust if needed
-        print('greater than')
-        diff = sleep_time - IDEAL_SLEEP_RANGE_IN_MINS
-        print(sleep_time)
-        print(IDEAL_SLEEP_RANGE_IN_MINS)
-        print('diff', diff)
-        avg_start += diff
-        if avg_start >= (24 * 60):
-            avg_start -= (24 * 60)
-            avg_end = remove_one_day_diff(avg_end)
+
+        avg_start, avg_end = greater_than_adjustment(avg_start, avg_end, sleep_time)
         sleep_time = calculate_sleeptime(avg_start, avg_end)
-        print('before core hours check')
-        print('start', avg_start, 'end', avg_end)
-        print('start', convert_to_hours(avg_start), 'end', convert_to_hours(remove_all_day_diff(avg_end)))
-        print('time', convert_to_hours(sleep_time))
+
         # check with core hours
-        if avg_start < core_end and avg_start > core_start:
-            print('end', remove_all_day_diff(core_end))
-            avg_start = remove_all_day_diff(core_end)
-        if sleep_time == IDEAL_SLEEP_RANGE_IN_MINS:
-            print('start', avg_start, 'end', avg_end)
-            print('start', convert_to_hours(avg_start), 'end', convert_to_hours(remove_all_day_diff(avg_end)))
-            print('time', convert_to_hours(sleep_time))
-            return avg_start, remove_all_day_diff(avg_end)
-        elif sleep_time > IDEAL_SLEEP_RANGE_IN_MINS:
-            print('greater')
-            diff = sleep_time - IDEAL_SLEEP_RANGE_IN_MINS
-            print(avg_end)
-            print(avg_start)
-            avg_end -= diff
-            if avg_end < 0:
-                avg_end = (24 * 60) + avg_end
-            elif avg_end == 0:
-                avg_end = 0
-        elif sleep_time < IDEAL_SLEEP_RANGE_IN_MINS:
-            print('less')
-            diff = IDEAL_SLEEP_RANGE_IN_MINS - sleep_time
-            avg_end += diff 
-            if remove_all_day_diff(avg_end) > core_start:
-                avg_end = core_start
-            if avg_start > avg_end:
-                avg_end += (24*60)
-    print('before return')
-    print('avg_end', avg_end)
-    print('avg_start', avg_start)
+        
+        avg_start, avg_end = core_hours_check(avg_start, avg_end, core_start, core_end)
+
     return avg_start, remove_all_day_diff(avg_end)
+
+def get_sleep_recommendation(date):
+    user_data = get_data()
+    sleep_data = get_day_of_week_data(date, user_data)
+    avg_start, avg_end = get_avg_sleep_times(sleep_data)
+    return get_recommended_sleep_time(avg_start, avg_end)
 
 
 

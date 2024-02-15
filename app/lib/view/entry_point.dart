@@ -1,6 +1,6 @@
 import 'package:activ8/managers/app_state.dart';
-import 'package:activ8/view/home_page.dart';
-import 'package:activ8/view/setup/setup_page.dart';
+import 'package:activ8/view/home_page/home_page.dart';
+import 'package:activ8/view/setup_pages/setup_page.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +26,7 @@ class _EntryPointState extends State<EntryPoint> {
         future: data,
         builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
           Widget child;
-          if (snapshot.connectionState != ConnectionState.done || snapshot.data == null) {
+          if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
             child = const _Loading(
               key: ValueKey(3),
             );

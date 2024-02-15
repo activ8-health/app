@@ -1,8 +1,8 @@
 import 'package:activ8/types/food/dietary_restrictions.dart';
 import 'package:activ8/types/food/weight_goal.dart';
 import 'package:activ8/utils/logger.dart';
-import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/widgets/large_icon.dart';
+import 'package:activ8/view/setup_pages/setup_state.dart';
+import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/checkable_entry.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
 import 'package:activ8/view/widgets/icon_with_label.dart';

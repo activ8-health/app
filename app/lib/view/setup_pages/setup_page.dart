@@ -1,12 +1,12 @@
-import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/subpages/a_welcome.dart';
-import 'package:activ8/view/setup/subpages/b_health_permission.dart';
-import 'package:activ8/view/setup/subpages/c_location_permission.dart';
-import 'package:activ8/view/setup/subpages/d_profile.dart';
-import 'package:activ8/view/setup/subpages/e_exercise.dart';
-import 'package:activ8/view/setup/subpages/f_nutrition.dart';
-import 'package:activ8/view/setup/subpages/g_core_hours.dart';
-import 'package:activ8/view/setup/subpages/h_handshake.dart';
+import 'package:activ8/view/setup_pages/setup_state.dart';
+import 'package:activ8/view/setup_pages/subpages/a_welcome.dart';
+import 'package:activ8/view/setup_pages/subpages/b_health_permission.dart';
+import 'package:activ8/view/setup_pages/subpages/c_location_permission.dart';
+import 'package:activ8/view/setup_pages/subpages/d_profile.dart';
+import 'package:activ8/view/setup_pages/subpages/e_exercise.dart';
+import 'package:activ8/view/setup_pages/subpages/f_nutrition.dart';
+import 'package:activ8/view/setup_pages/subpages/g_core_hours.dart';
+import 'package:activ8/view/setup_pages/subpages/h_handshake.dart';
 import 'package:activ8/view/widgets/page_indicator.dart';
 import 'package:flutter/material.dart';
 

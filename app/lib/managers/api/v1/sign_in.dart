@@ -44,7 +44,8 @@ class V1SignInResponse {
   });
 
   V1SignInResponse.fromJson(Map<String, dynamic> json, {required this.status}) : errorMessage = json["error_message"] {
-    if (status != V1SignInStatus.success) return;
+    if (!status.isSuccessful) return;
+    assert(errorMessage == null, "Error message provided on success");
     userProfile = UserProfile.fromJson(json["user_profile"]);
     userPreferences = UserPreferences.fromJson(json); // UserPreferences is not stored in its own field
   }
@@ -67,6 +68,8 @@ enum V1SignInStatus {
     }
     return V1SignInStatus.unknown;
   }
+
+  bool get isSuccessful => this == V1SignInStatus.success;
 
   final int? statusCode;
 }

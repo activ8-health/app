@@ -10,11 +10,8 @@ class LargeIcon extends StatelessWidget {
     this.icon,
     this.child,
     this.color,
-  })  :
-        // Either icon or child must be provided, but not both
-        assert((icon == null) != (child == null)),
-        // If icon is provided, color must be provided
-        assert((icon != null) == (color != null));
+  })  : assert((icon == null) != (child == null), "Either icon or child must be provided, but not both"),
+        assert((icon != null) == (color != null), "If icon is provided, color must be provided");
 
   @override
   Widget build(BuildContext context) {

@@ -1,66 +1,102 @@
+import 'package:activ8/managers/health_manager.dart';
+import 'package:activ8/types/health_data.dart';
 import 'package:activ8/utils/logger.dart';
+import 'package:activ8/utils/pair.dart';
 import 'package:activ8/utils/snackbar.dart';
-import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/widgets/large_icon.dart';
+import 'package:activ8/view/setup_pages/setup_state.dart';
+import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:health/health.dart';
 
-class SetupLocationPermissionPage extends StatefulWidget {
+class SetupHealthPermissionPage extends StatefulWidget {
   final SetupState setupState;
   final PageController pageController;
 
-  const SetupLocationPermissionPage({
+  const SetupHealthPermissionPage({
     super.key,
     required this.setupState,
     required this.pageController,
   });
 
   @override
-  State<SetupLocationPermissionPage> createState() => _SetupLocationPermissionPageState();
+  State<SetupHealthPermissionPage> createState() => _SetupHealthPermissionPageState();
 }
 
-class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPage> {
+class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
   bool hasPermissions = false;
   bool showHint = false;
 
   void requestPermissionsAction() async {
-    if (!(await Geolocator.isLocationServiceEnabled())) {
-      logger.w("Location services is off");
-      if (context.mounted) {
-        showSnackBar(context, "Please turn on location services.");
-      }
+    hasPermissions = await HealthManager.instance.requestPermissions();
+    logger.i("Has health permissions: $hasPermissions");
 
-      return;
-    }
-
-    // Request permission
-    Future<bool> currentlyHasPermissions() async =>
-        [LocationPermission.always, LocationPermission.whileInUse].contains(await Geolocator.checkPermission());
-    Future<bool> grantedPermissions() async =>
-        [LocationPermission.always, LocationPermission.whileInUse].contains(await Geolocator.requestPermission());
-    hasPermissions = await currentlyHasPermissions() || await grantedPermissions();
-    logger.i("Has location permissions: $hasPermissions");
-
+    // Update the height and weight
     if (hasPermissions) {
       showHint = false;
-      Position location = await Geolocator.getLastKnownPosition() ??
-          await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-      widget.setupState.location = location;
-      logger.i("Got location: $location");
+      _updateHeightWeight();
+      _updateStepsAndSleep();
     }
     // Show failed message
     else {
       showHint = true;
-      logger.w("Failed to get location");
+      logger.w("Failed to get health permissions");
       if (context.mounted) {
-        showSnackBar(context, "Please grant location permissions in settings.");
+        showSnackBar(context, "Failed to get all permissions. Please try granting them in system settings.");
       }
     }
 
     setState(() {});
+  }
+
+  /// Sets the height and weight in [widget.setupState]
+  void _updateHeightWeight() async {
+    // Retrieve health points from the last 30 years
+    Pair<HealthDataPoint?> values = await HealthManager.instance.retrieveHeightWeightData(days: 365 * 30);
+
+    // Height
+    if (values.first != null && widget.setupState.height == null) {
+      NumericHealthValue value = values.first!.value as NumericHealthValue;
+      double height = value.numericValue.toDouble();
+
+      // m -> cm
+      height *= 100;
+      widget.setupState.height = height;
+      logger.i("Got height: $height");
+    }
+
+    // Weight
+    if (values.second != null && widget.setupState.weight == null) {
+      NumericHealthValue value = values.second!.value as NumericHealthValue;
+      double weight = value.numericValue.toDouble();
+
+      widget.setupState.weight = weight;
+      logger.i("Got weight: $weight");
+    }
+  }
+
+  /// Sets the steps and sleep in [widget.setupState]
+  void _updateStepsAndSleep() async {
+    // Retrieve health points from the last 90 days
+    int days = 90;
+
+    List<SleepPoint> sleepData = (await HealthManager.instance.retrieveSleepData(days: days))
+        .map((point) => SleepPoint(dateFrom: point.dateFrom, dateTo: point.dateTo))
+        .toList();
+
+    List<StepPoint> stepData = (await HealthManager.instance.retrieveStepData(days: days))
+        .map((point) => StepPoint(
+            dateFrom: point.dateFrom,
+            dateTo: point.dateTo,
+            steps: (point.value as NumericHealthValue).numericValue.toInt()))
+        .toList();
+
+    widget.setupState.healthData = HealthData(
+      stepData: stepData,
+      sleepData: sleepData,
+    );
   }
 
   @override
@@ -89,17 +125,18 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
       padding(48),
 
       // Icon
-      LargeIcon(icon: Icons.near_me, color: Colors.blue.shade300),
+      LargeIcon(icon: Icons.monitor_heart_outlined, color: Colors.red.shade300),
       padding(16),
 
       // Title
-      Text("Location Data", style: headingTheme),
+      Text("Health Data", style: headingTheme),
       padding(8),
 
       // Description
       const Text(
         "To give you the most personalized"
-        "\nexperience, we need to know your location",
+        "\nexperience, we need to connect to"
+        "\nyour health tracker",
         textAlign: TextAlign.center,
       ),
       padding(32),
@@ -151,13 +188,23 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
             padding(16),
             const Text(
               "To grant permissions manually"
-              "\nSettings > Activ8 > Location > While Using the App",
+              "\nSettings > Health > Data Access > Activ8",
               textAlign: TextAlign.center,
             ),
             padding(8),
             const TextButton(
               onPressed: AppSettings.openAppSettings,
               child: Text("Open Settings"),
+            ),
+            TextButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                pageController.nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutQuart,
+                );
+              },
+              child: const Text("I'm sure I granted permissions"),
             ),
           ],
         ),

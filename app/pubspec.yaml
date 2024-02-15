@@ -24,6 +24,7 @@ dependencies:
   logger: ^2.0.2+1
   path_provider: ^2.1.2
   shared_preferences: ^2.2.2
+  syncfusion_flutter_gauges: ^24.2.4
   time_range_picker: ^2.2.0
   units_converter: ^3.0.0
 

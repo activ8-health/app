@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/types/user_preferences.dart';
 import 'package:activ8/types/user_profile.dart';
 import 'package:activ8/utils/logger.dart';
@@ -18,8 +19,24 @@ class AppState {
   late SharedPreferences _sharedPreferences;
   String? email;
   String? password;
+
+  String? host;
+  int? port;
   UserProfile? userProfile;
   UserPreferences? userPreferences;
+
+  Auth get auth => Auth(email: email!, password: password!);
+
+  set serverAddress(String address) {
+    List<String> splitAuthority = address.split(":");
+    host = splitAuthority.first;
+    port = (splitAuthority.length > 1) ? int.tryParse(splitAuthority[1]) : null;
+    logger.i('Split "$address" into host="$host" and port="$port"');
+
+    logger.i("Storing server address in SharedPreferences");
+    _sharedPreferences.setString("host", host!);
+    _sharedPreferences.setString("port", port.toString());
+  }
 
   /// Returns whether a user was found
   Future<bool> initialize() async {
@@ -27,6 +44,9 @@ class AppState {
     _sharedPreferences = await SharedPreferences.getInstance();
     email = _sharedPreferences.getString("email");
     password = _sharedPreferences.getString("password");
+
+    host = _sharedPreferences.getString("host");
+    port = int.tryParse(_sharedPreferences.getString("port") ?? "");
 
     if (email == null) {
       logger.i("No email found in SharedPreferences, going to setup page");
@@ -52,6 +72,7 @@ class AppState {
     return true;
   }
 
+  /// Creates the local user profile, not to be confused with server-side profile creation
   Future<void> registerUser({
     required String email,
     required String password,

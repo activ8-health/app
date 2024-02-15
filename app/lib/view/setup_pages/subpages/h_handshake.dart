@@ -1,13 +1,12 @@
 import 'package:activ8/managers/api/api_auth.dart';
-import 'package:activ8/managers/api/api_worker.dart';
 import 'package:activ8/managers/api/v1/register.dart';
 import 'package:activ8/managers/api/v1/sign_in.dart';
 import 'package:activ8/managers/app_state.dart';
 import 'package:activ8/utils/logger.dart';
 import 'package:activ8/utils/snackbar.dart';
-import 'package:activ8/view/home_page.dart';
-import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/widgets/large_icon.dart';
+import 'package:activ8/view/home_page/home_page.dart';
+import 'package:activ8/view/setup_pages/setup_state.dart';
+import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
 import 'package:activ8/view/widgets/custom_text_field.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
@@ -59,7 +58,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     }
 
     // Set up API host
-    ApiWorker.instance.address = registerData.address;
+    AppState.instance.serverAddress = registerData.address;
 
     Future<bool> Function() action = (widget.accountExists) ? signInAction : registerAction;
     bool success = await action();

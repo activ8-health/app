@@ -1,7 +1,7 @@
 import 'package:activ8/types/gender.dart';
 import 'package:activ8/utils/logger.dart';
-import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/widgets/large_icon.dart';
+import 'package:activ8/view/setup_pages/setup_state.dart';
+import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
 import 'package:activ8/view/widgets/custom_navigation_bar.dart';
 import 'package:activ8/view/widgets/custom_text_field.dart';
 import 'package:activ8/view/widgets/shorthand.dart';

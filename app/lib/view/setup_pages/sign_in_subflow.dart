@@ -1,7 +1,7 @@
-import 'package:activ8/view/setup/setup_state.dart';
-import 'package:activ8/view/setup/subpages/b_health_permission.dart';
-import 'package:activ8/view/setup/subpages/c_location_permission.dart';
-import 'package:activ8/view/setup/subpages/h_handshake.dart';
+import 'package:activ8/view/setup_pages/setup_state.dart';
+import 'package:activ8/view/setup_pages/subpages/b_health_permission.dart';
+import 'package:activ8/view/setup_pages/subpages/c_location_permission.dart';
+import 'package:activ8/view/setup_pages/subpages/h_handshake.dart';
 import 'package:activ8/view/widgets/page_indicator.dart';
 import 'package:flutter/material.dart';
 
@@ -18,9 +18,9 @@ class _SignInSubflowState extends State<SignInSubflow> {
 
   late final List<Widget> pages;
 
-  // uiGradients Starfall (darker)
+  // uiGradients Lawrencium (hue shifted)
   static const LinearGradient backgroundGradient = LinearGradient(
-    colors: [Color(0xFF4B1248), Color(0xFF856B44)],
+    colors: [Color(0xFF290C0E), Color(0xFF632B36), Color(0xFF3D232C)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -28,7 +28,7 @@ class _SignInSubflowState extends State<SignInSubflow> {
   @override
   void initState() {
     pages = [
-      // Log in
+      // TODO add page to easy the user into the new workflow branch
       SetupHealthPermissionPage(setupState: setupState, pageController: pageController),
       SetupLocationPermissionPage(setupState: setupState, pageController: pageController),
       SetupHandshakePage(setupState: setupState, pageController: pageController, accountExists: true),

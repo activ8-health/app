@@ -1,3 +1,4 @@
+import 'package:activ8/constants.dart';
 import 'package:activ8/managers/app_state.dart';
 import 'package:activ8/view/home_page/home_page.dart';
 import 'package:activ8/view/setup_pages/setup_page.dart';
@@ -68,7 +69,7 @@ class _Loading extends StatelessWidget {
               width: 128,
               height: 128,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: largeIconBorderRadius,
                 child: Image.asset("assets/icon.png"),
               ),
             ),

@@ -1,9 +1,8 @@
-import datetime
 from typing import List
 from dateutil import parser
 import json
 
-IDEAL_SLEEP_RANGE_IN_MINS = 8 * 60
+IDEAL_SLEEP_RANGE_IN_MINS = 8 * 60 # 8 hours
 DAY_OF_WEEK_CONVERT = {1: 'Monday',
                        2: 'Tuesday',
                        3: 'Wednesday',
@@ -56,12 +55,12 @@ def convert_to_time_of_day(date: str) -> int:
     mins = time.minute
     return hour * 60 + mins
 
-def avg(times: List[int]) -> int:
+def avg(sleep_times: List[int]) -> int:
     '''
-    times: list of sleep data points that were converted to time of day
+    sleep_times: list of sleep data points that were converted to time of day
     returns the average time based on those points in time of day
     '''
-    return sum(times) // len(times)
+    return sum(sleep_times) // len(sleep_times)
 
 def calculate_sleeptime(start_time: int, end_time: int) -> int:
     '''
@@ -88,15 +87,15 @@ def convert_to_hours(time: int) -> float:
     '''
     return time / 60
 
-def get_day_diff(date1: str, date2: str) -> int:
+def get_day_diff(start_date: str, end_date: str) -> int:
     '''
-    date1: string of the date in iso format (start date)
-    date2: string of the date in iso format (end time)
+    start_date: string of the date in iso format
+    end_date: string of the date in iso format
     returns the day difference between these two dates
     '''
-    datetime1 = parser.isoparse(date1).date()
-    datetime2 = parser.isoparse(date2).date()
-    diff = datetime2 - datetime1
+    start_datetime = parser.isoparse(start_date).date()
+    end_datetime = parser.isoparse(end_date).date()
+    diff = end_datetime - start_datetime
     return diff.days
 
 def remove_one_day_diff(time: int) -> int:
@@ -133,7 +132,7 @@ def get_avg_sleep_times(sleep_data: List[dict]) -> tuple[int, int]:
         day_diff = get_day_diff(start_date, end_date)
         start = convert_to_time_of_day(start_date)
         end = convert_to_time_of_day(end_date)
-        end += (day_diff*24*60)
+        end += (day_diff * 24 * 60)
         start_data.append(start)
         end_data.append(end)
     
@@ -224,7 +223,7 @@ def end_time_less_than_adjustment(avg_start: int, avg_end: int, core_start: int,
         avg_end = core_start
 
     if avg_start > avg_end:
-        avg_end += (24*60)
+        avg_end += (24 * 60)
     
     return avg_end
 
@@ -295,7 +294,7 @@ def get_recommended_sleep_time(avg_start: int, avg_end: int, core_hours: dict) -
     if remove_all_day_diff(avg_end) > core_start:
         avg_end = core_start
         if avg_start > avg_end:
-            avg_end += (24*60)
+            avg_end += (24 * 60)
 
     sleep_time = calculate_sleeptime(avg_start, avg_end)
 

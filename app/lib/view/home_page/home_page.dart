@@ -155,20 +155,23 @@ class _SignOutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: Alignment.centerRight,
-      child: ElevatedButton.icon(
-        onPressed: action,
-        icon: const Icon(Icons.logout),
-        label: const Text("Sign Out"),
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
-            side: BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
+      alignment: Alignment.center,
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          onPressed: action,
+          icon: const Icon(Icons.logout),
+          label: const Text("Sign Out"),
+          style: ElevatedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+              side: BorderSide(color: Colors.white.withOpacity(0.6), width: 1),
+            ),
+            backgroundColor: Colors.white.withOpacity(0.12),
+            foregroundColor: Colors.white,
+            shadowColor: Colors.transparent,
+            padding: const EdgeInsets.symmetric(vertical: 12),
           ),
-          backgroundColor: Colors.white.withOpacity(0.12),
-          foregroundColor: Colors.white,
-          shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
       ),
     );

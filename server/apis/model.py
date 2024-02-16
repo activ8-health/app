@@ -95,7 +95,6 @@ class Food:
             raise ValueError('Invalid weight goal')
 
 
-
 @dataclass
 class Exercise:
     step_data: list
@@ -170,31 +169,32 @@ class UserProfile:
 
     def serialize(self):
         return ({
-                    'email': self.login.email,
-                    'password': self.login.password
+                    self.login.email: {
+                        'password': self.login.password}
                 },
                 {
-                    'user_profile': {
-                        'email': self.login.email,
-                        'name': self.user.name,
-                        'age': self.user.age,
-                        'height': self.user.height,
-                        'weight': self.user.weight,
-                        'sex': self.user.sex,
-                    },
-                    'food': {
-                        'weight_goal': self.food.weight_goal,
-                        'dietary': self.food.dietary,
-                        'food_log': self.food.food_log
-                    },
-                    'exercise': {
-                        'step_data': self.exercise.step_data,
-                        'reminder_time': self.exercise.reminder_time,
-                        'step_goal': self.exercise.step_goal
-                    },
-                    'sleep': {
-                        'sleep_data': self.sleep.sleep_data,
-                        'core_hours': self.sleep.core_hours
-                    },
-                    'location': self.location
+                    self.login.email: {
+                        'user_profile': {
+                            'name': self.user.name,
+                            'age': self.user.age,
+                            'height': self.user.height,
+                            'weight': self.user.weight,
+                            'sex': self.user.sex,
+                        },
+                        'food': {
+                            'weight_goal': self.food.weight_goal,
+                            'dietary': self.food.dietary,
+                            'food_log': self.food.food_log
+                        },
+                        'exercise': {
+                            'step_data': self.exercise.step_data,
+                            'reminder_time': self.exercise.reminder_time,
+                            'step_goal': self.exercise.step_goal
+                        },
+                        'sleep': {
+                            'sleep_data': self.sleep.sleep_data,
+                            'core_hours': self.sleep.core_hours
+                        },
+                        'location': self.location
+                    }
                 })

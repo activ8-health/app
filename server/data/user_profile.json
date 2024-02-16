@@ -1,7 +1,6 @@
-[
-  {
+{
+  "5": {
     "user_profile": {
-      "email": "5",
       "name": "Tomo-chan",
       "age": 1,
       "height": 144.0,
@@ -12,8 +11,8 @@
       "weight_goal": "Maintain",
       "dietary": [
         "halal",
-        "vegetarian",
-        "pescetarian"
+        "pescetarian",
+        "vegetarian"
       ],
       "food_log": null
     },
@@ -190,4 +189,4 @@
       "long": -117.82164237
     }
   }
-]
+}

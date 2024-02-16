@@ -18,7 +18,7 @@ def get_data() -> dict:
     opens and loads the user data from the json file to return the user's sleep data
     (may be changed in the future depending on how the data would be stored)
     '''
-    user_file = open('user_profile.json', 'r')
+    user_file = open('./data/user_profile.json', 'r')
     user_data = json.load(user_file)
     return user_data['sleep']
 

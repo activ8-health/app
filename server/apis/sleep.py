@@ -13,14 +13,15 @@ DAY_OF_WEEK_CONVERT = {1: 'Monday',
 
 # data = {'core_hours': {"start": 12*60, "end": 15*60}} # for testing purposes
 
-def get_data() -> dict:
+def get_data(email: str) -> dict:
     '''
+    email: email of the user to retrieve the user data
     opens and loads the user data from the json file to return the user's sleep data
     (may be changed in the future depending on how the data would be stored)
     '''
     user_file = open('./data/user_profile.json', 'r')
     user_data = json.load(user_file)
-    return user_data['sleep']
+    return user_data[email]['sleep']
 
 def get_core_hours(user_data: dict) -> dict:
     '''
@@ -327,14 +328,15 @@ def get_recommended_sleep_time(avg_start: int, avg_end: int, core_hours: dict) -
 
     return avg_start, remove_all_day_diff(avg_end)
 
-def get_sleep_recommendation(date: str) -> dict:
+def get_sleep_recommendation(email: str, date: str) -> dict:
     '''
+    email: email of the user
     date: string of the date in iso format
     returns the recommended start and end sleep time in a dictionary
 
     retrieves the user data and calculates a recommended sleep time that best fits their schedule and the ideal sleep range
     '''
-    user_data = get_data()
+    user_data = get_data(email)
     core_hours = get_core_hours(user_data)
     sleep_data = get_day_of_week_data(date, user_data)
     avg_start, avg_end = get_avg_sleep_times(sleep_data)

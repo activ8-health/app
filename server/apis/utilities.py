@@ -66,7 +66,7 @@ def retrieve_data_from_file(file_name) -> list:
         try:
             data = json.load(infile)
         except json.JSONDecodeError:
-            data = []
+            data = dict()
     return data
 
 
@@ -76,7 +76,7 @@ def write_data_to_file(file_name, retrieved_data, info) -> None:
     """
     with open(file_name, 'w') as outfile:
         if len(retrieved_data) != 0:
-            retrieved_data.append(info)
+            retrieved_data.update(info)
             json.dump(retrieved_data, outfile, indent=2)
         else:
-            json.dump([info], outfile, indent=2)
+            json.dump(info, outfile, indent=2)

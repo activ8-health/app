@@ -4,7 +4,7 @@ import apis.model as model
 
 
 def signin_user(authentication, new_data) -> (str, int):
-    with open("../data/login_data.json", "r") as infile:
+    with open("./data/login_data.json", "r") as infile:
         email, password = utilities.get_email_password(authentication)
         check_email = utilities.check_email_password(email, password, 1)
         if check_email == 401:
@@ -21,5 +21,5 @@ def signin_user(authentication, new_data) -> (str, int):
         user_profile.update_location(update_data['location'])
         _, user = user_profile.serialize()
         data[email] = user
-        utilities.write_data_to_file("../data/user_profile.json", data, user)
+        utilities.write_data_to_file("./data/user_profile.json", data, user)
         return user[email], 200

@@ -1,6 +1,6 @@
-import utilities
+import apis.utilities as utilities
 import json
-import model
+import apis.model as model
 
 
 def signin_user(authentication, new_data) -> (str, int):
@@ -8,7 +8,7 @@ def signin_user(authentication, new_data) -> (str, int):
         email, password = utilities.get_email_password(authentication)
         check_email = utilities.check_email_password(email, password, 1)
         if check_email == 401:
-            return 'Incorrect email or password', 401
+            return {'error_message': 'Incorrect email or password'}, 401
 
         data = utilities.retrieve_data_from_file("../data/user_profile.json")
         user_stored_data = data[email]

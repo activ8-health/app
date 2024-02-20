@@ -118,10 +118,16 @@ class Exercise:
     step_goal: int
 
     def __post_init__(self):
-        if not isinstance(self.reminder_time, int):
+        reminder_time = int(self.reminder_time)
+        if reminder_time == self.reminder_time and (self.reminder_time < 0 or self.reminder_time > 1439):
+            self.reminder_time = reminder_time
+        else:
             raise ValueError('Invalid step reminder time')
 
-        if not isinstance(self.step_goal, int):
+        step_goal = int(self.step_goal)
+        if step_goal == self.step_goal and self.step_goal > 0:
+            self.step_goal = step_goal
+        else:
             raise ValueError('Invalid step goal')
 
 
@@ -150,13 +156,12 @@ class UserProfile:
                              age=user_data['age'],
                              height=user_data['height'],
                              weight=user_data['weight'],
-                             sex=user_data['sex'] if flag else Sex(user_data['sex']).name)
+                             sex=user_data['sex'])
         except ValueError as e:
             raise ValueError('Invalid user data: ' + str(e))
 
         try:
-            self.food = Food(weight_goal=(food_data['weight_goal'] if flag
-                                          else WeightGoal(food_data['weight_goal']).name),
+            self.food = Food(weight_goal=food_data['weight_goal'],
                              dietary=food_data['dietary'],
                              food_log=food_data['food_log'] if flag else None)
         except ValueError as e:
@@ -172,7 +177,10 @@ class UserProfile:
             core_hours=sleep_data['core_hours'])
 
         location = location_data
-        self.location = location_data if flag else {'lat': location[0], 'long': location[1]}
+        try:
+            self.location = location_data if flag else {'lat': float(location[0]), 'long': float(location[1])}
+        except ValueError as e:
+            raise ValueError('Invalid location data: ' + str(e))
 
     def update_sleep_data(self, sleep_data) -> None:
         self.sleep.sleep_data = format_sleep_data(sleep_data)

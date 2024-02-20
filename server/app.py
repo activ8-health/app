@@ -1,10 +1,11 @@
 from flask import Flask, request
 from waitress import serve
-from register import register_user
-from signin import signin_user
+from apis.register import register_user
+from apis.signin import signin_user
 import requests
+from apis import sleep
 
-from server.apis import utilities
+import apis.utilities as utilities
 
 app = Flask(__name__)
 app.json.sort_keys = False
@@ -26,6 +27,17 @@ def v1signIn():
     data_retrieved_sign_in = request.data
     decoded_data_sign_in = data_retrieved_sign_in.decode('utf-8')
     return signin_user(authentication, decoded_data_sign_in)
+
+
+# @app.route("/v1/getSleepRecommendation", methods=['GET'])
+# def sleep_recommendation():
+#     authentication = request.headers["Authorization"]
+#     print(type(authentication), authentication)
+#
+#
+#     data_retrieved_sleep = request.data
+#     decoded_data_sign_in = data_retrieved_sleep.decode('utf-8')
+#     return "" #sleep.get_sleep_recommendation(email)
 
 
 @app.route("/v1/getFoodRecommendation", methods=['GET'])

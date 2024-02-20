@@ -1,6 +1,7 @@
 import base64
-import model
 import json
+
+import apis.model as model
 
 
 def get_email_password(authorization) -> (int, str, str):
@@ -32,7 +33,7 @@ def check_email_password(email, password, flag) -> int:
     """
     Check if email already in use, return 409 if email already in use, 201 if email not in use.
     """
-    with open("../data/login_data.json", "r") as infile:
+    with open("./data/login_data.json", "r") as infile:
         try:
             data = json.load(infile)
             if email in data:
@@ -71,12 +72,12 @@ def store_user_info(email, password, user_data) -> int:
     auth, user_data = user.serialize()
 
     # store authentication (email, password) in data/login_data.json
-    auth_info = retrieve_data_from_file("../data/login_data.json")
-    write_data_to_file("../data/login_data.json", auth_info, auth)
+    auth_info = retrieve_data_from_file("./data/login_data.json")
+    write_data_to_file("./data/login_data.json", auth_info, auth)
 
     # store user_data in data/user_profile.json
-    user_info = retrieve_data_from_file("../data/user_profile.json")
-    write_data_to_file("../data/user_profile.json", user_info, user_data)
+    user_info = retrieve_data_from_file("./data/user_profile.json")
+    write_data_to_file("./data/user_profile.json", user_info, user_data)
     return 200
 
 

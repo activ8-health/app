@@ -1,6 +1,5 @@
 import utilities
 import json
-import model
 
 
 def register_user(authentication, data) -> (str, int):

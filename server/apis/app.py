@@ -1,6 +1,7 @@
 from flask import Flask, request
 from waitress import serve
-import register
+from register import register_user
+from signin import signin_user
 import requests
 
 from server.apis import utilities
@@ -15,7 +16,7 @@ def v1register():
 
     data_retrieved_register = request.data
     decoded_data_register = data_retrieved_register.decode('utf-8')
-    return register.register_user(authentication, decoded_data_register)
+    return register_user(authentication, decoded_data_register)
 
 
 @app.route("/v1/signIn", methods=['POST'])
@@ -24,7 +25,7 @@ def v1signIn():
 
     data_retrieved_sign_in = request.data
     decoded_data_sign_in = data_retrieved_sign_in.decode('utf-8')
-    return register.sign_in_user(authentication, decoded_data_sign_in)
+    return signin_user(authentication, decoded_data_sign_in)
 
 
 @app.route("/v1/getFoodRecommendation", methods=['GET'])

@@ -28,7 +28,7 @@ class _SignInSubflowState extends State<SignInSubflow> {
   @override
   void initState() {
     pages = [
-      // TODO add page to easy the user into the new workflow branch
+      // TODO add page to ease the user into the new workflow branch
       SetupHealthPermissionPage(setupState: setupState, pageController: pageController),
       SetupLocationPermissionPage(setupState: setupState, pageController: pageController),
       SetupHandshakePage(setupState: setupState, pageController: pageController, accountExists: true),

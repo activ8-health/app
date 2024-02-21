@@ -72,6 +72,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
       );
     }
 
+    loading = false;
     setState(() {});
   }
 
@@ -119,6 +120,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     // Make registration request
     V1SignInBody body = V1SignInBody(
       location: widget.setupState.location,
+      healthData: widget.setupState.healthData!,
     );
 
     Auth auth = Auth(email: registerData.email, password: registerData.password);

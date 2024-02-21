@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:activ8/extensions/position.dart';
 import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
 import 'package:activ8/types/health_data.dart';
 import 'package:activ8/types/user_preferences.dart';
 import 'package:activ8/types/user_profile.dart';
+import 'package:activ8/utils/json.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' show Response;
 
@@ -16,7 +15,7 @@ Future<V1RegisterResponse> v1register(V1RegisterBody body, Auth auth) async {
 
   V1RegisterStatus status = V1RegisterStatus.fromStatusCode(response.statusCode);
 
-  Map<String, dynamic> json = jsonDecode(response.body);
+  Map<String, dynamic> json = JsonUtils.tryDecode(response.body, {"error_message": "Something went wrong"});
   return V1RegisterResponse(status: status, errorMessage: json["error_message"]);
 }
 
@@ -37,8 +36,8 @@ class V1RegisterBody {
     return {
       "user_profile": userProfile.toJson(),
       "health_data": healthData.toJson(),
-      ...userPreferences.toJson(), // UserPreferences is not stored in its own field
       "location": location?.asLatLonList(),
+      ...userPreferences.toJson(), // UserPreferences is not stored in its own field
     };
   }
 }

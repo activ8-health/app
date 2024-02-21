@@ -19,7 +19,7 @@ class SleepTimeWidget extends StatelessWidget {
         children: [
           const TextSpan(text: "Set an alarm at "),
           TextSpan(
-            text: sleepTime?.format(context) ?? "--:--",
+            text: wakeTime?.format(context) ?? "--:--",
             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
           ),
           const TextSpan(text: "\nto get started"),

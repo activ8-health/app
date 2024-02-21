@@ -3,12 +3,14 @@ from waitress import serve
 from apis.register import register_user
 from apis.signin import signin_user
 import requests
+import sys
 from apis import sleep
 
 import apis.utilities as utilities
 
 app = Flask(__name__)
 app.json.sort_keys = False
+PORT = 8080
 
 
 @app.route("/v1/register", methods=['POST'])
@@ -39,14 +41,15 @@ def sleep_recommendation():
     if status != 200:
         return authentication, status
 
-    with open("./data/login_data.json", "r") as infile:
-        email, password = utilities.get_email_password(authentication)
-        check_email = utilities.check_email_password(email, password, 1)
-        if check_email == 401:
-            return {'error_message': 'Incorrect email or password'}, 401
+    # with open("./data/login_data.json", "r") as infile:
+    #     email, password = utilities.get_email_password(authentication)
+    #     check_email = utilities.check_email_password(email, password, 1)
+    #     if check_email == 401:
+    #         return {'error_message': 'Incorrect email or password'}, 401
 
     data_retrieved_sleep = request.data
     decoded_data_sign_in = data_retrieved_sleep.decode('utf-8')
+    print(decoded_data_sign_in)
     return {}  # sleep.get_sleep_recommendation(email)
 
 
@@ -66,7 +69,10 @@ def food_recommendation():
 
 mode = 'dev'
 if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        PORT = sys.argv[1]
+
     if mode == 'dev':
-        app.run(host='localhost', port=8080, debug=True)
+        app.run(host='localhost', port=int(PORT), debug=True)
     else:
-        serve(app, host='localhost', port=8080, threads=2)
+        serve(app, host='localhost', port=int(PORT), threads=2)

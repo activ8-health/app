@@ -10,7 +10,7 @@ def signin_user(authentication, new_data) -> (str, int):
         if check_email == 401:
             return {'error_message': 'Incorrect email or password'}, 401
 
-        data = utilities.retrieve_data_from_file("../data/user_profile.json")
+        data = utilities.retrieve_data_from_file("./data/user_profile.json")
         user_stored_data = data[email]
         user_profile = model.UserProfile(email, password, user_stored_data['user_profile'], None,
                                          user_stored_data['food'], user_stored_data['exercise'],
@@ -19,7 +19,7 @@ def signin_user(authentication, new_data) -> (str, int):
         user_profile.update_step_data(update_data['health_data']['step_data'])
         user_profile.update_sleep_data(update_data['health_data']['sleep_data'])
         user_profile.update_location(update_data['location'])
-        _, user = user_profile.serialize()
+        user = user_profile.serialize_return()
         data[email] = user
         utilities.write_data_to_file("./data/user_profile.json", data, user)
         return user[email], 200

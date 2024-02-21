@@ -13,7 +13,9 @@ app.json.sort_keys = False
 
 @app.route("/v1/register", methods=['POST'])
 def v1register():
-    authentication = request.headers["Authorization"]
+    authentication, status = utilities.check_authorization(request.headers)
+    if status != 200:
+        return authentication, status
 
     data_retrieved_register = request.data
     decoded_data_register = data_retrieved_register.decode('utf-8')
@@ -22,22 +24,30 @@ def v1register():
 
 @app.route("/v1/signIn", methods=['POST'])
 def v1signIn():
-    authentication = request.headers["Authorization"]
+    authentication, status = utilities.check_authorization(request.headers)
+    if status != 200:
+        return authentication, status
 
     data_retrieved_sign_in = request.data
     decoded_data_sign_in = data_retrieved_sign_in.decode('utf-8')
     return signin_user(authentication, decoded_data_sign_in)
 
 
-# @app.route("/v1/getSleepRecommendation", methods=['GET'])
-# def sleep_recommendation():
-#     authentication = request.headers["Authorization"]
-#     print(type(authentication), authentication)
-#
-#
-#     data_retrieved_sleep = request.data
-#     decoded_data_sign_in = data_retrieved_sleep.decode('utf-8')
-#     return "" #sleep.get_sleep_recommendation(email)
+@app.route("/v1/getSleepRecommendation", methods=['GET'])
+def sleep_recommendation():
+    authentication, status = utilities.check_authorization(request.headers)
+    if status != 200:
+        return authentication, status
+
+    with open("./data/login_data.json", "r") as infile:
+        email, password = utilities.get_email_password(authentication)
+        check_email = utilities.check_email_password(email, password, 1)
+        if check_email == 401:
+            return {'error_message': 'Incorrect email or password'}, 401
+
+    data_retrieved_sleep = request.data
+    decoded_data_sign_in = data_retrieved_sleep.decode('utf-8')
+    return {}  # sleep.get_sleep_recommendation(email)
 
 
 @app.route("/v1/getFoodRecommendation", methods=['GET'])

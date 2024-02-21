@@ -1,7 +1,15 @@
 import base64
 import json
-
+from flask import request
 import apis.model as model
+
+
+def check_authorization(authentication) -> int:
+    try:
+        authentication = request.headers["Authorization"]
+    except KeyError:
+        return {'error_message': 'Invalid authorization'}, 400
+    return authentication, 200
 
 
 def get_email_password(authorization) -> (int, str, str):

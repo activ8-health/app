@@ -4,6 +4,7 @@ from apis.register import register_user
 from apis.signin import signin_user
 import requests
 import sys
+from datetime import datetime, timedelta
 from apis import sleep
 
 import apis.utilities as utilities
@@ -41,16 +42,16 @@ def sleep_recommendation():
     if status != 200:
         return authentication, status
 
-    # with open("./data/login_data.json", "r") as infile:
-    #     email, password = utilities.get_email_password(authentication)
-    #     check_email = utilities.check_email_password(email, password, 1)
-    #     if check_email == 401:
-    #         return {'error_message': 'Incorrect email or password'}, 401
+    email, password = utilities.get_email_password(authentication)
+    check_email = utilities.check_email_password(email, password, 1)
+    if check_email == 401:
+        return {'error_message': 'Incorrect email or password'}, 401
 
-    data_retrieved_sleep = request.data
-    decoded_data_sign_in = data_retrieved_sleep.decode('utf-8')
-    print(decoded_data_sign_in)
-    return {}  # sleep.get_sleep_recommendation(email)
+    sleep_args = request.args
+    date = sleep_args.get('date')
+    if date is None:
+        date = (datetime.now() - timedelta(hours=6)).isoformat()
+    return sleep.get_sleep_recommendation(email, date)
 
 
 @app.route("/v1/getFoodRecommendation", methods=['GET'])

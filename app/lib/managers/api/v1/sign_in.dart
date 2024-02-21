@@ -1,10 +1,10 @@
-import 'dart:convert';
-
 import 'package:activ8/extensions/position.dart';
 import 'package:activ8/managers/api/api_auth.dart';
 import 'package:activ8/managers/api/api_worker.dart';
+import 'package:activ8/types/health_data.dart';
 import 'package:activ8/types/user_preferences.dart';
 import 'package:activ8/types/user_profile.dart';
+import 'package:activ8/utils/json.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' show Response;
 
@@ -14,17 +14,22 @@ Future<V1SignInResponse> v1signIn(V1SignInBody body, Auth auth) async {
   Response response = await ApiWorker.instance.post(_endpoint, body.toJson(), auth);
   V1SignInStatus status = V1SignInStatus.fromStatusCode(response.statusCode);
 
-  return V1SignInResponse.fromJson(jsonDecode(response.body), status: status);
+  return V1SignInResponse.fromJson(
+    JsonUtils.tryDecode(response.body, {"error_message": "Something went wrong"}),
+    status: status,
+  );
 }
 
 class V1SignInBody {
   final Position? location;
+  final HealthData healthData;
 
-  V1SignInBody({this.location});
+  V1SignInBody({this.location, required this.healthData});
 
   Map<String, dynamic> toJson() {
     return {
       "location": location?.asLatLonList(),
+      "health_data": healthData.toJson(),
     };
   }
 }

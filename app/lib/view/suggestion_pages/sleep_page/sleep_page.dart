@@ -15,9 +15,11 @@ class SleepPage extends StatefulWidget {
 
 class _SleepPageState extends State<SleepPage> {
   late Future<V1GetSleepRecommendationResponse> sleepRecommendationResponse;
-  final DateTime date = DateTime.now();
 
-  // uiGradients Starfall (darkened)
+  // Query for 6 hours ago, so that up to 6 AM will still count as the day before
+  final DateTime date = DateTime.now().subtract(const Duration(hours: 6));
+
+  // uiGradients (Moonlit Asteroid)
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
     begin: Alignment.topLeft,

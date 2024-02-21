@@ -56,6 +56,19 @@ def format_step_data(step_data):  # ignore 2 hours naps
     return step_data_points
 
 
+def format_food_preferences(dietary):
+    food_preferences = {}
+    preferences = {'vegan', 'vegetarian', 'kosher', 'halal', 'pescetarian', 'sesame_free',
+                   'soy_free', 'gluten_free', 'lactose_intolerance', 'nut_allergy',
+                   'peanut_allergy', 'shellfish_allergy', 'wheat_allergy'}
+    for food in preferences:
+        if food not in dietary:
+            food_preferences[food] = False
+        else:
+            food_preferences[food] = True
+    return food_preferences
+
+
 @dataclass
 class LoginInfo:
     email: str
@@ -119,7 +132,7 @@ class Exercise:
 
     def __post_init__(self):
         reminder_time = int(self.reminder_time)
-        if reminder_time == self.reminder_time and (self.reminder_time < 0 or self.reminder_time > 1439):
+        if reminder_time == self.reminder_time and (0 < self.reminder_time < 1439):
             self.reminder_time = reminder_time
         else:
             raise ValueError('Invalid step reminder time')
@@ -156,12 +169,13 @@ class UserProfile:
                              age=user_data['age'],
                              height=user_data['height'],
                              weight=user_data['weight'],
-                             sex=user_data['sex'])
+                             sex=user_data['sex'] if flag else Sex(user_data['sex']).name)
         except ValueError as e:
             raise ValueError('Invalid user data: ' + str(e))
 
         try:
-            self.food = Food(weight_goal=food_data['weight_goal'],
+            self.food = Food(weight_goal=(food_data['weight_goal'] if flag
+                                          else WeightGoal(food_data['weight_goal']).name),
                              dietary=food_data['dietary'],
                              food_log=food_data['food_log'] if flag else None)
         except ValueError as e:
@@ -225,3 +239,27 @@ class UserProfile:
                         'location': self.location
                     }
                 })
+
+    def serialize_return(self):
+        return ({
+            self.login.email: {
+                'user_profile': {
+                    'name': self.user.name,
+                    'age': self.user.age,
+                    'height': self.user.height,
+                    'weight': self.user.weight,
+                    'sex': Sex[self.user.sex].value,
+                },
+                'food_preferences': {
+                    'weight_goal': WeightGoal[self.food.weight_goal].value,
+                    'dietary': format_food_preferences(self.food.dietary),
+                },
+                'exercise_preferences': {
+                    'reminder_time': self.exercise.reminder_time,
+                    'step_goal': self.exercise.step_goal
+                },
+                'sleep_preferences': {
+                    'core_hours': self.sleep.core_hours
+                }
+            }
+        })

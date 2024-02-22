@@ -342,7 +342,7 @@ def get_sleep_recommendation(email: str, date: str) -> dict:
     avg_start, avg_end = get_avg_sleep_times(sleep_data)
     rec_start, rec_end = get_recommended_sleep_time(avg_start, avg_end, core_hours)
 
-    return {'start': rec_start, 'end': rec_end}
+    return {"ideal_sleep_range": {'start': rec_start, 'end': rec_end}}
 
 
 # some testing

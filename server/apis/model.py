@@ -149,6 +149,29 @@ class Sleep:
     sleep_data: list
     core_hours: dict
 
+    def __post_init__(self):
+        try:
+            core_hour_start = int(self.core_hours['start'])
+            core_hour_end = int(self.core_hours['end'])
+            if core_hour_start == self.core_hours['start'] and core_hour_end == self.core_hours['end']:
+                self.core_hours['start'] = core_hour_start
+                self.core_hours['end'] = core_hour_end
+            else:
+                raise ValueError("Invalid core hours start or end times")
+        except KeyError:
+            raise ValueError("Invalid core hours")
+
+
+@dataclass
+class Location:
+    lat: float
+    long: float
+
+    def __post_init__(self):
+        if self.lat is not None and self.long is not None:
+            self.lat = float(self.lat)
+            self.long = float(self.long)
+
 
 @dataclass
 class UserProfile:
@@ -185,14 +208,15 @@ class UserProfile:
                                             else format_step_data(health_data['step_data'])),
                                  reminder_time=exercise_data['reminder_time'],
                                  step_goal=exercise_data['step_goal'])
-
-        self.sleep = Sleep(
-            sleep_data=sleep_data['sleep_data'] if flag else format_sleep_data(health_data['sleep_data']),
-            core_hours=sleep_data['core_hours'])
-
-        location = location_data
         try:
-            self.location = location_data if flag else {'lat': float(location[0]), 'long': float(location[1])}
+            self.sleep = Sleep(
+                sleep_data=sleep_data['sleep_data'] if flag else format_sleep_data(health_data['sleep_data']),
+                core_hours=sleep_data['core_hours'])
+        except ValueError as e:
+            raise ValueError('Invalid sleep data: ' + str(e))
+
+        try:
+            self.location = Location(lat=location_data[0], long=location_data[1])
         except ValueError as e:
             raise ValueError('Invalid location data: ' + str(e))
 
@@ -236,7 +260,10 @@ class UserProfile:
                             'sleep_data': self.sleep.sleep_data,
                             'core_hours': self.sleep.core_hours
                         },
-                        'location': self.location
+                        'location': {
+                            'lat': self.location.lat,
+                            'long': self.location.long
+                        }
                     }
                 })
 

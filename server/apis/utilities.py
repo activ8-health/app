@@ -41,8 +41,8 @@ def check_email_password(email, password, flag) -> int:
     """
     Check if email already in use, return 409 if email already in use, 201 if email not in use.
     """
-    with open("./data/login_data.json", "r") as infile:
-        try:
+    try:
+        with open("./data/login_data.json", "r") as infile:
             data = json.load(infile)
             if email in data:
                 if flag == 0:
@@ -54,8 +54,10 @@ def check_email_password(email, password, flag) -> int:
                         return 401
             else:
                 return 401
-        except json.JSONDecodeError:
-            return 200
+    except FileNotFoundError:
+        return 200
+    except json.JSONDecodeError:
+        return 200
 
 
 def store_user_info(email, password, user_data) -> int:
@@ -93,11 +95,13 @@ def retrieve_data_from_file(file_name) -> dict:
     """
     Retrieve data from file and return it as a list of dictionaries. If file is empty, return an empty list.
     """
-    with open(file_name, 'r') as infile:
-        try:
+    try:
+        with open(file_name, 'r') as infile:
             data = json.load(infile)
-        except json.JSONDecodeError:
-            data = dict()
+    except FileNotFoundError:
+        data = dict()
+    except json.JSONDecodeError:
+        data = dict()
     return data
 
 

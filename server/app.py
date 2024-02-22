@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, request
 from waitress import serve
 from apis.register import register_user
@@ -7,6 +9,7 @@ import sys
 from datetime import datetime, timedelta
 from apis import sleep
 
+import apis.model as model
 import apis.utilities as utilities
 
 app = Flask(__name__)
@@ -37,7 +40,7 @@ def v1signIn():
 
 
 @app.route("/v1/getSleepRecommendation", methods=['GET'])
-def sleep_recommendation():
+def v1sleep_recommendation():
     authentication, status = utilities.check_authorization(request.headers)
     if status != 200:
         return authentication, status
@@ -48,6 +51,9 @@ def sleep_recommendation():
         return {'error_message': 'Incorrect email or password'}, 401
 
     sleep_args = request.args
+    lat = sleep.args.get("location_lat")
+    long = sleep.args.get("location_long")
+
     date = sleep_args.get('date')
     if date is None:
         date = (datetime.now() - timedelta(hours=6)).isoformat()
@@ -70,6 +76,10 @@ def food_recommendation():
 
 mode = 'dev'
 if __name__ == '__main__':
+    path = os.path.join(os.getcwd(), "data")
+    if not os.path.exists(path):
+        os.makedirs(path)
+
     if len(sys.argv) > 1:
         PORT = sys.argv[1]
 

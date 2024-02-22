@@ -51,8 +51,8 @@ def v1sleep_recommendation():
         return {'error_message': 'Incorrect email or password'}, 401
 
     sleep_args = request.args
-    lat = sleep.args.get("location_lat")
-    long = sleep.args.get("location_long")
+    lat = sleep_args.get("location_lat")
+    long = sleep_args.get("location_long")
 
     date = sleep_args.get('date')
     if date is None:

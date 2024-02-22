@@ -101,16 +101,30 @@ def get_exercise_message(steps: int, step_goal: int, location: dict) -> str:
     lat, lon = location['lat'], location['lon']
     weather = get_weather_code_conv(get_weather_code(lat, lon))
     if steps >= step_goal:
-        return f'reached goal'
+        return f"Congratulations, you've met your step goal for the day!"
     steps_left = step_goal - steps
     # come up with diff messages based on how many steps left and weather
-    return f'{steps_left} steps left till goal'
+    # still need second part of message that recommends an activity based on weather
+    # prob something simple like 
+    # if good weather go for a run outside
+    # if meh weather be like its chilly wear more if running outside or go to gym etc
+    # if bad weather either take it easy or if want to meet goal exercise inside / go to gym
+    # debating on drizzle, slight snow, foggy prob considered as meh but slightly diff
+    percent_left = steps_left / step_goal
+    if percent_left == 0.5:
+        return f"You're halfway to your step goal. Only {steps_left} steps left."
+    elif percent_left < 0.2:
+        return f"You're almost at your step goal. Only {steps_left} steps left."
+    elif percent_left < 0.5:
+        return f"You're more than halfway to your step goal. Only {steps_left} steps left."
+    else:
+        return f"You still have {steps_left} steps left until you reach your step goal."
 
 def get_activity_recommendation(email:str, date:str) -> dict:
     user_data = get_user_data(email)
     exercise_data = user_data['exercise']
     user_profile = user_data['user_profile']
-    
+
     steps = get_steps_by_day(exercise_data, date)
     step_goal = exercise_data['step_goal']
     location = user_data['location']
@@ -125,6 +139,7 @@ def get_activity_recommendation(email:str, date:str) -> dict:
                       'steps': steps},
             'message': message}
 
-print(get_weather_code(40.7128,74.0060))
-print(get_weather_code_conv(get_weather_code(33.6897734, -117.82164237)))
+# print(get_weather_code(40.7128,74.0060))
+print(get_weather_code_conv(get_weather_code(40.7128,74.0060)))
 print(calc_calories_burned(144.0, 15.875732950000002, 11524))
+print((23000-11524)/23000)

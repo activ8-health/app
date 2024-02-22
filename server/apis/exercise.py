@@ -97,22 +97,34 @@ def get_steps_by_day(exercise_data: str, date: str):
     date = parser.isoparse(date).date()
     return exercise_data['steps_data'][date]
 
-def get_exercise_message(email: str, date: str) -> str:
+def get_exercise_message(steps: int, step_goal: int, location: dict) -> str:
+    lat, lon = location['lat'], location['lon']
+    weather = get_weather_code_conv(get_weather_code(lat, lon))
+    if steps >= step_goal:
+        return f'reached goal'
+    steps_left = step_goal - steps
+    # come up with diff messages based on how many steps left and weather
+    return f'{steps_left} steps left till goal'
+
+def get_activity_recommendation(email:str, date:str) -> dict:
     user_data = get_user_data(email)
     exercise_data = user_data['exercise']
     user_profile = user_data['user_profile']
-    location = user_data['location']
-    lat, lon = location['lat'], location['lon']
+    
     steps = get_steps_by_day(exercise_data, date)
     step_goal = exercise_data['step_goal']
+    location = user_data['location']
+
+    message = get_exercise_message(steps, step_goal, location)
+
     height, weight = user_profile['height'], user_profile['weight']
-    cals_burned = calc_calories_burned(height, weight, )
-    if steps >= step_goal:
-        return f'reached goal and burned {cals_burned} calories'
-    weather = get_weather_code_conv(get_weather_code(lat, lon))
-    steps_left = step_goal - steps
-    # come up with diff messages based on how many steps left and weather
-    return f'{steps_left} steps left till goal so far {cals_burned} calories burned'
+    cals_burned = calc_calories_burned(height, weight, steps)
+
+    return {'calories_burned': cals_burned,
+            'steps': {'goal': step_goal,
+                      'steps': steps},
+            'message': message}
 
 print(get_weather_code(40.7128,74.0060))
+print(get_weather_code_conv(get_weather_code(33.6897734, -117.82164237)))
 print(calc_calories_burned(144.0, 15.875732950000002, 11524))

@@ -20,26 +20,41 @@ class _FoodPageState extends State<FoodPage> {
   @override
   Widget build(BuildContext context) {
     // TODO
-    return Container(
-      color: Colors.black,
-      child: Container(
-        decoration: const BoxDecoration(gradient: backgroundGradient),
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: const BackButtonAppBar(),
-          body: SizedBox.expand(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                padding(8),
-                const Icon(Icons.restaurant_menu, size: 60),
-                padding(12),
-                Text(
-                  "Food & Nutrition",
-                  style: Theme.of(context).textTheme.headlineLarge,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      appBar: const BackButtonAppBar(),
+      extendBodyBehindAppBar: true,
+      body: SizedBox.expand(
+        child: Container(
+          color: Colors.black,
+          child: Container(
+            decoration: const BoxDecoration(gradient: backgroundGradient),
+            child: RefreshIndicator(
+              displacement: 80,
+              backgroundColor: Colors.white.withOpacity(0.2),
+              color: Colors.white,
+              onRefresh: () async {
+                // TODO refresh logic
+                setState(() {});
+              },
+              child: SizedBox.expand(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(), // TODO remove if not necessary
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      padding(58),
+                      const Icon(Icons.restaurant_menu, size: 60),
+                      padding(12),
+                      Text(
+                        "Food & Nutrition",
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
+                      padding(8),
+                    ],
+                  ),
                 ),
-                padding(8),
-              ],
+              ),
             ),
           ),
         ),

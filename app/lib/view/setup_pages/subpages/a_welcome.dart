@@ -58,7 +58,10 @@ class SetupWelcomePage extends StatelessWidget {
       padding(16),
       Text("Welcome to Activ8", style: headingTheme),
       padding(8),
-      const Text("Embark on your personal\nself-improvement journey"),
+      const Text(
+        "Embark on your personal\nself-improvement journey",
+        textAlign: TextAlign.center,
+      ),
       padding(32),
       ElevatedButton.icon(
         onPressed: nextPageAction,

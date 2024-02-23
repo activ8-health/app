@@ -61,7 +61,7 @@ class _SetupNutritionPageState extends State<SetupNutritionPage> {
       padding(48),
 
       // Icon
-      LargeIcon(icon: Icons.dinner_dining, color: Colors.green.shade400),
+      LargeIcon(icon: Icons.restaurant_menu, color: Colors.green.shade400),
       padding(16),
 
       // Title

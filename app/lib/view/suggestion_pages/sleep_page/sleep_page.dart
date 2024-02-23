@@ -2,8 +2,8 @@ import 'package:activ8/managers/api/v1/get_sleep_recommendation.dart';
 import 'package:activ8/managers/app_state.dart';
 import 'package:activ8/utils/snackbar.dart';
 import 'package:activ8/view/suggestion_pages/sleep_page/sleep_time_widget.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:activ8/view/widgets/back_button_app_bar.dart';
+import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -66,54 +66,68 @@ class _SleepPageState extends State<SleepPage> {
       textAlign: TextAlign.center,
     );
 
-    return Container(
-      decoration: const BoxDecoration(gradient: backgroundGradient),
-      child: Scaffold(
-        appBar: const BackButtonAppBar(),
-        backgroundColor: Colors.transparent,
-        body: SizedBox.expand(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              padding(8),
-              const Icon(Icons.bedtime_outlined, size: 60),
-              padding(12),
-              Text(
-                "Sleep Schedule",
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              padding(8),
-              descriptionText,
-              padding(16),
-              FutureBuilder(
-                future: sleepRecommendationResponse,
-                builder: (BuildContext context, AsyncSnapshot<V1GetSleepRecommendationResponse> snapshot) {
-                  Widget widget;
-                  // Loading or error
-                  if (snapshot.connectionState != ConnectionState.done ||
-                      !snapshot.hasData ||
-                      !snapshot.data!.status.isSuccessful) {
-                    widget = const SleepTimeWidget(key: ValueKey(0));
-                  } else {
-                    // Get data from the API
-                    V1GetSleepRecommendationResponse data = snapshot.data!;
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: const BackButtonAppBar(),
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: const BoxDecoration(gradient: backgroundGradient),
+        child: RefreshIndicator(
+          displacement: 80,
+          backgroundColor: Colors.white.withOpacity(0.2),
+          color: Colors.white,
+          onRefresh: () async {
+            sleepRecommendationResponse = loadApi();
+            await sleepRecommendationResponse;
+            setState(() {});
+          },
+          child: SizedBox.expand(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  padding(58),
+                  const Icon(Icons.bedtime_outlined, size: 60),
+                  padding(12),
+                  Text(
+                    "Sleep Schedule",
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
+                  padding(8),
+                  descriptionText,
+                  padding(16),
+                  FutureBuilder(
+                    future: sleepRecommendationResponse,
+                    builder: (BuildContext context, AsyncSnapshot<V1GetSleepRecommendationResponse> snapshot) {
+                      Widget widget;
+                      // Loading or error
+                      if (snapshot.connectionState != ConnectionState.done ||
+                          !snapshot.hasData ||
+                          !snapshot.data!.status.isSuccessful) {
+                        widget = const SleepTimeWidget(key: ValueKey(0));
+                      } else {
+                        // Get data from the API
+                        V1GetSleepRecommendationResponse data = snapshot.data!;
 
-                    widget = SleepTimeWidget(
-                      key: const ValueKey(1),
-                      sleepTime: data.sleepRangeStart,
-                      wakeTime: data.sleepRangeEnd,
-                      date: date,
-                    );
-                  }
+                        widget = SleepTimeWidget(
+                          key: const ValueKey(1),
+                          sleepTime: data.sleepRangeStart,
+                          wakeTime: data.sleepRangeEnd,
+                          date: date,
+                        );
+                      }
 
-                  // Animate between the pre- and post-loading screens
-                  return AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    child: widget,
-                  );
-                },
+                      // Animate between the pre- and post-loading screens
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 200),
+                        child: widget,
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

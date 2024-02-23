@@ -6,6 +6,7 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      surfaceTintColor: Colors.transparent,
       backgroundColor: Colors.transparent,
       leadingWidth: 72,
       leading: Padding(

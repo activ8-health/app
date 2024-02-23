@@ -77,71 +77,57 @@ class _HomePageState extends State<HomePage> {
         child: Container(
           decoration: const BoxDecoration(gradient: backgroundGradient),
           alignment: Alignment.center,
-          child: SingleChildScrollView(
-            child: SizedBox(
-              width: 370,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  padding(72),
+          child: RefreshIndicator(
+            displacement: 80,
+            backgroundColor: Colors.white.withOpacity(0.2),
+            color: Colors.white,
+            onRefresh: () async {
+              homeViewResponse = loadApi();
+              await homeViewResponse;
+              setState(() {});
+            },
+            child: SingleChildScrollView(
+              child: SizedBox(
+                width: 370,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    padding(72),
 
-                  // Title
-                  // FittedBox allows the text to shrink to fit the container
-                  FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: Text(
-                      "Welcome, $name",
-                      style: Theme.of(context).textTheme.headlineLarge,
+                    // Title
+                    // FittedBox allows the text to shrink to fit the container
+                    FittedBox(
+                      fit: BoxFit.fitWidth,
+                      child: Text(
+                        "Welcome, $name",
+                        style: Theme.of(context).textTheme.headlineLarge,
+                      ),
                     ),
-                  ),
-                  padding(20),
+                    padding(20),
 
-                  // Overview Category
-                  const CategoryMarker(label: "OVERVIEW"),
+                    // Overview Category
+                    const CategoryMarker(label: "OVERVIEW"),
 
-                  // Lifestyle Score
-                  LifestyleScoreWidget(homeViewResponse: homeViewResponse),
-                  padding(6),
+                    // Lifestyle Score
+                    LifestyleScoreWidget(homeViewResponse: homeViewResponse),
+                    padding(6),
 
-                  MessageWidget(homeViewResponse: homeViewResponse),
-                  padding(20),
+                    MessageWidget(homeViewResponse: homeViewResponse),
+                    padding(20),
 
-                  // Suggestion Category
-                  const CategoryMarker(label: "SUGGESTIONS"),
-                  const SuggestionSelectorWidget(),
-                  padding(12),
+                    // Suggestion Category
+                    const CategoryMarker(label: "SUGGESTIONS"),
+                    const SuggestionSelectorWidget(),
+                    padding(12),
 
-                  // Sign-out Button
-                  _SignOutButton(action: signOutAction),
-                  padding(24),
-                ],
+                    // Sign-out Button
+                    _SignOutButton(action: signOutAction),
+                    padding(24),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// The small text above each section
-class _CategoryMarker extends StatelessWidget {
-  final String label;
-
-  const _CategoryMarker({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 24.0, bottom: 2.0),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: Colors.white.withOpacity(0.5),
-              ),
         ),
       ),
     );

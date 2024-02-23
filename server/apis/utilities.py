@@ -8,7 +8,7 @@ def check_authorization(authentication) -> int:
     try:
         authentication = request.headers["Authorization"]
     except KeyError:
-        return {'error_message': 'Invalid authorization'}, 400
+        return {'error_message': 'Invalid authorization'}, 401
     return authentication, 200
 
 
@@ -79,6 +79,28 @@ def store_user_info(email, password, user_data, instance) -> int:
 
     instance.update_user(email, user)
     return 200
+
+
+def check_authentication_login(headers, instance):
+    authentication, status = check_authorization(headers)
+    if status != 200:
+        return authentication, status
+
+    email, password = get_email_password(authentication)
+    check_email = check_email_password(email, password, instance, 1)
+    if check_email == 401:
+        return {'error_message': 'Incorrect email or password'}, 401
+
+    return email, 200
+
+
+def update_user_info(new_data, user_profile, email, instance):
+    update_data = json.loads(new_data)
+    user_profile.replace_step_data(update_data['health_data']['step_data'])
+    user_profile.replace_sleep_data(update_data['health_data']['sleep_data'])
+    user_profile.update_location(update_data['location'])
+    user = instance.update_user(email, user_profile)
+    return user, 200
 
 # TODO DELETE
 # def retrieve_data_from_file(file_name) -> dict:

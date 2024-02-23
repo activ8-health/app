@@ -228,17 +228,20 @@ class UserProfile:
         except ValueError as e:
             raise ValueError('Invalid location data: ' + str(e))
 
-    def update_sleep_data(self, sleep_data) -> None:
+    def replace_sleep_data(self, sleep_data) -> None:
         self.sleep.sleep_data = format_sleep_data(sleep_data)
 
-    def update_step_data(self, step_data) -> None:
+    def replace_step_data(self, step_data) -> None:
         self.exercise.step_data = format_step_data(step_data)
 
     def update_food_data(self, food_data):
         pass
 
     def update_location(self, location_data) -> None:
-        self.location = Location(lat=location_data[0], long=location_data[1])
+        print(location_data)
+        if location_data[0] is not None and location_data[1] is not None:
+            self.location = Location(lat=location_data[0], long=location_data[1])
+            print(self.location)
 
     def serialize(self):
         return ({

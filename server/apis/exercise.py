@@ -109,7 +109,8 @@ def get_steps_by_day(exercise_data: dict, date: str) -> int:
     the date string is parsed to get only the date to return the correct steps data
     '''
     date_string = str(parser.isoparse(date).date())
-    return exercise_data['step_data'][date_string]
+
+    return exercise_data['step_data'].get(date_string, 0)
 
 def get_step_progress_message(steps_left: int, step_goal: int) -> str:
     '''

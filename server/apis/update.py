@@ -1,8 +1,7 @@
-import apis.utilities as utilities
-import json
+from apis import utilities
 
 
-def signin_user(authentication, new_data, instance) -> (str, int):
+def update_health_data(authentication, new_data, instance):
     email, password = utilities.get_email_password(authentication)
     check_login = utilities.check_email_password(email, password, instance, 1)
     if check_login == 401:
@@ -12,5 +11,5 @@ def signin_user(authentication, new_data, instance) -> (str, int):
     if status != 200:
         return {'error_message': 'Something went wrong'}, 400
 
-    user, status = utilities.update_user_info(new_data, user_profile, email, instance)
-    return user[email], status
+    _, status = utilities.update_user_info(new_data, user_profile, email, instance)
+    return {}, status

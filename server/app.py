@@ -8,6 +8,7 @@ import requests
 import sys
 from datetime import datetime, timedelta
 from apis import sleep
+import apis.state as manager_instance
 
 import apis.model as model
 import apis.utilities as utilities
@@ -25,7 +26,8 @@ def v1register():
 
     data_retrieved_register = request.data
     decoded_data_register = data_retrieved_register.decode('utf-8')
-    return register_user(authentication, decoded_data_register)
+    instance = manager_instance.ProfileManager.instance()
+    return register_user(authentication, decoded_data_register, instance)
 
 
 @app.route("/v1/signIn", methods=['POST'])
@@ -36,7 +38,8 @@ def v1signIn():
 
     data_retrieved_sign_in = request.data
     decoded_data_sign_in = data_retrieved_sign_in.decode('utf-8')
-    return signin_user(authentication, decoded_data_sign_in)
+    instance = manager_instance.ProfileManager.instance()
+    return signin_user(authentication, decoded_data_sign_in, instance)
 
 
 @app.route("/v1/getSleepRecommendation", methods=['GET'])
@@ -46,13 +49,16 @@ def v1sleep_recommendation():
         return authentication, status
 
     email, password = utilities.get_email_password(authentication)
-    check_email = utilities.check_email_password(email, password, 1)
+
+    instance = manager_instance.ProfileManager.instance()
+    check_email = utilities.check_email_password(email, password, instance, 1)
     if check_email == 401:
         return {'error_message': 'Incorrect email or password'}, 401
 
     sleep_args = request.args
-    lat = sleep_args.get("location_lat")
-    long = sleep_args.get("location_long")
+
+    _, user = instance.get_user(email, 1)
+    user.update_location((sleep_args.get("location_lat"), sleep_args.get("location_long")))
 
     date = sleep_args.get('date')
     if date is None:
@@ -64,13 +70,6 @@ def v1sleep_recommendation():
 def food_recommendation():
     authentication = request.headers["Authorization"]
     status, email, password = utilities.create_email_password(authentication)
-
-    param = {
-        'email': email,
-        'password': password,
-    }
-    data = requests.get('http://localhost:8080/v1/getFoodRecommendation', params=param)
-    print(data.content)
     return "Hello, World!"
 
 

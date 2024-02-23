@@ -2,6 +2,10 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
+PREFERENCES = {'vegan', 'vegetarian', 'kosher', 'halal', 'pescetarian', 'sesame_free',
+               'soy_free', 'gluten_free', 'lactose_intolerance', 'nut_allergy',
+               'peanut_allergy', 'shellfish_allergy', 'wheat_allergy'}
+
 
 class Sex(Enum):
     Male = 0
@@ -58,10 +62,8 @@ def format_step_data(step_data):  # ignore 2 hours naps
 
 def format_food_preferences(dietary):
     food_preferences = {}
-    preferences = {'vegan', 'vegetarian', 'kosher', 'halal', 'pescetarian', 'sesame_free',
-                   'soy_free', 'gluten_free', 'lactose_intolerance', 'nut_allergy',
-                   'peanut_allergy', 'shellfish_allergy', 'wheat_allergy'}
-    for food in preferences:
+
+    for food in PREFERENCES:
         if food not in dietary:
             food_preferences[food] = False
         else:
@@ -107,15 +109,11 @@ class Food:
         if not isinstance(self.weight_goal, str):
             raise ValueError('Invalid weight goal')
 
-        preferences = {'vegan', 'vegetarian', 'kosher', 'halal', 'pescetarian', 'sesame_free',
-                       'soy_free', 'gluten_free', 'lactose_intolerance', 'nut_allergy',
-                       'peanut_allergy', 'shellfish_allergy', 'wheat_allergy'}
-
         if isinstance(self.dietary, dict):
             dietary = []
-            if len(self.dietary) == len(preferences):
+            if len(self.dietary) == len(PREFERENCES):
                 for diet, value in self.dietary.items():
-                    if (diet not in preferences) or (not isinstance(value, bool) and value is not None):
+                    if (diet not in PREFERENCES) or (not isinstance(value, bool) and value is not None):
                         raise ValueError('Invalid dietary preferences')
                     if value:
                         dietary.append(diet)
@@ -180,19 +178,24 @@ class UserProfile:
     food: Food
     exercise: Exercise
     sleep: Sleep
+    location: Location
 
-    location: dict
-
-    def __init__(self, email, password, user_data, health_data,
-                 food_data, exercise_data, sleep_data, location_data, flag=0):
+    def __init__(self, email, password, user_data, flag=0):
         self.login = LoginInfo(email=email, password=password)
 
+        user = user_data['user_profile']
+        health_data = None if flag else user_data['health_data']
+        food_data = user_data['food'] if flag else user_data['food_preferences']
+        exercise_data = user_data['exercise'] if flag else user_data['exercise_preferences']
+        sleep_data = user_data['sleep'] if flag else user_data['sleep_preferences']
+        location_data = user_data['location']
+
         try:
-            self.user = User(name=user_data['name'],
-                             age=user_data['age'],
-                             height=user_data['height'],
-                             weight=user_data['weight'],
-                             sex=user_data['sex'] if flag else Sex(user_data['sex']).name)
+            self.user = User(name=user['name'],
+                             age=user['age'],
+                             height=user['height'],
+                             weight=user['weight'],
+                             sex=user['sex'] if flag else Sex(user['sex']).name)
         except ValueError as e:
             raise ValueError('Invalid user data: ' + str(e))
 
@@ -204,10 +207,14 @@ class UserProfile:
         except ValueError as e:
             raise ValueError('Invalid food data: ' + str(e))
 
-        self.exercise = Exercise(step_data=(exercise_data['step_data'] if flag
-                                            else format_step_data(health_data['step_data'])),
-                                 reminder_time=exercise_data['reminder_time'],
-                                 step_goal=exercise_data['step_goal'])
+        try:
+            self.exercise = Exercise(step_data=(exercise_data['step_data'] if flag
+                                                else format_step_data(health_data['step_data'])),
+                                     reminder_time=exercise_data['reminder_time'],
+                                     step_goal=exercise_data['step_goal'])
+        except ValueError as e:
+            raise ValueError('Invalid exercise data: ' + str(e))
+
         try:
             self.sleep = Sleep(
                 sleep_data=sleep_data['sleep_data'] if flag else format_sleep_data(health_data['sleep_data']),
@@ -216,7 +223,8 @@ class UserProfile:
             raise ValueError('Invalid sleep data: ' + str(e))
 
         try:
-            self.location = Location(lat=location_data[0], long=location_data[1])
+            self.location = Location(lat=location_data['lat'] if flag else location_data[0],
+                                     long=location_data['long'] if flag else location_data[1])
         except ValueError as e:
             raise ValueError('Invalid location data: ' + str(e))
 
@@ -230,7 +238,7 @@ class UserProfile:
         pass
 
     def update_location(self, location_data) -> None:
-        self.location = {'lat': location_data[0], 'long': location_data[1]}
+        self.location = Location(lat=location_data[0], long=location_data[1])
 
     def serialize(self):
         return ({

@@ -3,6 +3,7 @@ import 'package:activ8/managers/app_state.dart';
 import 'package:activ8/utils/snackbar.dart';
 import 'package:activ8/view/suggestion_pages/sleep_page/sleep_time_widget.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
+import 'package:activ8/view/widgets/back_button_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -68,23 +69,13 @@ class _SleepPageState extends State<SleepPage> {
     return Container(
       decoration: const BoxDecoration(gradient: backgroundGradient),
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          leadingWidth: 72,
-          leading: Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ),
-        ),
+        appBar: const BackButtonAppBar(),
         backgroundColor: Colors.transparent,
         body: SizedBox.expand(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              padding(18),
+              padding(8),
               const Icon(Icons.bedtime_outlined, size: 60),
               padding(12),
               Text(

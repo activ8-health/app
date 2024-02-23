@@ -18,7 +18,7 @@ class _SignInSubflowState extends State<SignInSubflow> {
 
   late final List<Widget> pages;
 
-  // uiGradients Lawrencium (hue shifted)
+  // uiGradients (Lawrencium, hue shifted)
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [Color(0xFF290C0E), Color(0xFF632B36), Color(0xFF3D232C)],
     begin: Alignment.topLeft,

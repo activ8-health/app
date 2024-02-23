@@ -6,6 +6,7 @@ import 'package:activ8/view/entry_point.dart';
 import 'package:activ8/view/home_page/home_view/lifestyle_score_widget.dart';
 import 'package:activ8/view/home_page/home_view/message_widget.dart';
 import 'package:activ8/view/home_page/home_view/suggestion_selector_widget.dart';
+import 'package:activ8/view/widgets/category_marker.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -60,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  // uiGradients Starfall (darkened)
+  // uiGradients (Starfall, manually darkened)
   static const LinearGradient backgroundGradient = LinearGradient(
     colors: [Color(0xFF4B1248), Color(0xFF685334)],
     begin: Alignment.topLeft,
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
                   padding(20),
 
                   // Overview Category
-                  const _CategoryMarker(label: "OVERVIEW"),
+                  const CategoryMarker(label: "OVERVIEW"),
 
                   // Lifestyle Score
                   LifestyleScoreWidget(homeViewResponse: homeViewResponse),
@@ -106,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                   padding(20),
 
                   // Suggestion Category
-                  const _CategoryMarker(label: "SUGGESTIONS"),
+                  const CategoryMarker(label: "SUGGESTIONS"),
                   const SuggestionSelectorWidget(),
                   padding(12),
 

@@ -2,6 +2,9 @@ import requests
 import json
 from dateutil import parser
 
+# API: OpenMeteo API
+# API call: https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&current_weather=true
+# Weather code to weather conversion given in documentation
 # WEATHER_CODE_CONVERSION = {0: 'Clear Sky',
 #                  1: 'Mainly Clear',
 #                  2: 'Partly Cloudy',
@@ -31,11 +34,11 @@ from dateutil import parser
 #                  96: 'Thunderstorm with Slight Hail',
 #                  99: 'Thunderstorm with Heavy Hail'
 #                  }
-
-# API call: https://api.open-meteo.com/v1/forecast?latitude={latitude}&longitude={longitude}&current_weather=true
 API_URL = 'https://api.open-meteo.com/v1/forecast'
 
+# pace to speed conversion (default is average)
 SPEED_CONV = {'slow': 0.9, 'average': 1.34, 'fast': 1.79} # m/s
+# pace to MET conversion (default is average)
 MET_CONV = {'slow': 2.8, 'average': 3.5, 'fast': 5.0}
 
 def get_weather_code(lat: float, lon: float)-> int:
@@ -46,11 +49,12 @@ def get_weather_code(lat: float, lon: float)-> int:
     '''
     res = requests.get(f'{API_URL}?latitude={lat}&longitude={lon}&current_weather=true')
     if res.status_code != 200:
+        # there is an error with the response (location doesnt exist, etc)
         return -1
     res = res.json()
     return res['current_weather']['weathercode']
 
-def calc_calories_burned(height: float, weight: float, steps: int, pace: str='average'):
+def calc_calories_burned(height: float, weight: float, steps: int, pace: str='average') -> float:
     '''
     height: user's height in cm
     weight: user's weight in kg
@@ -96,7 +100,7 @@ def get_user_data(email: str) -> dict:
     user_profile = user_data[email]['user_profile']
     return {'user_profile': user_profile, 'exercise': exercise, 'location': location}
 
-def get_steps_by_day(exercise_data: dict, date: str):
+def get_steps_by_day(exercise_data: dict, date: str) -> int:
     '''
     exercise_data: dictionary of the user's steps data for each day
     date: the date (string in iso format) to get the steps data for
@@ -143,12 +147,14 @@ def get_weather_suggestion_message(location: dict) -> str:
     '''
     if location == None:
         # location was not provided so a default message is given as a recommendation
-        return 'You can either go for a run outside or exercise indoors.'
+        return "You can either go for a run outside or exercise indoors."
+    
     lat, lon = location['lat'], location['long']
     weather_code = get_weather_code(lat, lon)
+    
     if weather_code == -1:
         # API returned an error so a default message is given as a recommendation
-        return 'You can either go for a run outside or exercise indoors.'
+        return "You can either go for a run outside or exercise indoors."
     elif weather_code == 0 or weather_code == 1:
         # for clear sky, mainly clear
         return "The weather looks great today, so go for a run outside."

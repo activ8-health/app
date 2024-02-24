@@ -1,17 +1,46 @@
+import 'package:activ8/managers/api/v1/get_activity_recommendation.dart';
 import 'package:activ8/view/widgets/clear_card.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:flutter/material.dart';
 
-class RecommendationMessage extends StatefulWidget {
-  const RecommendationMessage({super.key});
+class RecommendationMessage extends StatelessWidget {
+  final Future<V1GetActivityRecommendationResponse> activityRecommendationFuture;
 
-  @override
-  State<RecommendationMessage> createState() => _RecommendationMessageState();
-}
+  const RecommendationMessage({super.key, required this.activityRecommendationFuture});
 
-class _RecommendationMessageState extends State<RecommendationMessage> {
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: activityRecommendationFuture,
+      builder: (BuildContext context, AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
+        // Loading
+        if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
+          return const _Widget();
+        }
+        // Interpret data
+        V1GetActivityRecommendationResponse response = snapshot.data!;
+
+        // Error
+        if (!response.status.isSuccessful) {
+          return const _Widget();
+        }
+
+        // Success
+        return _Widget(message: response.message);
+      },
+    );
+  }
+}
+
+class _Widget extends StatelessWidget {
+  final String? message;
+
+  const _Widget({this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    String message = this.message ?? "Loading...";
+
     return ClearCard(
       color: Colors.orange.shade400,
       child: Padding(
@@ -30,7 +59,7 @@ class _RecommendationMessageState extends State<RecommendationMessage> {
             padding(4),
             Expanded(
               child: Text(
-                "Remember to get in your steps today. You still have 11000 steps left until you reach your step goal. It might be chilly today, so make sure to wear more when going for a run outside.",
+                message,
                 style: TextStyle(color: Colors.orange.shade50, fontSize: 18),
               ),
             ),

@@ -67,7 +67,8 @@ class _ExercisePageState extends State<ExercisePage> {
               backgroundColor: Colors.white.withOpacity(0.2),
               color: Colors.white,
               onRefresh: () async {
-                // TODO refresh logic
+                activityRecommendationFuture = loadApi();
+                await activityRecommendationFuture;
                 setState(() {});
               },
               child: SizedBox(
@@ -96,12 +97,12 @@ class _ExercisePageState extends State<ExercisePage> {
 
                         // Calories
                         const CategoryMarker(label: "CALORIES"),
-                        const CaloriesMessage(),
+                        CaloriesMessage(activityRecommendationFuture: activityRecommendationFuture),
                         padding(12),
 
                         // Message
                         const CategoryMarker(label: "RECOMMENDATION"),
-                        const RecommendationMessage(),
+                        RecommendationMessage(activityRecommendationFuture: activityRecommendationFuture),
                       ],
                     ),
                   ),

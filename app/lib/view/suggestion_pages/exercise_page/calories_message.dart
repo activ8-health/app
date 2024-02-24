@@ -1,3 +1,4 @@
+import 'package:activ8/managers/api/v1/get_activity_recommendation.dart';
 import 'package:activ8/view/widgets/clear_card.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:flutter/gestures.dart';
@@ -8,12 +9,41 @@ const String _articleLabel = "Physical Activity for a Healthy Weight";
 const String _articleUrl = "https://www.cdc.gov/healthyweight/physical_activity/index.html";
 
 class CaloriesMessage extends StatelessWidget {
-  const CaloriesMessage({super.key});
+  final Future<V1GetActivityRecommendationResponse> activityRecommendationFuture;
+
+  const CaloriesMessage({super.key, required this.activityRecommendationFuture});
 
   @override
   Widget build(BuildContext context) {
-    const int caloriesBurned = 500;
+    return FutureBuilder(
+      future: activityRecommendationFuture,
+      builder: (BuildContext context, AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
+        // Loading
+        if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
+          return const _Widget();
+        }
+        // Interpret data
+        V1GetActivityRecommendationResponse response = snapshot.data!;
 
+        // Error
+        if (!response.status.isSuccessful) {
+          return const _Widget();
+        }
+
+        // Success
+        return _Widget(caloriesBurned: response.caloriesBurned);
+      },
+    );
+  }
+}
+
+class _Widget extends StatelessWidget {
+  final int? caloriesBurned;
+
+  const _Widget({this.caloriesBurned});
+
+  @override
+  Widget build(BuildContext context) {
     return ClearCard(
       color: Colors.orange.shade200,
       child: Padding(
@@ -46,7 +76,14 @@ class CaloriesMessage extends StatelessWidget {
     );
   }
 
-  Widget _getBurnText(BuildContext context, int caloriesBurned) {
+  Widget _getBurnText(BuildContext context, [int? caloriesBurned]) {
+    if (caloriesBurned == null) {
+      return Text(
+        "Loading...",
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16),
+      );
+    }
+
     return RichText(
       text: TextSpan(
         children: [

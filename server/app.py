@@ -51,7 +51,8 @@ def v1sleep_recommendation():
 
     sleep_args = request.args
     _, user = instance.get_user(email, 1)
-    user.update_location((sleep_args.get("location_lat"), sleep_args.get("location_long")))
+    user.update_location((sleep_args.get("location_lat"), sleep_args.get("location_lon")))
+    instance.update_user(email, user)
 
     date = sleep_args.get('date')
     if date is None:
@@ -73,7 +74,8 @@ def v1activity_recommendation():
 
     exercise_args = request.args
     _, user = instance.get_user(email, 1)
-    user.update_location((exercise_args.get("location_lat"), exercise_args.get("location_long")))
+    user.update_location((exercise_args.get("location_lat"), exercise_args.get("location_lon")))
+    instance.update_user(email, user)
 
     return exercise.get_activity_recommendation(email, datetime.now().isoformat())
 

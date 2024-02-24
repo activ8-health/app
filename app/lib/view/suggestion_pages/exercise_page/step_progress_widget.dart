@@ -11,9 +11,39 @@ class StepProgressWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double stepProgress = 12000;
-    const double stepTarget = 20000;
+    return FutureBuilder(
+      future: activityRecommendationFuture,
+      builder: (BuildContext context, AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
+        // Loading
+        if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
+          return const _Widget();
+        }
+        // Interpret data
+        V1GetActivityRecommendationResponse response = snapshot.data!;
 
+        // Error
+        if (!response.status.isSuccessful) {
+          return const _Widget();
+        }
+
+        // Success
+        return _Widget(
+          stepProgress: response.stepProgress?.toDouble(),
+          stepTarget: response.stepTarget?.toDouble(),
+        );
+      },
+    );
+  }
+}
+
+class _Widget extends StatelessWidget {
+  final double? stepProgress;
+  final double? stepTarget;
+
+  const _Widget({this.stepProgress, this.stepTarget});
+
+  @override
+  Widget build(BuildContext context) {
     return ClearCard(
       color: Colors.orange.shade50,
       child: Padding(
@@ -23,14 +53,14 @@ class StepProgressWidget extends StatelessWidget {
           children: [
             _getProgressLabel(context, stepProgress, stepTarget),
             padding(4),
-            const StepProgressGauge(progress: stepProgress, target: stepTarget),
+            StepProgressGauge(progress: stepProgress ?? 0, target: stepTarget ?? 10),
           ],
         ),
       ),
     );
   }
 
-  Widget _getProgressLabel(BuildContext context, double stepProgress, double stepTarget) {
+  Widget _getProgressLabel(BuildContext context, double? stepProgress, double? stepTarget) {
     final TextStyle? progressTextStyle = Theme.of(context).textTheme.headlineMedium?.copyWith(
           color: Colors.white,
           fontWeight: FontWeight.bold,
@@ -45,11 +75,11 @@ class StepProgressWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          stepProgress.toStringAsFixed(0),
+          stepProgress?.toStringAsFixed(0) ?? "--",
           style: progressTextStyle,
         ),
         Text(
-          " / ${stepTarget.toStringAsFixed(0)}",
+          " / ${stepTarget?.toStringAsFixed(0) ?? "--"}",
           style: targetTextStyle,
         ),
       ],

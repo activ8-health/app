@@ -18,20 +18,28 @@ class CaloriesMessage extends StatelessWidget {
     return FutureBuilder(
       future: activityRecommendationFuture,
       builder: (BuildContext context, AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
-        // Loading
+        Widget widget;
+
         if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
-          return const _Widget();
-        }
-        // Interpret data
-        V1GetActivityRecommendationResponse response = snapshot.data!;
+          // Loading
+          widget = const _Widget(key: ValueKey(1));
+        } else {
+          // Interpret data
+          V1GetActivityRecommendationResponse response = snapshot.data!;
 
-        // Error
-        if (!response.status.isSuccessful) {
-          return const _Widget();
+          // Error
+          if (!response.status.isSuccessful) {
+            widget = const _Widget(key: ValueKey(1));
+          }
+
+          // Success
+          widget = _Widget(key: const ValueKey(0), caloriesBurned: response.caloriesBurned);
         }
 
-        // Success
-        return _Widget(caloriesBurned: response.caloriesBurned);
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: widget,
+        );
       },
     );
   }
@@ -40,7 +48,7 @@ class CaloriesMessage extends StatelessWidget {
 class _Widget extends StatelessWidget {
   final int? caloriesBurned;
 
-  const _Widget({this.caloriesBurned});
+  const _Widget({super.key, this.caloriesBurned});
 
   @override
   Widget build(BuildContext context) {

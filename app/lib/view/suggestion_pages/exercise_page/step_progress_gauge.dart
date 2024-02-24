@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -22,7 +24,7 @@ class StepProgressGauge extends StatelessWidget {
       barPointers: [
         LinearBarPointer(
           enableAnimation: false,
-          value: progress,
+          value: max(progress, target * 0.075),
           thickness: 20,
           edgeStyle: LinearEdgeStyle.bothCurve,
           color: Colors.white,

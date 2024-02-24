@@ -29,7 +29,7 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
   void requestPermissionsAction() async {
     if (!(await Geolocator.isLocationServiceEnabled())) {
       logger.w("Location services is off");
-      if (context.mounted) {
+      if (mounted) {
         showSnackBar(context, "Please turn on location services.");
       }
 
@@ -55,7 +55,7 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
     else {
       showHint = true;
       logger.w("Failed to get location");
-      if (context.mounted) {
+      if (mounted) {
         showSnackBar(context, "Please grant location permissions in settings.");
       }
     }

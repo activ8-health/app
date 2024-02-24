@@ -63,7 +63,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     Future<bool> Function() action = (widget.accountExists) ? signInAction : registerAction;
     bool success = await action();
 
-    if (success && context.mounted) {
+    if (success && mounted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -89,7 +89,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
 
     V1RegisterResponse response = await v1register(body, auth);
 
-    if (!context.mounted) return false;
+    if (!mounted) return false;
 
     // In case a custom message was provided
     if (response.errorMessage != null && response.errorMessage!.isNotEmpty) {
@@ -127,7 +127,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
 
     V1SignInResponse response = await v1signIn(body, auth);
 
-    if (!context.mounted) return false;
+    if (!mounted) return false;
 
     // In case a custom message was provided
     if (response.errorMessage != null && response.errorMessage!.isNotEmpty) {

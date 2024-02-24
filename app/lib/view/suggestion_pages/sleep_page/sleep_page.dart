@@ -43,7 +43,7 @@ class _SleepPageState extends State<SleepPage> {
     V1GetSleepRecommendationBody body = V1GetSleepRecommendationBody(date: date, location: location);
     V1GetSleepRecommendationResponse sleepRecommendation = await v1getSleepRecommendation(body, AppState.instance.auth);
 
-    if (!sleepRecommendation.status.isSuccessful && context.mounted) {
+    if (!sleepRecommendation.status.isSuccessful && mounted) {
       showSnackBar(context, "ERROR: ${sleepRecommendation.errorMessage}");
     }
 

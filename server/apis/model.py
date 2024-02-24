@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
+
 PREFERENCES = {'vegan', 'vegetarian', 'kosher', 'halal', 'pescetarian', 'sesame_free',
                'soy_free', 'gluten_free', 'lactose_intolerance', 'nut_allergy',
                'peanut_allergy', 'shellfish_allergy', 'wheat_allergy'}
@@ -31,20 +32,42 @@ class WeightGoal(Enum):
 
 def format_sleep_data(sleep_data):  # ignore 2 hours naps
     sleep_data_points = dict()
+    latest_date_from = None
+    latest_date_to = None
+
     for date in sleep_data:
         date_from = datetime.fromisoformat(date['date_from'])
         date_to = datetime.fromisoformat(date['date_to'])
-        if (date_to - date_from).seconds / 3600 > 2:
-            date_of_week = date_to.weekday() - 1
+
+        if latest_date_from is None:
+            latest_date_from = date_from
+            latest_date_to = date_to
+            continue
+
+        if (latest_date_from - date_to).seconds < 1800:
+            latest_date_from = date_from
+            continue
+
+        latest_date = {
+            'date_from': latest_date_from.isoformat(),
+            'date_to': latest_date_to.isoformat()
+        }
+
+        if (latest_date_to - latest_date_from).seconds / 3600 > 2:
+            date_of_week = latest_date_to.weekday() - 1
             if date_of_week < 0:
                 date_of_week = Weekdays(6).name
             else:
                 date_of_week = Weekdays(date_of_week).name
 
             if date_of_week in sleep_data_points:
-                sleep_data_points[date_of_week].append(date)
+                sleep_data_points[date_of_week].append(latest_date)
             else:
-                sleep_data_points[date_of_week] = [date]
+                sleep_data_points[date_of_week] = [latest_date]
+
+        latest_date_from = date_from
+        latest_date_to = date_to
+
     return sleep_data_points
 
 

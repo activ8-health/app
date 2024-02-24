@@ -45,39 +45,42 @@ def v1signIn():
 @app.route("/v1/getSleepRecommendation", methods=['GET'])
 def v1sleep_recommendation():
     instance = manage_instance.ProfileManager.instance()
-    email, status = utilities.check_authentication_login(request.headers, instance)
+    email_or_error_message, status = utilities.check_authentication_login(request.headers, instance)
     if status != 200:
-        return email, status
+        return email_or_error_message, status
 
     sleep_args = request.args
-    _, user = instance.get_user(email, 1)
-    user.update_location((sleep_args.get("location_lat"), sleep_args.get("location_lon")))
-    instance.update_user(email, user)
+    utilities.update_location(sleep_args, instance)
 
     date = sleep_args.get('date')
     if date is None:
         date = (datetime.now() - timedelta(hours=6)).isoformat()
-    return sleep.get_sleep_recommendation(email, date), 200
+    return sleep.get_sleep_recommendation(email_or_error_message, date), 200
 
 
 @app.route("/v1/getFoodRecommendation", methods=['GET'])
 def v1food_recommendation():
+    instance = manage_instance.ProfileManager.instance()
+    email_or_error_message, status = utilities.check_authentication_login(request.headers, instance)
+    if status != 200:
+        return email_or_error_message, status
+
+    food_args = request.args
+    utilities.update_location(food_args, instance)
+
     return "Hello, World!"
 
 
 @app.route("/v1/getActivityRecommendation", methods=['GET'])
 def v1activity_recommendation():
     instance = manage_instance.ProfileManager.instance()
-    email, status = utilities.check_authentication_login(request.headers, instance)
+    email_or_error_message, status = utilities.check_authentication_login(request.headers, instance)
     if status != 200:
-        return email, status
+        return email_or_error_message, status
 
     exercise_args = request.args
-    _, user = instance.get_user(email, 1)
-    user.update_location((exercise_args.get("location_lat"), exercise_args.get("location_lon")))
-    instance.update_user(email, user)
-
-    return exercise.get_activity_recommendation(email, datetime.now().isoformat())
+    utilities.update_location(exercise_args, instance)
+    return exercise.get_activity_recommendation(email_or_error_message, datetime.now().isoformat())
 
 
 @app.route("/v1/updateHealthData", methods=['POST'])
@@ -89,7 +92,6 @@ def v1update_health_data():
     data_retrieved_update_data = request.data
     decoded_data_update_data = data_retrieved_update_data.decode('utf-8')
     instance = manage_instance.ProfileManager.instance()
-
     return update.update_health_data(authentication, decoded_data_update_data, instance)
 
 

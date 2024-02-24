@@ -37,9 +37,9 @@ class ProfileManager:
     def update_user(self, email, update_user_profile):
         login_data, user_data = update_user_profile.serialize()
 
-        with open("./data/login_data.json", "w") as login_data_file:
-            self.login_data[email] = login_data[email]
-            json.dump(self.login_data, login_data_file, indent=2)
+        # with open("./data/login_data.json", "w") as login_data_file:
+        #     self.login_data[email] = login_data[email]
+        #     json.dump(self.login_data, login_data_file, indent=2)
 
         with open("./data/user_profile.json", "w") as user_profile_file:
             self.user_data[email] = user_data[email]

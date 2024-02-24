@@ -1,11 +1,20 @@
-import 'package:activ8/managers/api/v1/get_sleep_recommendation.dart';
-import 'package:activ8/managers/app_state.dart';
-import 'package:activ8/utils/snackbar.dart';
-import 'package:activ8/view/suggestion_pages/sleep_page/sleep_time_widget.dart';
-import 'package:activ8/view/widgets/back_button_app_bar.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import "package:activ8/extensions/snapshot_loading.dart";
+import "package:activ8/managers/api/v1/get_sleep_recommendation.dart";
+import "package:activ8/managers/app_state.dart";
+import "package:activ8/managers/location_manager.dart";
+import "package:activ8/shorthands/gradient_scaffold.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:activ8/utils/snackbar.dart";
+import "package:activ8/view/suggestion_pages/sleep_page/sleep_time_widget.dart";
+import "package:flutter/material.dart";
+import "package:geolocator/geolocator.dart";
+
+// uiGradients (Moonlit Asteroid)
+const LinearGradient _backgroundGradient = LinearGradient(
+  colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+  begin: Alignment.topLeft,
+  end: Alignment.bottomRight,
+);
 
 class SleepPage extends StatefulWidget {
   const SleepPage({super.key});
@@ -15,33 +24,23 @@ class SleepPage extends StatefulWidget {
 }
 
 class _SleepPageState extends State<SleepPage> {
-  late Future<V1GetSleepRecommendationResponse> sleepRecommendationResponse;
+  // Must not be final to allow refresh, therefore cannot be stateless
+  late Future<V1GetSleepRecommendationResponse> sleepRecommendationFuture = _loadApi();
 
   // Query for 6 hours ago, so that up to 6 AM will still count as the day before
-  final DateTime date = DateTime.now().subtract(const Duration(hours: 6));
+  // Only the date of this request should matter, not the time
+  DateTime dateToQuery = DateTime.now().subtract(const Duration(hours: 6));
 
-  // uiGradients (Moonlit Asteroid)
-  static const LinearGradient backgroundGradient = LinearGradient(
-    colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  Future<V1GetSleepRecommendationResponse> _loadApi() async {
+    dateToQuery = DateTime.now().subtract(const Duration(hours: 6));
 
-  @override
-  void initState() {
-    sleepRecommendationResponse = loadApi();
-
-    super.initState();
-  }
-
-  Future<V1GetSleepRecommendationResponse> loadApi() async {
     // Get the current location
-    Position location = await Geolocator.getLastKnownPosition() ??
-        await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    final Position location = await LocationManager.instance.getLocation();
 
     // Send the request
-    V1GetSleepRecommendationBody body = V1GetSleepRecommendationBody(date: date, location: location);
-    V1GetSleepRecommendationResponse sleepRecommendation = await v1getSleepRecommendation(body, AppState.instance.auth);
+    final V1GetSleepRecommendationBody body = V1GetSleepRecommendationBody(date: dateToQuery, location: location);
+    final V1GetSleepRecommendationResponse sleepRecommendation =
+        await v1getSleepRecommendation(body, AppState.instance.auth);
 
     if (!sleepRecommendation.status.isSuccessful && mounted) {
       showSnackBar(context, "ERROR: ${sleepRecommendation.errorMessage}");
@@ -66,69 +65,73 @@ class _SleepPageState extends State<SleepPage> {
       textAlign: TextAlign.center,
     );
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: const BackButtonAppBar(),
-      backgroundColor: Colors.transparent,
-      body: Container(
-        decoration: const BoxDecoration(gradient: backgroundGradient),
-        child: RefreshIndicator(
-          displacement: 80,
-          backgroundColor: Colors.white.withOpacity(0.2),
-          color: Colors.white,
-          onRefresh: () async {
-            sleepRecommendationResponse = loadApi();
-            await sleepRecommendationResponse;
-            setState(() {});
-          },
-          child: SizedBox.expand(
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  padding(58),
-                  const Icon(Icons.bedtime_outlined, size: 60),
-                  padding(12),
-                  Text(
-                    "Sleep Schedule",
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  padding(8),
-                  descriptionText,
-                  padding(16),
-                  FutureBuilder(
-                    future: sleepRecommendationResponse,
-                    builder: (BuildContext context, AsyncSnapshot<V1GetSleepRecommendationResponse> snapshot) {
-                      Widget widget;
-                      // Loading or error
-                      if (snapshot.connectionState != ConnectionState.done ||
-                          !snapshot.hasData ||
-                          !snapshot.data!.status.isSuccessful) {
-                        widget = const SleepTimeWidget(key: ValueKey(0));
-                      } else {
-                        // Get data from the API
-                        V1GetSleepRecommendationResponse data = snapshot.data!;
+    return GradientScaffold(
+      hasBackButton: true,
+      backgroundGradient: _backgroundGradient,
+      child: _allowRefresh(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            padding(58),
 
-                        widget = SleepTimeWidget(
-                          key: const ValueKey(1),
-                          sleepTime: data.sleepRangeStart,
-                          wakeTime: data.sleepRangeEnd,
-                          date: date,
-                        );
-                      }
+            // Title
+            const Icon(Icons.bedtime_outlined, size: 60),
+            padding(12),
+            Text("Sleep Schedule", style: Theme.of(context).textTheme.headlineLarge),
+            padding(8),
 
-                      // Animate between the pre- and post-loading screens
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 200),
-                        child: widget,
-                      );
-                    },
-                  ),
-                ],
-              ),
+            // Description
+            descriptionText,
+            padding(16),
+
+            // Sleep Time Widget
+            FutureBuilder(
+              future: sleepRecommendationFuture,
+              builder: (BuildContext context, AsyncSnapshot<V1GetSleepRecommendationResponse> snapshot) {
+                // Animate between the pre- and post-loading screens
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: _getWidget(snapshot),
+                );
+              },
             ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _getWidget(AsyncSnapshot<V1GetSleepRecommendationResponse> snapshot) {
+    if (snapshot.isLoading) return const SleepTimeWidget(key: ValueKey(1));
+
+    // Get data from the API
+    final V1GetSleepRecommendationResponse data = snapshot.data!;
+
+    if (!data.status.isSuccessful) return const SleepTimeWidget(key: ValueKey(1));
+
+    return SleepTimeWidget(
+      key: const ValueKey(0),
+      sleepTime: data.sleepRangeStart,
+      wakeTime: data.sleepRangeEnd,
+      date: dateToQuery,
+    );
+  }
+
+  /// The wrapped widget can refresh, causing [sleepRecommendationFuture] to be reset
+  Widget _allowRefresh({required Widget child}) {
+    return RefreshIndicator(
+      displacement: 80,
+      backgroundColor: Colors.white.withOpacity(0.2),
+      color: Colors.white,
+      onRefresh: () async {
+        sleepRecommendationFuture = _loadApi();
+        await sleepRecommendationFuture;
+        setState(() {});
+      },
+      child: SizedBox.expand(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: child,
         ),
       ),
     );

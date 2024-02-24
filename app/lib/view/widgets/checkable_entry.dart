@@ -1,14 +1,14 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class CheckableEntry extends StatefulWidget {
-  final String label;
+  final Widget child;
   final Function(bool) onChanged;
   final bool value;
   final BorderRadius borderRadius;
 
   const CheckableEntry({
     super.key,
-    required this.label,
+    required this.child,
     required this.onChanged,
     this.value = false,
     this.borderRadius = BorderRadius.zero,
@@ -19,27 +19,26 @@ class CheckableEntry extends StatefulWidget {
 }
 
 class _CheckableEntryState extends State<CheckableEntry> {
-  late bool value;
+  late bool checked = widget.value;
 
-  @override
-  void initState() {
-    value = widget.value;
-    super.initState();
-  }
-
-  void onChanged(bool value) {
-    this.value = value;
-    widget.onChanged(this.value);
+  /// Change the state of this entry to [newState]
+  void _onChanged(bool newState) {
+    checked = newState;
+    widget.onChanged(checked);
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor =
-        value ? Theme.of(context).colorScheme.primary.withOpacity(0.2) : Colors.white.withOpacity(0.08);
+    Color backgroundColor;
+    if (checked) {
+      backgroundColor = Theme.of(context).colorScheme.primary.withOpacity(0.2);
+    } else {
+      backgroundColor = Colors.white.withOpacity(0.08);
+    }
 
     return InkWell(
-      onTap: () => onChanged(!value),
+      onTap: () => _onChanged(!checked),
       child: Container(
         decoration: BoxDecoration(
           color: backgroundColor,
@@ -48,13 +47,13 @@ class _CheckableEntryState extends State<CheckableEntry> {
         child: Row(
           children: [
             Checkbox(
-              value: value,
-              onChanged: (bool? value) => onChanged(value ?? this.value),
+              value: checked,
+              onChanged: (bool? value) => _onChanged(value ?? checked),
             ),
             Expanded(
-              child: Text(
-                widget.label,
-                style: Theme.of(context).textTheme.bodyMedium,
+              child: DefaultTextStyle(
+                style: Theme.of(context).textTheme.bodyMedium!,
+                child: widget.child,
               ),
             ),
           ],

@@ -1,6 +1,6 @@
-import 'package:logger/logger.dart';
+import "package:logger/logger.dart";
 
-var logger = Logger(
+Logger logger = Logger(
   filter: null,
   printer: SimplePrinter(colors: false),
   output: null,

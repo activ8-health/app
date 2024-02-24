@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 extension TimeOfDaySerializer on TimeOfDay {
   int get minutesSinceMidnight => hour * 60 + minute;

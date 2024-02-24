@@ -1,17 +1,17 @@
-import 'package:activ8/view/widgets/styles.dart';
-import 'package:flutter/material.dart';
+import "package:activ8/view/widgets/styles.dart";
+import "package:flutter/material.dart";
 
-/// Creates a two-button navigation bar
+/// Creates a two-button navigation bar for paginated [PageView]
 class CustomNavigationBar extends StatelessWidget {
   final PageController pageController;
-  final bool enableNext; // Whether the next button should be enabled (for validation)
-  final bool showNext;
+  final bool allowNext; // Whether the next button should be enabled (for validation)
+  final bool showNextButton;
 
   const CustomNavigationBar({
     super.key,
     required this.pageController,
-    this.enableNext = true,
-    this.showNext = true,
+    this.allowNext = true,
+    this.showNextButton = true,
   });
 
   @override
@@ -22,7 +22,7 @@ class CustomNavigationBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _createBackButton(context),
-          if (showNext) _createForwardButton(context),
+          if (showNextButton) _createForwardButton(context),
         ],
       ),
     );
@@ -49,7 +49,7 @@ class CustomNavigationBar extends StatelessWidget {
     Function()? action;
 
     // Determine whether the button should be available
-    if (enableNext) {
+    if (allowNext) {
       action = () async {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -61,7 +61,7 @@ class CustomNavigationBar extends StatelessWidget {
     }
 
     // Create the icon
-    Widget icon = ElevatedButton.icon(
+    final Widget icon = ElevatedButton.icon(
       onPressed: action,
       icon: const Icon(Icons.arrow_back),
       label: const Text("Next"),
@@ -101,8 +101,8 @@ class CustomNavigationBarWrapper extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           child: CustomNavigationBar(
             pageController: pageController,
-            enableNext: enableNext,
-            showNext: showNext,
+            allowNext: enableNext,
+            showNextButton: showNext,
           ),
         ),
       ],

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 /// The small text above each section
 class CategoryMarker extends StatelessWidget {
@@ -8,17 +8,17 @@ class CategoryMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
+    final TextStyle? textStyle = Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w900,
+          color: Colors.white.withOpacity(0.5),
+        );
+
+    return Container(
       alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 24.0, bottom: 2.0),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w900,
-                color: Colors.white.withOpacity(0.5),
-              ),
-        ),
+      padding: const EdgeInsets.only(left: 24.0, bottom: 2.0),
+      child: Text(
+        label,
+        style: textStyle,
       ),
     );
   }

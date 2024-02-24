@@ -1,9 +1,10 @@
-import 'package:activ8/managers/api/v1/get_activity_recommendation.dart';
-import 'package:activ8/view/widgets/clear_card.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import "package:activ8/extensions/snapshot_loading.dart";
+import "package:activ8/managers/api/v1/get_activity_recommendation.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:activ8/view/widgets/clear_card.dart";
+import "package:flutter/gestures.dart";
+import "package:flutter/material.dart";
+import "package:url_launcher/url_launcher_string.dart";
 
 const String _articleLabel = "Physical Activity for a Healthy Weight";
 const String _articleUrl = "https://www.cdc.gov/healthyweight/physical_activity/index.html";
@@ -18,30 +19,30 @@ class CaloriesMessage extends StatelessWidget {
     return FutureBuilder(
       future: activityRecommendationFuture,
       builder: (BuildContext context, AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
-        Widget widget;
-
-        if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
-          // Loading
-          widget = const _Widget(key: ValueKey(1));
-        } else {
-          // Interpret data
-          V1GetActivityRecommendationResponse response = snapshot.data!;
-
-          // Error
-          if (!response.status.isSuccessful) {
-            widget = const _Widget(key: ValueKey(1));
-          }
-
-          // Success
-          widget = _Widget(key: const ValueKey(0), caloriesBurned: response.caloriesBurned);
-        }
-
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          child: widget,
+          child: _getWidget(snapshot),
         );
       },
     );
+  }
+
+  Widget _getWidget(AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
+    if (snapshot.isLoading) {
+      // Loading
+      return const _Widget(key: ValueKey(1));
+    }
+
+    // Interpret data
+    final V1GetActivityRecommendationResponse response = snapshot.data!;
+
+    // Error
+    if (!response.status.isSuccessful) {
+      return const _Widget(key: ValueKey(1));
+    }
+
+    // Success
+    return _Widget(key: const ValueKey(0), caloriesBurned: response.caloriesBurned);
   }
 }
 
@@ -54,41 +55,39 @@ class _Widget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClearCard(
       color: Colors.orange.shade200,
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 10.0, right: 16.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 4, left: 4),
-              child: Icon(
-                Icons.local_fire_department,
-                size: 36,
-                color: Colors.orange.shade300,
-              ),
+      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 10.0, right: 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 4, left: 4),
+            child: Icon(
+              Icons.local_fire_department,
+              size: 36,
+              color: Colors.orange.shade300,
             ),
-            padding(4),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _getBurnText(context, caloriesBurned),
-                  padding(12),
-                  _getReadMore(context),
-                ],
-              ),
+          ),
+          padding(4),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _getBurnedText(context, caloriesBurned),
+                padding(12),
+                _getReadMore(context),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _getBurnText(BuildContext context, [int? caloriesBurned]) {
+  Widget _getBurnedText(BuildContext context, [int? caloriesBurned]) {
     if (caloriesBurned == null) {
       return Text(
         "Loading...",
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 18),
       );
     }
 

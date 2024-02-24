@@ -1,18 +1,19 @@
-import 'package:activ8/managers/api/api_auth.dart';
-import 'package:activ8/managers/api/v1/register.dart';
-import 'package:activ8/managers/api/v1/sign_in.dart';
-import 'package:activ8/managers/app_state.dart';
-import 'package:activ8/utils/logger.dart';
-import 'package:activ8/utils/snackbar.dart';
-import 'package:activ8/view/home_page/home_page.dart';
-import 'package:activ8/view/setup_pages/setup_state.dart';
-import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
-import 'package:activ8/view/widgets/custom_navigation_bar.dart';
-import 'package:activ8/view/widgets/custom_text_field.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:activ8/view/widgets/styles.dart';
-import 'package:email_validator/email_validator.dart';
-import 'package:flutter/material.dart';
+import "package:activ8/constants.dart";
+import "package:activ8/managers/api/api_auth.dart";
+import "package:activ8/managers/api/v1/register.dart";
+import "package:activ8/managers/api/v1/sign_in.dart";
+import "package:activ8/managers/app_state.dart";
+import "package:activ8/utils/logger.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:activ8/utils/snackbar.dart";
+import "package:activ8/view/home_page/home_page.dart";
+import "package:activ8/view/setup_pages/setup_state.dart";
+import "package:activ8/view/setup_pages/widgets/large_icon.dart";
+import "package:activ8/view/widgets/custom_navigation_bar.dart";
+import "package:activ8/view/widgets/custom_text_field.dart";
+import "package:activ8/view/widgets/styles.dart";
+import "package:email_validator/email_validator.dart";
+import "package:flutter/material.dart";
 
 // Facilitates for signing up or signing in, handshaking with the server
 class SetupHandshakePage extends StatefulWidget {
@@ -34,6 +35,7 @@ class SetupHandshakePage extends StatefulWidget {
 class _SetupHandshakePageState extends State<SetupHandshakePage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final _RegisterData registerData = _RegisterData();
+
   bool enableSubmit = false;
   bool loading = false;
 
@@ -49,7 +51,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
   }
 
   /// Submits the [widget.setupState] using [registerData]
-  void submitAction() async {
+  void _submitAction() async {
     loading = true;
     setState(() {});
 
@@ -60,8 +62,8 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     // Set up API host
     AppState.instance.serverAddress = registerData.address;
 
-    Future<bool> Function() action = (widget.accountExists) ? signInAction : registerAction;
-    bool success = await action();
+    final Future<bool> Function() action = (widget.accountExists) ? _signInAction : _registerAction;
+    final bool success = await action();
 
     if (success && mounted) {
       Navigator.pushReplacement(
@@ -76,18 +78,17 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     setState(() {});
   }
 
-  Future<bool> registerAction() async {
+  Future<bool> _registerAction() async {
     // Make registration request
-    V1RegisterBody body = V1RegisterBody(
+    final V1RegisterBody body = V1RegisterBody(
       userProfile: widget.setupState.userProfile,
       healthData: widget.setupState.healthData!,
       userPreferences: widget.setupState.userPreferences,
       location: widget.setupState.location,
     );
 
-    Auth auth = Auth(email: registerData.email, password: registerData.password);
-
-    V1RegisterResponse response = await v1register(body, auth);
+    final Auth auth = Auth(email: registerData.email, password: registerData.password);
+    final V1RegisterResponse response = await v1register(body, auth);
 
     if (!mounted) return false;
 
@@ -116,16 +117,15 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     }
   }
 
-  Future<bool> signInAction() async {
+  Future<bool> _signInAction() async {
     // Make registration request
-    V1SignInBody body = V1SignInBody(
+    final V1SignInBody body = V1SignInBody(
       location: widget.setupState.location,
       healthData: widget.setupState.healthData!,
     );
 
-    Auth auth = Auth(email: registerData.email, password: registerData.password);
-
-    V1SignInResponse response = await v1signIn(body, auth);
+    final Auth auth = Auth(email: registerData.email, password: registerData.password);
+    final V1SignInResponse response = await v1signIn(body, auth);
 
     if (!mounted) return false;
 
@@ -156,8 +156,6 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle? headingTheme = Theme.of(context).textTheme.headlineLarge;
-
     return GestureDetector(
       // Allow tapping outside to dismiss keyboard
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -172,32 +170,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
-                children: [
-                  padding(48),
-
-                  // Icon
-                  LargeIcon(icon: Icons.badge, color: Colors.purple.shade400),
-                  padding(16),
-
-                  // Title
-                  Text(widget.accountExists ? "Sign In" : "Register", style: headingTheme),
-                  padding(8),
-
-                  // Description
-                  const Text(
-                    "Welcome to Activ8",
-                    textAlign: TextAlign.center,
-                  ),
-                  padding(16),
-
-                  // Content
-                  _createContent(),
-
-                  padding(16),
-
-                  // Submit
-                  _createSubmitButton(),
-                ],
+                children: _createContent(),
               ),
             ),
           ),
@@ -206,7 +179,37 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     );
   }
 
-  Widget _createContent() {
+  List<Widget> _createContent() {
+    final TextStyle? headingTheme = Theme.of(context).textTheme.headlineLarge;
+
+    return [
+      padding(48),
+
+      // Icon
+      LargeIcon(icon: Icons.badge, color: Colors.purple.shade400),
+      padding(16),
+
+      // Title
+      Text(widget.accountExists ? "Sign In" : "Register", style: headingTheme),
+      padding(8),
+
+      // Description
+      const Text(
+        "Welcome to Activ8",
+        textAlign: TextAlign.center,
+      ),
+      padding(16),
+
+      // Content
+      _createForm(),
+      padding(16),
+
+      // Submit
+      _createSubmitButton(),
+    ];
+  }
+
+  Widget _createForm() {
     return SizedBox(
       width: 250,
       child: Form(
@@ -218,43 +221,55 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
         },
         child: Column(
           children: [
-            CustomTextField(
-              label: "Email",
-              initialValue: registerData.email,
-              onChanged: (String value) {
-                registerData.email = value.trim();
-                logger.i("Email set to ${registerData.email}");
-              },
-              validator: (String value) => EmailValidator.validate(value.trim()),
-              readOnly: loading,
-            ),
-            CustomTextField(
-              label: "Password",
-              obscureText: true,
-              initialValue: registerData.password,
-              onChanged: (String value) => registerData.password = value.trim(),
-              validator: (String value) {
-                late bool isGoodLength = value.trim().length >= 4 && value.trim().length <= 35;
-                late bool hasWhitespaces = value.trim().contains(RegExp("\\s"));
-                return isGoodLength && !hasWhitespaces;
-              },
-              readOnly: loading,
-            ),
-            CustomTextField(
-              label: "Server Address (Debug)",
-              initialValue: registerData.address,
-              onChanged: (String value) => registerData.address = value,
-              readOnly: loading,
-            ),
+            _createEmailField(),
+            _createPasswordField(),
+            _createServerAddressField(),
           ],
         ),
       ),
     );
   }
 
+  Widget _createEmailField() {
+    return CustomTextField(
+      label: "Email",
+      initialValue: registerData.email,
+      onChanged: (String value) {
+        registerData.email = value.trim();
+        logger.i("Email set to ${registerData.email}");
+      },
+      validator: (String value) => EmailValidator.validate(value.trim()),
+      readOnly: loading,
+    );
+  }
+
+  Widget _createPasswordField() {
+    return CustomTextField(
+      label: "Password",
+      obscureText: true,
+      initialValue: registerData.password,
+      onChanged: (String value) => registerData.password = value.trim(),
+      validator: (String value) {
+        late final bool isGoodLength = value.trim().length >= 4 && value.trim().length <= 35;
+        late final bool hasWhitespaces = value.trim().contains(RegExp("\\s"));
+        return isGoodLength && !hasWhitespaces;
+      },
+      readOnly: loading,
+    );
+  }
+
+  Widget _createServerAddressField() {
+    return CustomTextField(
+      label: "Server Address (Debug)",
+      initialValue: registerData.address,
+      onChanged: (String value) => registerData.address = value,
+      readOnly: loading,
+    );
+  }
+
   Widget _createSubmitButton() {
     return ElevatedButton.icon(
-      onPressed: (enableSubmit && !loading) ? submitAction : null,
+      onPressed: (enableSubmit && !loading) ? _submitAction : null,
       icon: const Icon(Icons.check),
       label: const Text("Submit"),
       style: filledElevatedButtonStyle(context),
@@ -265,7 +280,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
 class _RegisterData {
   String email = "";
   String password = "";
-  String address = "127.0.0.1:8080";
+  String address = defaultServerAddress;
 
   _RegisterData();
 }

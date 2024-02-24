@@ -1,19 +1,19 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:activ8/managers/api/api_auth.dart';
-import 'package:activ8/managers/api/api_worker.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' show Response;
+import "package:activ8/managers/api/api_auth.dart";
+import "package:activ8/managers/api/api_worker.dart";
+import "package:geolocator/geolocator.dart";
+import "package:http/http.dart" show Response;
 
 String _endpoint = "/v1/getActivityRecommendation";
 
 Future<V1GetActivityRecommendationResponse> v1getActivityRecommendation(
     V1GetActivityRecommendationBody body, Auth auth) async {
-  Response response = await ApiWorker.instance.get(_endpoint, body.toJson(), auth);
+  final Response response = await ApiWorker.instance.get(_endpoint, body.toJson(), auth);
 
-  V1GetActivityRecommendationStatus status = V1GetActivityRecommendationStatus.fromStatusCode(response.statusCode);
+  final V1GetActivityRecommendationStatus status = V1GetActivityRecommendationStatus.fromStatusCode(response.statusCode);
 
-  Map<String, dynamic> json = jsonDecode(response.body);
+  final Map<String, dynamic> json = jsonDecode(response.body);
   return V1GetActivityRecommendationResponse(json, status: status);
 }
 

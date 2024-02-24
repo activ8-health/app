@@ -1,16 +1,16 @@
-import 'package:activ8/extensions/position.dart';
-import 'package:activ8/managers/api/api_auth.dart';
-import 'package:activ8/managers/api/api_worker.dart';
-import 'package:activ8/types/health_data.dart';
-import 'package:activ8/utils/json.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' show Response;
+import "package:activ8/extensions/position.dart";
+import "package:activ8/managers/api/api_auth.dart";
+import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/types/health_data.dart";
+import "package:activ8/utils/json.dart";
+import "package:geolocator/geolocator.dart";
+import "package:http/http.dart" show Response;
 
 String _endpoint = "/v1/updateHealthData";
 
 Future<V1UpdateHealthDataResponse> v1updateHealthData(V1UpdateHealthDataBody body, Auth auth) async {
-  Response response = await ApiWorker.instance.post(_endpoint, body.toJson(), auth);
-  V1UpdateHealthDataStatus status = V1UpdateHealthDataStatus.fromStatusCode(response.statusCode);
+  final Response response = await ApiWorker.instance.post(_endpoint, body.toJson(), auth);
+  final V1UpdateHealthDataStatus status = V1UpdateHealthDataStatus.fromStatusCode(response.statusCode);
 
   return V1UpdateHealthDataResponse.fromJson(
     JsonUtils.tryDecode(response.body, {"error_message": "Something went wrong"}),

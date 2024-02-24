@@ -1,20 +1,20 @@
-import 'dart:convert';
+import "dart:convert";
 
-import 'package:activ8/extensions/time_of_day_serializer.dart';
-import 'package:activ8/managers/api/api_auth.dart';
-import 'package:activ8/managers/api/api_worker.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' show Response;
+import "package:activ8/extensions/time_of_day_serializer.dart";
+import "package:activ8/managers/api/api_auth.dart";
+import "package:activ8/managers/api/api_worker.dart";
+import "package:flutter/material.dart";
+import "package:geolocator/geolocator.dart";
+import "package:http/http.dart" show Response;
 
 String _endpoint = "/v1/getSleepRecommendation";
 
 Future<V1GetSleepRecommendationResponse> v1getSleepRecommendation(V1GetSleepRecommendationBody body, Auth auth) async {
-  Response response = await ApiWorker.instance.get(_endpoint, body.toJson(), auth);
+  final Response response = await ApiWorker.instance.get(_endpoint, body.toJson(), auth);
 
-  V1GetSleepRecommendationStatus status = V1GetSleepRecommendationStatus.fromStatusCode(response.statusCode);
+  final V1GetSleepRecommendationStatus status = V1GetSleepRecommendationStatus.fromStatusCode(response.statusCode);
 
-  Map<String, dynamic> json = jsonDecode(response.body);
+  final Map<String, dynamic> json = jsonDecode(response.body);
   return V1GetSleepRecommendationResponse(json, status: status);
 }
 

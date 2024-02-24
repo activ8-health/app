@@ -1,10 +1,10 @@
-import 'package:activ8/constants.dart';
-import 'package:activ8/view/suggestion_pages/exercise_page/exercise_page.dart';
-import 'package:activ8/view/suggestion_pages/food_page/food_page.dart';
-import 'package:activ8/view/suggestion_pages/sleep_page/sleep_page.dart';
-import 'package:activ8/view/widgets/clear_card.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:flutter/material.dart';
+import "package:activ8/constants.dart";
+import "package:activ8/view/suggestion_pages/exercise_page/exercise_page.dart";
+import "package:activ8/view/suggestion_pages/food_page/food_page.dart";
+import "package:activ8/view/suggestion_pages/sleep_page/sleep_page.dart";
+import "package:activ8/view/widgets/clear_card.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:flutter/material.dart";
 
 const double _indent = 15;
 

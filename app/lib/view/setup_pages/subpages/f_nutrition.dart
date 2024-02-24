@@ -1,14 +1,14 @@
-import 'package:activ8/types/food/dietary_restrictions.dart';
-import 'package:activ8/types/food/weight_goal.dart';
-import 'package:activ8/utils/logger.dart';
-import 'package:activ8/view/setup_pages/setup_state.dart';
-import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
-import 'package:activ8/view/widgets/checkable_entry.dart';
-import 'package:activ8/view/widgets/custom_navigation_bar.dart';
-import 'package:activ8/view/widgets/icon_with_label.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import "package:activ8/types/food/dietary_restrictions.dart";
+import "package:activ8/types/food/weight_goal.dart";
+import "package:activ8/utils/logger.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:activ8/view/setup_pages/setup_state.dart";
+import "package:activ8/view/setup_pages/widgets/large_icon.dart";
+import "package:activ8/view/widgets/checkable_entry.dart";
+import "package:activ8/view/widgets/custom_navigation_bar.dart";
+import "package:activ8/view/widgets/icon_with_label.dart";
+import "package:flutter/cupertino.dart";
+import "package:flutter/material.dart";
 
 class SetupNutritionPage extends StatefulWidget {
   final SetupState setupState;
@@ -25,7 +25,7 @@ class SetupNutritionPage extends StatefulWidget {
 }
 
 class _SetupNutritionPageState extends State<SetupNutritionPage> {
-  Widget get divider => Divider(
+  Widget get _divider => Divider(
         height: 0,
         color: Colors.white.withOpacity(0.25),
       );
@@ -90,7 +90,7 @@ class _SetupNutritionPageState extends State<SetupNutritionPage> {
   }
 
   Widget _createWeightGoalSelector(context) {
-    Color thumbColor = Theme.of(context).colorScheme.primary.withOpacity(0.2);
+    final Color thumbColor = Theme.of(context).colorScheme.primary.withOpacity(0.2);
 
     return SizedBox(
       width: 350,
@@ -112,6 +112,7 @@ class _SetupNutritionPageState extends State<SetupNutritionPage> {
   }
 
   Widget _createDietaryRestrictionSelection() {
+    // Create rounded corners for the edges
     BorderRadius getBorderRadius(DietaryRestriction restriction) {
       if (restriction == DietaryRestriction.values.first) {
         return const BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(8));
@@ -128,12 +129,12 @@ class _SetupNutritionPageState extends State<SetupNutritionPage> {
         children: [
           for (DietaryRestriction restriction in DietaryRestriction.values) ...[
             CheckableEntry(
-              label: restriction.displayName,
               value: widget.setupState.dietaryRestrictions.contains(restriction),
               onChanged: (bool value) => _updateDietaryRestriction(restriction, value),
               borderRadius: getBorderRadius(restriction),
+              child: Text(restriction.displayName),
             ),
-            if (restriction != DietaryRestriction.values.last) divider,
+            if (restriction != DietaryRestriction.values.last) _divider,
           ],
         ],
       ),

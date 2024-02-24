@@ -1,16 +1,15 @@
-import 'package:activ8/managers/health_manager.dart';
-import 'package:activ8/types/health_data.dart';
-import 'package:activ8/utils/logger.dart';
-import 'package:activ8/utils/pair.dart';
-import 'package:activ8/utils/snackbar.dart';
-import 'package:activ8/view/setup_pages/setup_state.dart';
-import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
-import 'package:activ8/view/widgets/custom_navigation_bar.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:app_settings/app_settings.dart';
-import 'package:flutter/material.dart';
-import 'package:health/health.dart';
-import 'package:material_symbols_icons/material_symbols_icons.dart';
+import "package:activ8/managers/health_manager.dart";
+import "package:activ8/utils/logger.dart";
+import "package:activ8/utils/pair.dart";
+import "package:activ8/utils/snackbar.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:activ8/view/setup_pages/setup_state.dart";
+import "package:activ8/view/setup_pages/widgets/large_icon.dart";
+import "package:activ8/view/widgets/custom_navigation_bar.dart";
+import "package:app_settings/app_settings.dart";
+import "package:flutter/material.dart";
+import "package:health/health.dart";
+import "package:material_symbols_icons/material_symbols_icons.dart";
 
 class SetupHealthPermissionPage extends StatefulWidget {
   final SetupState setupState;
@@ -55,11 +54,11 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
   /// Sets the height and weight in [widget.setupState]
   void _updateHeightWeight() async {
     // Retrieve health points from the last 30 years
-    Pair<HealthDataPoint?> values = await HealthManager.instance.retrieveHeightWeightData(days: 365 * 30);
+    final Pair<HealthDataPoint?> values = await HealthManager.instance.retrieveHeightWeightData(days: 365 * 30);
 
     // Height
     if (values.first != null && widget.setupState.height == null) {
-      NumericHealthValue value = values.first!.value as NumericHealthValue;
+      final NumericHealthValue value = values.first!.value as NumericHealthValue;
       double height = value.numericValue.toDouble();
 
       // m -> cm
@@ -70,8 +69,8 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
 
     // Weight
     if (values.second != null && widget.setupState.weight == null) {
-      NumericHealthValue value = values.second!.value as NumericHealthValue;
-      double weight = value.numericValue.toDouble();
+      final NumericHealthValue value = values.second!.value as NumericHealthValue;
+      final double weight = value.numericValue.toDouble();
 
       widget.setupState.weight = weight;
       logger.i("Got weight: $weight");
@@ -80,24 +79,7 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
 
   /// Sets the steps and sleep in [widget.setupState]
   void _updateStepsAndSleep() async {
-    // Retrieve health points from the last 90 days
-    int days = 90;
-
-    List<SleepPoint> sleepData = (await HealthManager.instance.retrieveSleepData(days: days))
-        .map((point) => SleepPoint(dateFrom: point.dateFrom, dateTo: point.dateTo))
-        .toList();
-
-    List<StepPoint> stepData = (await HealthManager.instance.retrieveStepData(days: days))
-        .map((point) => StepPoint(
-            dateFrom: point.dateFrom,
-            dateTo: point.dateTo,
-            steps: (point.value as NumericHealthValue).numericValue.toInt()))
-        .toList();
-
-    widget.setupState.healthData = HealthData(
-      stepData: stepData,
-      sleepData: sleepData,
-    );
+    widget.setupState.healthData = await HealthManager.instance.retrieveHealthData();
   }
 
   @override

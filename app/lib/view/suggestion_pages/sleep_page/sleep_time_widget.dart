@@ -1,9 +1,9 @@
-import 'package:activ8/extensions/time_of_day_serializer.dart';
-import 'package:activ8/managers/app_state.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
+import "package:activ8/extensions/time_of_day_serializer.dart";
+import "package:activ8/managers/app_state.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:flutter/material.dart";
+import "package:intl/intl.dart";
+import "package:syncfusion_flutter_gauges/gauges.dart";
 
 class SleepTimeWidget extends StatelessWidget {
   final TimeOfDay? sleepTime;

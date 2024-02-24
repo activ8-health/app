@@ -1,9 +1,9 @@
-import 'package:activ8/view/setup_pages/setup_state.dart';
-import 'package:activ8/view/setup_pages/sign_in_subflow.dart';
-import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:activ8/view/widgets/styles.dart';
-import 'package:flutter/material.dart';
+import "package:activ8/view/setup_pages/setup_state.dart";
+import "package:activ8/view/setup_pages/sign_in_subflow.dart";
+import "package:activ8/view/setup_pages/widgets/large_icon.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:activ8/view/widgets/styles.dart";
+import "package:flutter/material.dart";
 
 class SetupWelcomePage extends StatelessWidget {
   final SetupState setupState;
@@ -54,15 +54,23 @@ class SetupWelcomePage extends StatelessWidget {
 
     return [
       padding(96),
+
+      // Icon
       LargeIcon(child: Image.asset("assets/icon.png")),
       padding(16),
+
+      // Title
       Text("Welcome to Activ8", style: headingTheme),
       padding(8),
+
+      // Description
       const Text(
         "Embark on your personal\nself-improvement journey",
         textAlign: TextAlign.center,
       ),
       padding(32),
+
+      // Start Button
       ElevatedButton.icon(
         onPressed: nextPageAction,
         icon: const Icon(Icons.flight_takeoff),
@@ -70,6 +78,8 @@ class SetupWelcomePage extends StatelessWidget {
         style: filledElevatedButtonStyle(context),
       ),
       padding(8),
+
+      // Sign-in Button
       TextButton(
         onPressed: () => signInAction(context),
         child: const Text("Already have an account? Sign in!"),

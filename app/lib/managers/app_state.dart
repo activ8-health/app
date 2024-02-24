@@ -1,12 +1,12 @@
-import 'dart:convert';
-import 'dart:io';
+import "dart:convert";
+import "dart:io";
 
-import 'package:activ8/managers/api/api_auth.dart';
-import 'package:activ8/types/user_preferences.dart';
-import 'package:activ8/types/user_profile.dart';
-import 'package:activ8/utils/logger.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import "package:activ8/managers/api/api_auth.dart";
+import "package:activ8/types/user_preferences.dart";
+import "package:activ8/types/user_profile.dart";
+import "package:activ8/utils/logger.dart";
+import "package:path_provider/path_provider.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 class AppState {
   AppState._();
@@ -28,7 +28,7 @@ class AppState {
   Auth get auth => Auth(email: email!, password: password!);
 
   set serverAddress(String address) {
-    List<String> splitAuthority = address.split(":");
+    final List<String> splitAuthority = address.split(":");
     host = splitAuthority.first;
     port = (splitAuthority.length > 1) ? int.tryParse(splitAuthority[1]) : null;
     logger.i('Split "$address" into host="$host" and port="$port"');
@@ -53,18 +53,18 @@ class AppState {
       return false;
     }
 
-    Directory documents = await getApplicationDocumentsDirectory();
+    final Directory documents = await getApplicationDocumentsDirectory();
 
     logger.i("Retrieving user profile from disk");
-    File userProfileFile = File("${documents.path}/$_userProfileFile");
+    final File userProfileFile = File("${documents.path}/$_userProfileFile");
     logger.i("User profile file exists: ${userProfileFile.existsSync()}");
-    String userProfileJson = await userProfileFile.readAsString();
+    final String userProfileJson = await userProfileFile.readAsString();
     userProfile = UserProfile.fromJson(jsonDecode(userProfileJson));
 
     logger.i("Retrieving user preferences from disk");
-    File userPreferencesFile = File("${documents.path}/$_userPreferencesFile");
+    final File userPreferencesFile = File("${documents.path}/$_userPreferencesFile");
     logger.i("User preferences file exists: ${userPreferencesFile.existsSync()}");
-    String userPreferencesJson = await userPreferencesFile.readAsString();
+    final String userPreferencesJson = await userPreferencesFile.readAsString();
     userPreferences = UserPreferences.fromJson(jsonDecode(userPreferencesJson));
 
     logger.i("User loaded");
@@ -85,15 +85,15 @@ class AppState {
     this.email = email;
     this.password = password;
 
-    Directory documents = await getApplicationDocumentsDirectory();
+    final Directory documents = await getApplicationDocumentsDirectory();
 
     logger.i("Storing user profile on disk");
-    File userProfileFile = File("${documents.path}/$_userProfileFile");
+    final File userProfileFile = File("${documents.path}/$_userProfileFile");
     await userProfileFile.writeAsString(jsonEncode(userProfile.toJson()));
     this.userProfile = userProfile;
 
     logger.i("Storing user preferences on disk");
-    File userPreferencesFile = File("${documents.path}/$_userPreferencesFile");
+    final File userPreferencesFile = File("${documents.path}/$_userPreferencesFile");
     await userPreferencesFile.writeAsString(jsonEncode(userPreferences.toJson()));
     this.userPreferences = userPreferences;
 
@@ -107,15 +107,15 @@ class AppState {
     email = null;
     password = null;
 
-    Directory documents = await getApplicationDocumentsDirectory();
+    final Directory documents = await getApplicationDocumentsDirectory();
 
     logger.i("Deleting user profile from disk");
-    File userProfileFile = File("${documents.path}/$_userProfileFile");
+    final File userProfileFile = File("${documents.path}/$_userProfileFile");
     await userProfileFile.delete();
     userProfile = null;
 
     logger.i("Deleting user preferences from disk");
-    File userPreferencesFile = File("${documents.path}/$_userPreferencesFile");
+    final File userPreferencesFile = File("${documents.path}/$_userPreferencesFile");
     await userPreferencesFile.delete();
     userPreferences = null;
 

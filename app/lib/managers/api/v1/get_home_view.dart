@@ -1,17 +1,17 @@
-import 'package:activ8/managers/api/api_auth.dart';
-import 'package:activ8/managers/api/api_worker.dart';
-import 'package:activ8/utils/json.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' show Response;
+import "package:activ8/managers/api/api_auth.dart";
+import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/utils/json.dart";
+import "package:geolocator/geolocator.dart";
+import "package:http/http.dart" show Response;
 
 String _endpoint = "/v1/getHomeView";
 
 Future<V1GetHomeViewResponse> v1getHomeView(V1GetHomeViewBody body, Auth auth) async {
-  Response response = await ApiWorker.instance.get(_endpoint, body.toJson(), auth);
+  final Response response = await ApiWorker.instance.get(_endpoint, body.toJson(), auth);
 
-  V1GetHomeViewStatus status = V1GetHomeViewStatus.fromStatusCode(response.statusCode);
+  final V1GetHomeViewStatus status = V1GetHomeViewStatus.fromStatusCode(response.statusCode);
 
-  Map<String, dynamic> json = JsonUtils.tryDecode(response.body, {"error_message": "Something went wrong"});
+  final Map<String, dynamic> json = JsonUtils.tryDecode(response.body, {"error_message": "Something went wrong"});
   return V1GetHomeViewResponse(json, status: status);
 }
 

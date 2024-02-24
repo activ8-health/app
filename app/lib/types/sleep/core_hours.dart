@@ -1,5 +1,5 @@
-import 'package:activ8/extensions/time_of_day_serializer.dart';
-import 'package:flutter/material.dart';
+import "package:activ8/extensions/time_of_day_serializer.dart";
+import "package:flutter/material.dart";
 
 class CoreHours {
   TimeOfDay start;

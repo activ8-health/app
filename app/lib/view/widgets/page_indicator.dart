@@ -1,5 +1,5 @@
-import 'package:dots_indicator/dots_indicator.dart';
-import 'package:flutter/material.dart';
+import "package:dots_indicator/dots_indicator.dart";
+import "package:flutter/material.dart";
 
 class PageIndicator extends StatefulWidget {
   final PageController pageController;
@@ -20,11 +20,13 @@ class _PageIndicatorState extends State<PageIndicator> {
 
   @override
   void initState() {
+    super.initState();
+
+    // Update page indicator whenever the page changes
     widget.pageController.addListener(() {
       currentPage = widget.pageController.page?.toInt() ?? currentPage;
       setState(() {});
     });
-    super.initState();
   }
 
   @override

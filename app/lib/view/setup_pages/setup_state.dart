@@ -1,14 +1,15 @@
-import 'package:activ8/types/food/dietary_restrictions.dart';
-import 'package:activ8/types/food/weight_goal.dart';
-import 'package:activ8/types/gender.dart';
-import 'package:activ8/types/health_data.dart';
-import 'package:activ8/types/sleep/core_hours.dart';
-import 'package:activ8/types/user_preferences.dart';
-import 'package:activ8/types/user_profile.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import "package:activ8/types/food/dietary_restrictions.dart";
+import "package:activ8/types/food/weight_goal.dart";
+import "package:activ8/types/gender.dart";
+import "package:activ8/types/health_data.dart";
+import "package:activ8/types/sleep/core_hours.dart";
+import "package:activ8/types/user_preferences.dart";
+import "package:activ8/types/user_profile.dart";
+import "package:flutter/material.dart";
+import "package:geolocator/geolocator.dart";
 
-// Blueprint for Profile objects and all information sent during registration
+/// Blueprint [UserProfile], [UserPreferences], and [HealthData]
+/// Required because of nullability
 class SetupState {
   // UserProfile
   String? name;

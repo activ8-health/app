@@ -55,7 +55,7 @@ class _Widget extends StatelessWidget {
     return ClearCard(
       color: Colors.orange.shade200,
       child: Padding(
-        padding: const EdgeInsets.only(top: 12.0, bottom: 12.0, left: 10.0, right: 16.0),
+        padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 10.0, right: 16.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -105,7 +105,7 @@ class _Widget extends StatelessWidget {
           ),
           const TextSpan(text: " calories today!"),
         ],
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 16),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 18),
       ),
     );
   }

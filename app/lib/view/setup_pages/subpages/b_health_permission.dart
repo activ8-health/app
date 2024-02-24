@@ -10,6 +10,7 @@ import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 
 class SetupHealthPermissionPage extends StatefulWidget {
   final SetupState setupState;
@@ -125,7 +126,7 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
       padding(48),
 
       // Icon
-      LargeIcon(icon: Icons.monitor_heart_outlined, color: Colors.red.shade300),
+      LargeIcon(icon: Symbols.ecg_heart, color: Colors.red.shade300),
       padding(16),
 
       // Title

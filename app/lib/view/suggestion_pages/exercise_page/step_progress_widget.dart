@@ -3,6 +3,7 @@ import 'package:activ8/view/suggestion_pages/exercise_page/step_progress_gauge.d
 import 'package:activ8/view/widgets/clear_card.dart';
 import 'package:activ8/view/widgets/shorthand.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class StepProgressWidget extends StatelessWidget {
   final Future<V1GetActivityRecommendationResponse> activityRecommendationFuture;
@@ -82,6 +83,8 @@ class _Widget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        const Icon(Symbols.footprint, size: 36),
+        padding(8),
         Text(
           stepProgress?.toStringAsFixed(0) ?? "--",
           style: progressTextStyle,
@@ -90,6 +93,7 @@ class _Widget extends StatelessWidget {
           " / ${stepTarget?.toStringAsFixed(0) ?? "--"}",
           style: targetTextStyle,
         ),
+        padding(12),
       ],
     );
   }

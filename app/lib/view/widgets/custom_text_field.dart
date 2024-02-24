@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
+/// A [TextFormField] with default styling and validation logic
 class CustomTextField extends StatelessWidget {
   final String label;
   final String? initialValue;
@@ -40,11 +41,11 @@ class CustomTextField extends StatelessWidget {
         onChanged: onChanged,
         validator: (String? value) {
           // Conditions to check
-          late bool isEmpty = value == null || value.isEmpty;
-          late bool isBadInteger = inputType == TextInputType.number && int.tryParse(value ?? "") == null;
-          late bool isBadDouble =
+          late final bool isEmpty = value == null || value.isEmpty;
+          late final bool isBadInteger = inputType == TextInputType.number && int.tryParse(value ?? "") == null;
+          late final bool isBadDouble =
               inputType == const TextInputType.numberWithOptions(decimal: true) && double.tryParse(value ?? "") == null;
-          late bool isInvalidWithCustomValidator = validator != null && !(validator!)(value ?? "");
+          late final bool isInvalidWithCustomValidator = validator != null && !(validator!)(value ?? "");
 
           if (isEmpty || isBadInteger || isBadDouble || isInvalidWithCustomValidator) {
             return "";
@@ -57,6 +58,7 @@ class CustomTextField extends StatelessWidget {
   }
 }
 
+/// Creates a custom [InputDecoration] for the [CustomTextField]
 InputDecoration createInputDecoration(context, String label, {String? suffix}) {
   return InputDecoration(
     labelText: label,

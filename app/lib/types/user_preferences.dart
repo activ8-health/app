@@ -1,9 +1,9 @@
-import 'package:activ8/extensions/dietary_restriction_set_serializer.dart';
-import 'package:activ8/extensions/time_of_day_serializer.dart';
-import 'package:activ8/types/food/dietary_restrictions.dart';
-import 'package:activ8/types/food/weight_goal.dart';
-import 'package:activ8/types/sleep/core_hours.dart';
-import 'package:flutter/material.dart';
+import "package:activ8/extensions/dietary_restriction_set_serializer.dart";
+import "package:activ8/extensions/time_of_day_serializer.dart";
+import "package:activ8/types/food/dietary_restrictions.dart";
+import "package:activ8/types/food/weight_goal.dart";
+import "package:activ8/types/sleep/core_hours.dart";
+import "package:flutter/material.dart";
 
 class UserPreferences {
   // Sleep

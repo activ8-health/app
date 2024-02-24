@@ -1,7 +1,7 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
+import "package:flutter/material.dart";
+import "package:syncfusion_flutter_gauges/gauges.dart";
 
 class StepProgressGauge extends StatelessWidget {
   final double progress;

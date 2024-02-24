@@ -1,4 +1,4 @@
-import 'package:activ8/types/gender.dart';
+import "package:activ8/types/gender.dart";
 
 class UserProfile {
   final String name;

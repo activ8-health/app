@@ -1,5 +1,5 @@
-import 'package:activ8/constants.dart';
-import 'package:flutter/material.dart';
+import "package:activ8/constants.dart";
+import "package:flutter/material.dart";
 
 class LargeIcon extends StatelessWidget {
   final IconData? icon;
@@ -16,7 +16,7 @@ class LargeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget childWidget = (child != null) ? child! : Icon(icon, size: 72);
+    final Widget childWidget = (child != null) ? child! : Icon(icon, size: 72);
     return Container(
         width: 128,
         height: 128,

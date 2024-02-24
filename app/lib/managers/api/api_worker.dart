@@ -12,9 +12,9 @@ class ApiWorker {
   ApiWorker._();
 
   Future<http.Response> post(String endpoint, Map<String, dynamic> body, Auth auth) async {
-    Uri uri = _getUri(endpoint);
+    final Uri uri = _getUri(endpoint);
     logger.i("Making POST request to $uri");
-    http.Response response = await http.post(
+    final http.Response response = await http.post(
       uri,
       body: jsonEncode(body),
       headers: {HttpHeaders.authorizationHeader: auth.toHeader()},
@@ -26,10 +26,10 @@ class ApiWorker {
   }
 
   Future<http.Response> get(String endpoint, Map<String, dynamic> parameters, Auth auth) async {
-    Map<String, String> stringParameters = parameters.map((key, value) => MapEntry(key, value.toString()));
-    Uri uri = _getUri(endpoint).replace(queryParameters: stringParameters);
+    final Map<String, String> stringParameters = parameters.map((key, value) => MapEntry(key, value.toString()));
+    final Uri uri = _getUri(endpoint).replace(queryParameters: stringParameters);
     logger.i("Making GET request to $uri");
-    http.Response response = await http.get(
+    final response = await http.get(
       uri,
       headers: {HttpHeaders.authorizationHeader: auth.toHeader()},
     ).catchError((error) {

@@ -1,12 +1,12 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:activ8/utils/logger.dart';
-import 'package:activ8/view/setup_pages/setup_state.dart';
-import 'package:activ8/view/setup_pages/widgets/large_icon.dart';
-import 'package:activ8/view/widgets/custom_navigation_bar.dart';
-import 'package:activ8/view/widgets/shorthand.dart';
-import 'package:flutter/material.dart';
-import 'package:time_range_picker/time_range_picker.dart';
+import "package:activ8/utils/logger.dart";
+import "package:activ8/view/setup_pages/setup_state.dart";
+import "package:activ8/view/setup_pages/widgets/large_icon.dart";
+import "package:activ8/view/widgets/custom_navigation_bar.dart";
+import "package:activ8/shorthands/padding.dart";
+import "package:flutter/material.dart";
+import "package:time_range_picker/time_range_picker.dart";
 
 class SetupCoreHoursPage extends StatefulWidget {
   final SetupState setupState;
@@ -78,7 +78,7 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
   }
 
   Widget _createTimeRangePicker() {
-    List<ClockLabel> labels = [];
+    final List<ClockLabel> labels = [];
     // AM labels
     for (int i = 0; i < 12; i += 2) {
       labels.add(ClockLabel(
@@ -94,8 +94,8 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
       ));
     }
 
-    String startHourText = widget.setupState.coreHours.start.format(context);
-    String endHourText = widget.setupState.coreHours.end.format(context);
+    final String startHourText = widget.setupState.coreHours.start.format(context);
+    final String endHourText = widget.setupState.coreHours.end.format(context);
 
     return SizedBox(
       width: 320,
@@ -124,8 +124,10 @@ class _SetupCoreHoursPageState extends State<SetupCoreHoursPage> {
           logger.i("Set core hour end time to ${end.format(context)}");
           setState(() {});
         },
-        backgroundWidget: Text("$startHourText to $endHourText",
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white)),
+        backgroundWidget: Text(
+          "$startHourText to $endHourText",
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+        ),
       ),
     );
   }

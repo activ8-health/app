@@ -1,7 +1,7 @@
-import 'dart:math';
+import "dart:math";
 
-import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
+import "package:flutter/material.dart";
+import "package:syncfusion_flutter_gauges/gauges.dart";
 
 class LifestyleScoreContent extends StatelessWidget {
   /// If this score is null, then this widget will interpret the value as indeterminate
@@ -27,7 +27,7 @@ class LifestyleScoreContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // The gradient that colors the gauge
-    GaugePointer gaugePointer = RangePointer(
+    final GaugePointer gaugePointer = RangePointer(
       // The minimum value should be 12 to prevent the corners from becoming flat
       value: max(12, (fitnessScore ?? 0).toDouble()),
       cornerStyle: CornerStyle.bothCurve,
@@ -44,7 +44,7 @@ class LifestyleScoreContent extends StatelessWidget {
     );
 
     // The white track of the gauge
-    GaugePointer gaugeRange = RangePointer(
+    final GaugePointer gaugeRange = RangePointer(
       value: 100,
       cornerStyle: CornerStyle.bothCurve,
       sizeUnit: GaugeSizeUnit.logicalPixel,
@@ -53,7 +53,7 @@ class LifestyleScoreContent extends StatelessWidget {
     );
 
     // Center of the gauge
-    Widget label = Column(
+    final Widget label = Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Row(

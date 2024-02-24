@@ -45,7 +45,7 @@ If you wish to install Activ8 as a real app, one option is to sideload it.
 The following command updates the app icon to the image at `assets/icon.png`
 
 ```bash
-flutter pub run flutter_launcher_icons
+dart run flutter_launcher_icons
 ```
 
 ### Dependency Validation

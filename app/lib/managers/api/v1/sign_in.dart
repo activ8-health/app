@@ -1,18 +1,18 @@
-import 'package:activ8/extensions/position.dart';
-import 'package:activ8/managers/api/api_auth.dart';
-import 'package:activ8/managers/api/api_worker.dart';
-import 'package:activ8/types/health_data.dart';
-import 'package:activ8/types/user_preferences.dart';
-import 'package:activ8/types/user_profile.dart';
-import 'package:activ8/utils/json.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' show Response;
+import "package:activ8/extensions/position.dart";
+import "package:activ8/managers/api/api_auth.dart";
+import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/types/health_data.dart";
+import "package:activ8/types/user_preferences.dart";
+import "package:activ8/types/user_profile.dart";
+import "package:activ8/utils/json.dart";
+import "package:geolocator/geolocator.dart";
+import "package:http/http.dart" show Response;
 
 String _endpoint = "/v1/signIn";
 
 Future<V1SignInResponse> v1signIn(V1SignInBody body, Auth auth) async {
-  Response response = await ApiWorker.instance.post(_endpoint, body.toJson(), auth);
-  V1SignInStatus status = V1SignInStatus.fromStatusCode(response.statusCode);
+  final Response response = await ApiWorker.instance.post(_endpoint, body.toJson(), auth);
+  final V1SignInStatus status = V1SignInStatus.fromStatusCode(response.statusCode);
 
   return V1SignInResponse.fromJson(
     JsonUtils.tryDecode(response.body, {"error_message": "Something went wrong"}),

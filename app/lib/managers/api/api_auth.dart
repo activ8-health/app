@@ -1,4 +1,4 @@
-import 'dart:convert';
+import "dart:convert";
 
 class Auth {
   String email;

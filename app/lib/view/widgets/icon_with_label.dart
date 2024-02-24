@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class IconWithLabel extends StatelessWidget {
   final IconData icon;

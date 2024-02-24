@@ -59,7 +59,7 @@ class _Widget extends StatelessWidget {
               padding: const EdgeInsets.only(top: 4, left: 4),
               child: Icon(
                 Icons.lightbulb,
-                size: 28,
+                size: 36,
                 color: Colors.orange.shade500,
               ),
             ),

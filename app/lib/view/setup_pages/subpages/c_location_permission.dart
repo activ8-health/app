@@ -89,7 +89,7 @@ class _SetupLocationPermissionPageState extends State<SetupLocationPermissionPag
       padding(48),
 
       // Icon
-      LargeIcon(icon: Icons.near_me, color: Colors.blue.shade300),
+      LargeIcon(icon: Icons.near_me_outlined, color: Colors.blue.shade300),
       padding(16),
 
       // Title

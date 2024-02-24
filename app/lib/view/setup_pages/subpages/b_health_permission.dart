@@ -43,7 +43,7 @@ class _SetupHealthPermissionPageState extends State<SetupHealthPermissionPage> {
     else {
       showHint = true;
       logger.w("Failed to get health permissions");
-      if (context.mounted) {
+      if (mounted) {
         showSnackBar(context, "Failed to get all permissions. Please try granting them in system settings.");
       }
     }

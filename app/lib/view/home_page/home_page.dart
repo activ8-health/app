@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
     V1GetHomeViewResponse response = await v1getHomeView(body, AppState.instance.auth);
 
     // Send snackbar if error
-    if (context.mounted && !response.status.isSuccessful) {
+    if (mounted && !response.status.isSuccessful) {
       showSnackBar(context, "ERROR: ${response.errorMessage}");
     }
 
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     logger.i("Signing out and restarting app");
     await AppState.instance.signOut();
 
-    if (!context.mounted) return;
+    if (!mounted) return;
 
     // Pop all pages
     Navigator.of(context).popUntil((route) => route.isFirst);

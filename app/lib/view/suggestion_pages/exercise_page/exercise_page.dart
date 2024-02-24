@@ -30,7 +30,7 @@ class _ExercisePageState extends State<ExercisePage> {
     V1GetActivityRecommendationResponse response = await v1getActivityRecommendation(body, AppState.instance.auth);
 
     // Send snackbar if error
-    if (context.mounted && !response.status.isSuccessful) {
+    if (mounted && !response.status.isSuccessful) {
       showSnackBar(context, "ERROR: ${response.errorMessage}");
     }
 

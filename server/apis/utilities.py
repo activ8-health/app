@@ -88,10 +88,16 @@ def check_authentication_login(headers, instance):
 
     email, password = get_email_password(authentication)
     check_email = check_email_password(email, password, instance, 1)
-    if check_email == 401:
+    if check_email != 200:
         return {'error_message': 'Incorrect email or password'}, 401
 
     return email, 200
+
+
+def update_location(email, location, instance):
+    _, user = instance.get_user(email, 1)
+    user.update_location((location.get("location_lat"), location.get("location_lon")))
+    instance.update_user(email, user)
 
 
 def update_user_info(new_data, user_profile, email, instance):

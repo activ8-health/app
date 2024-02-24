@@ -1,11 +1,10 @@
 import apis.utilities as utilities
-import json
 
 
 def signin_user(authentication, new_data, instance) -> (str, int):
     email, password = utilities.get_email_password(authentication)
     check_login = utilities.check_email_password(email, password, instance, 1)
-    if check_login == 401:
+    if check_login != 200:
         return {'error_message': 'Incorrect email or password'}, 401
 
     status, user_profile = instance.get_user(email, 1)

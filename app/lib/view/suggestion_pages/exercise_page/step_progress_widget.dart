@@ -14,22 +14,30 @@ class StepProgressWidget extends StatelessWidget {
     return FutureBuilder(
       future: activityRecommendationFuture,
       builder: (BuildContext context, AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
+        Widget widget;
         // Loading
         if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
-          return const _Widget();
-        }
-        // Interpret data
-        V1GetActivityRecommendationResponse response = snapshot.data!;
+          widget = const _Widget(key: ValueKey(1));
+        } else {
+          // Interpret data
+          V1GetActivityRecommendationResponse response = snapshot.data!;
 
-        // Error
-        if (!response.status.isSuccessful) {
-          return const _Widget();
+          if (!response.status.isSuccessful) {
+            // Error
+            widget = const _Widget(key: ValueKey(1));
+          } else {
+            // Success
+            widget = _Widget(
+              key: const ValueKey(0),
+              stepProgress: response.stepProgress?.toDouble(),
+              stepTarget: response.stepTarget?.toDouble(),
+            );
+          }
         }
 
-        // Success
-        return _Widget(
-          stepProgress: response.stepProgress?.toDouble(),
-          stepTarget: response.stepTarget?.toDouble(),
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: widget,
         );
       },
     );
@@ -40,7 +48,7 @@ class _Widget extends StatelessWidget {
   final double? stepProgress;
   final double? stepTarget;
 
-  const _Widget({this.stepProgress, this.stepTarget});
+  const _Widget({super.key, this.stepProgress, this.stepTarget});
 
   @override
   Widget build(BuildContext context) {

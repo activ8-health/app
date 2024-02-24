@@ -13,20 +13,27 @@ class RecommendationMessage extends StatelessWidget {
     return FutureBuilder(
       future: activityRecommendationFuture,
       builder: (BuildContext context, AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
+        Widget widget;
+
         // Loading
         if (snapshot.connectionState != ConnectionState.done || !snapshot.hasData) {
-          return const _Widget();
-        }
-        // Interpret data
-        V1GetActivityRecommendationResponse response = snapshot.data!;
+          widget = const _Widget(key: ValueKey(1));
+        } else {
+          // Interpret data
+          V1GetActivityRecommendationResponse response = snapshot.data!;
 
-        // Error
-        if (!response.status.isSuccessful) {
-          return const _Widget();
-        }
+          // Error
+          if (!response.status.isSuccessful) {
+            widget = const _Widget(key: ValueKey(1));
+          }
 
-        // Success
-        return _Widget(message: response.message);
+          // Success
+          widget = _Widget(key: const ValueKey(0), message: response.message);
+        }
+        return AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: widget,
+        );
       },
     );
   }
@@ -35,7 +42,7 @@ class RecommendationMessage extends StatelessWidget {
 class _Widget extends StatelessWidget {
   final String? message;
 
-  const _Widget({this.message});
+  const _Widget({super.key, this.message});
 
   @override
   Widget build(BuildContext context) {

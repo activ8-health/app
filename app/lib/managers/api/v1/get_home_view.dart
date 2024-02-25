@@ -1,5 +1,6 @@
 import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/managers/api/interfaces.dart";
 import "package:activ8/utils/json.dart";
 import "package:geolocator/geolocator.dart";
 import "package:http/http.dart" show Response;
@@ -15,7 +16,7 @@ Future<V1GetHomeViewResponse> v1getHomeView(V1GetHomeViewBody body, Auth auth) a
   return V1GetHomeViewResponse(json, status: status);
 }
 
-class V1GetHomeViewBody {
+class V1GetHomeViewBody implements IBody {
   final Position? location;
 
   V1GetHomeViewBody({
@@ -30,8 +31,10 @@ class V1GetHomeViewBody {
   }
 }
 
-class V1GetHomeViewResponse {
+class V1GetHomeViewResponse implements IResponse {
+  @override
   final V1GetHomeViewStatus status;
+  @override
   final String? errorMessage;
 
   late final int? fitnessScore;
@@ -45,7 +48,7 @@ class V1GetHomeViewResponse {
   }
 }
 
-enum V1GetHomeViewStatus {
+enum V1GetHomeViewStatus implements IStatus {
   success(statusCode: 200),
   incorrectCredentials(statusCode: 401),
   unknown,
@@ -62,6 +65,7 @@ enum V1GetHomeViewStatus {
     return V1GetHomeViewStatus.unknown;
   }
 
+  @override
   bool get isSuccessful => this == V1GetHomeViewStatus.success;
 
   final int? statusCode;

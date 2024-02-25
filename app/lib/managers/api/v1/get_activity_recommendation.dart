@@ -2,6 +2,7 @@ import "dart:convert";
 
 import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/managers/api/interfaces.dart";
 import "package:geolocator/geolocator.dart";
 import "package:http/http.dart" show Response;
 
@@ -11,13 +12,13 @@ Future<V1GetActivityRecommendationResponse> v1getActivityRecommendation(
     V1GetActivityRecommendationBody body, Auth auth) async {
   final Response response = await ApiWorker.instance.get(_endpoint, body.toJson(), auth);
 
-  final V1GetActivityRecommendationStatus status = V1GetActivityRecommendationStatus.fromStatusCode(response.statusCode);
+  final status = V1GetActivityRecommendationStatus.fromStatusCode(response.statusCode);
 
   final Map<String, dynamic> json = jsonDecode(response.body);
   return V1GetActivityRecommendationResponse(json, status: status);
 }
 
-class V1GetActivityRecommendationBody {
+class V1GetActivityRecommendationBody implements IBody {
   final Position? location;
 
   V1GetActivityRecommendationBody({this.location});
@@ -30,8 +31,10 @@ class V1GetActivityRecommendationBody {
   }
 }
 
-class V1GetActivityRecommendationResponse {
+class V1GetActivityRecommendationResponse implements IResponse {
+  @override
   final V1GetActivityRecommendationStatus status;
+  @override
   final String? errorMessage;
 
   late final int? caloriesBurned;
@@ -50,7 +53,7 @@ class V1GetActivityRecommendationResponse {
   }
 }
 
-enum V1GetActivityRecommendationStatus {
+enum V1GetActivityRecommendationStatus implements IStatus {
   success(statusCode: 200),
   incorrectCredentials(statusCode: 401),
   unknown,
@@ -67,6 +70,7 @@ enum V1GetActivityRecommendationStatus {
     return V1GetActivityRecommendationStatus.unknown;
   }
 
+  @override
   bool get isSuccessful => this == V1GetActivityRecommendationStatus.success;
 
   final int? statusCode;

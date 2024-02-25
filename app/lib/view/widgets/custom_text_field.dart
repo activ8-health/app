@@ -42,15 +42,15 @@ class CustomTextField extends StatelessWidget {
         validator: (String? value) {
           // Conditions to check
           late final bool isEmpty = value == null || value.isEmpty;
-          late final bool isBadInteger = inputType == TextInputType.number && int.tryParse(value ?? "") == null;
-          late final bool isBadDouble =
-              inputType == const TextInputType.numberWithOptions(decimal: true) && double.tryParse(value ?? "") == null;
+          late final bool isInteger = inputType == TextInputType.number;
+          late final bool isBadInteger = isInteger && int.tryParse(value ?? "") == null;
+          late final bool isDouble = inputType == const TextInputType.numberWithOptions(decimal: true);
+          late final bool isBadDouble = isDouble && double.tryParse(value ?? "") == null;
           late final bool isInvalidWithCustomValidator = validator != null && !(validator!)(value ?? "");
 
-          if (isEmpty || isBadInteger || isBadDouble || isInvalidWithCustomValidator) {
-            return "";
-          }
+          final bool bad = isEmpty || isBadInteger || isBadDouble || isInvalidWithCustomValidator;
 
+          if (bad) return "";
           return null;
         },
       ),

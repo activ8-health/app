@@ -3,6 +3,7 @@ import "dart:convert";
 import "package:activ8/extensions/time_of_day_serializer.dart";
 import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/managers/api/interfaces.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
 import "package:http/http.dart" show Response;
@@ -18,7 +19,7 @@ Future<V1GetSleepRecommendationResponse> v1getSleepRecommendation(V1GetSleepReco
   return V1GetSleepRecommendationResponse(json, status: status);
 }
 
-class V1GetSleepRecommendationBody {
+class V1GetSleepRecommendationBody implements IBody {
   final Position? location;
   final DateTime? date;
 
@@ -33,8 +34,10 @@ class V1GetSleepRecommendationBody {
   }
 }
 
-class V1GetSleepRecommendationResponse {
+class V1GetSleepRecommendationResponse implements IResponse {
+  @override
   final V1GetSleepRecommendationStatus status;
+  @override
   final String? errorMessage;
 
   late final TimeOfDay? sleepRangeStart;
@@ -49,7 +52,7 @@ class V1GetSleepRecommendationResponse {
   }
 }
 
-enum V1GetSleepRecommendationStatus {
+enum V1GetSleepRecommendationStatus implements IStatus {
   success(statusCode: 200),
   incorrectCredentials(statusCode: 401),
   unknown,
@@ -66,6 +69,7 @@ enum V1GetSleepRecommendationStatus {
     return V1GetSleepRecommendationStatus.unknown;
   }
 
+  @override
   bool get isSuccessful => this == V1GetSleepRecommendationStatus.success;
 
   final int? statusCode;

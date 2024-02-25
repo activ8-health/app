@@ -1,3 +1,4 @@
+import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/v1/get_activity_recommendation.dart";
 import "package:activ8/managers/app_state.dart";
 import "package:activ8/managers/location_manager.dart";
@@ -34,8 +35,8 @@ class _ExercisePageState extends State<ExercisePage> {
 
     // Send the request
     final V1GetActivityRecommendationBody body = V1GetActivityRecommendationBody(location: location);
-    final V1GetActivityRecommendationResponse response =
-        await v1getActivityRecommendation(body, AppState.instance.auth);
+    final Auth auth = AppState.instance.auth;
+    final V1GetActivityRecommendationResponse response = await v1getActivityRecommendation(body, auth);
 
     // Send snackbar if error
     if (mounted && !response.status.isSuccessful) {

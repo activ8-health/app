@@ -1,9 +1,9 @@
 import "package:activ8/managers/api/v1/get_home_view.dart";
 import "package:activ8/managers/app_state.dart";
 import "package:activ8/managers/location_manager.dart";
-import "package:activ8/utils/logger.dart";
 import "package:activ8/shorthands/gradient_scaffold.dart";
 import "package:activ8/shorthands/padding.dart";
+import "package:activ8/utils/logger.dart";
 import "package:activ8/utils/snackbar.dart";
 import "package:activ8/view/entry_point.dart";
 import "package:activ8/view/home_page/home_view/lifestyle_score_widget.dart";

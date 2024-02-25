@@ -1,8 +1,8 @@
+import "package:activ8/shorthands/padding.dart";
 import "package:activ8/utils/logger.dart";
 import "package:activ8/view/setup_pages/setup_state.dart";
 import "package:activ8/view/setup_pages/widgets/large_icon.dart";
 import "package:activ8/view/widgets/custom_navigation_bar.dart";
-import "package:activ8/shorthands/padding.dart";
 import "package:day_night_time_picker/day_night_time_picker.dart";
 import "package:flutter/material.dart";
 

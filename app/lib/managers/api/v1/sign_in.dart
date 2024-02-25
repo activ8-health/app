@@ -1,6 +1,7 @@
 import "package:activ8/extensions/position.dart";
 import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/managers/api/interfaces.dart";
 import "package:activ8/types/health_data.dart";
 import "package:activ8/types/user_preferences.dart";
 import "package:activ8/types/user_profile.dart";
@@ -20,7 +21,7 @@ Future<V1SignInResponse> v1signIn(V1SignInBody body, Auth auth) async {
   );
 }
 
-class V1SignInBody {
+class V1SignInBody implements IBody {
   final Position? location;
   final HealthData healthData;
 
@@ -34,8 +35,10 @@ class V1SignInBody {
   }
 }
 
-class V1SignInResponse {
+class V1SignInResponse implements IResponse {
+  @override
   final V1SignInStatus status;
+  @override
   final String? errorMessage;
 
   late final UserProfile? userProfile;
@@ -56,7 +59,7 @@ class V1SignInResponse {
   }
 }
 
-enum V1SignInStatus {
+enum V1SignInStatus implements IStatus {
   success(statusCode: 200),
   incorrectCredentials(statusCode: 401),
   badRequest(statusCode: 400),
@@ -74,6 +77,7 @@ enum V1SignInStatus {
     return V1SignInStatus.unknown;
   }
 
+  @override
   bool get isSuccessful => this == V1SignInStatus.success;
 
   final int? statusCode;

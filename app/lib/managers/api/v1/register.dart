@@ -1,6 +1,7 @@
 import "package:activ8/extensions/position.dart";
 import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/managers/api/interfaces.dart";
 import "package:activ8/types/health_data.dart";
 import "package:activ8/types/user_preferences.dart";
 import "package:activ8/types/user_profile.dart";
@@ -19,7 +20,7 @@ Future<V1RegisterResponse> v1register(V1RegisterBody body, Auth auth) async {
   return V1RegisterResponse(status: status, errorMessage: json["error_message"]);
 }
 
-class V1RegisterBody {
+class V1RegisterBody implements IBody {
   final UserProfile userProfile;
   final HealthData healthData;
   final UserPreferences userPreferences;
@@ -42,14 +43,16 @@ class V1RegisterBody {
   }
 }
 
-class V1RegisterResponse {
+class V1RegisterResponse implements IResponse {
+  @override
   final V1RegisterStatus status;
+  @override
   final String? errorMessage;
 
   V1RegisterResponse({required this.status, this.errorMessage});
 }
 
-enum V1RegisterStatus {
+enum V1RegisterStatus implements IStatus {
   success(statusCode: 200),
   emailInUse(statusCode: 409),
   badRequest(statusCode: 400),
@@ -66,6 +69,9 @@ enum V1RegisterStatus {
     }
     return V1RegisterStatus.unknown;
   }
+
+  @override
+  bool get isSuccessful => this == V1RegisterStatus.success;
 
   final int? statusCode;
 }

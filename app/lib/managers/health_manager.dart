@@ -78,8 +78,8 @@ class HealthManager {
     final List<HealthDataPoint> dataPoints = await _retrieveDataPoints(days, [HealthDataType.SLEEP_IN_BED]);
 
     // Convert HealthDataPoints to SleepPoints
-    final List<SleepPoint> sleepPoints =
-        dataPoints.map((point) => SleepPoint(dateFrom: point.dateFrom, dateTo: point.dateTo)).toList();
+    converter(HealthDataPoint point) => SleepPoint(dateFrom: point.dateFrom, dateTo: point.dateTo);
+    final List<SleepPoint> sleepPoints = dataPoints.map(converter).toList();
 
     return sleepPoints;
   }
@@ -94,7 +94,8 @@ class HealthManager {
 
   // Returns the height, followed by the weight
   Future<Pair<HealthDataPoint?>> retrieveHeightWeightData({int days = 90}) async {
-    final List<HealthDataPoint> dataPoints = await _retrieveDataPoints(days, [HealthDataType.HEIGHT, HealthDataType.WEIGHT]);
+    final List<HealthDataType> types = [HealthDataType.HEIGHT, HealthDataType.WEIGHT];
+    final List<HealthDataPoint> dataPoints = await _retrieveDataPoints(days, types);
 
     HealthDataPoint maxHealthReducer(HealthDataPoint a, HealthDataPoint b) {
       return a.dateFrom.compareTo(b.dateFrom) > 0 ? a : b;

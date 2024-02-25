@@ -1,7 +1,7 @@
+import "package:activ8/shorthands/padding.dart";
 import "package:activ8/view/setup_pages/setup_state.dart";
 import "package:activ8/view/setup_pages/sign_in_subflow.dart";
 import "package:activ8/view/setup_pages/widgets/large_icon.dart";
-import "package:activ8/shorthands/padding.dart";
 import "package:activ8/view/widgets/styles.dart";
 import "package:flutter/material.dart";
 

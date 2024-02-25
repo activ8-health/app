@@ -1,6 +1,6 @@
-import "package:activ8/extensions/snapshot_loading.dart";
 import "package:activ8/managers/api/v1/get_activity_recommendation.dart";
 import "package:activ8/shorthands/padding.dart";
+import "package:activ8/utils/future_widget_selector.dart";
 import "package:activ8/view/widgets/clear_card.dart";
 import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
@@ -19,30 +19,20 @@ class CaloriesMessage extends StatelessWidget {
     return FutureBuilder(
       future: activityRecommendationFuture,
       builder: (BuildContext context, AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
+        final Widget widget = futureWidgetSelector(
+          snapshot,
+          failureWidget: const _Widget(key: ValueKey(1)),
+          successWidgetBuilder: (V1GetActivityRecommendationResponse response) {
+            return _Widget(key: const ValueKey(0), caloriesBurned: response.caloriesBurned);
+          },
+        );
+
         return AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
-          child: _getWidget(snapshot),
+          child: widget,
         );
       },
     );
-  }
-
-  Widget _getWidget(AsyncSnapshot<V1GetActivityRecommendationResponse> snapshot) {
-    if (snapshot.isLoading) {
-      // Loading
-      return const _Widget(key: ValueKey(1));
-    }
-
-    // Interpret data
-    final V1GetActivityRecommendationResponse response = snapshot.data!;
-
-    // Error
-    if (!response.status.isSuccessful) {
-      return const _Widget(key: ValueKey(1));
-    }
-
-    // Success
-    return _Widget(key: const ValueKey(0), caloriesBurned: response.caloriesBurned);
   }
 }
 

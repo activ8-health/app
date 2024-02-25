@@ -1,6 +1,7 @@
 import "package:activ8/extensions/position.dart";
 import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/api_worker.dart";
+import "package:activ8/managers/api/interfaces.dart";
 import "package:activ8/types/health_data.dart";
 import "package:activ8/utils/json.dart";
 import "package:geolocator/geolocator.dart";
@@ -18,7 +19,7 @@ Future<V1UpdateHealthDataResponse> v1updateHealthData(V1UpdateHealthDataBody bod
   );
 }
 
-class V1UpdateHealthDataBody {
+class V1UpdateHealthDataBody implements IBody {
   final Position? location;
   final HealthData healthData;
 
@@ -32,8 +33,10 @@ class V1UpdateHealthDataBody {
   }
 }
 
-class V1UpdateHealthDataResponse {
+class V1UpdateHealthDataResponse implements IResponse {
+  @override
   final V1UpdateHealthDataStatus status;
+  @override
   final String? errorMessage;
 
   V1UpdateHealthDataResponse({
@@ -48,7 +51,7 @@ class V1UpdateHealthDataResponse {
   }
 }
 
-enum V1UpdateHealthDataStatus {
+enum V1UpdateHealthDataStatus implements IStatus {
   success(statusCode: 200),
   incorrectCredentials(statusCode: 401),
   badRequest(statusCode: 400),
@@ -66,6 +69,7 @@ enum V1UpdateHealthDataStatus {
     return V1UpdateHealthDataStatus.unknown;
   }
 
+  @override
   bool get isSuccessful => this == V1UpdateHealthDataStatus.success;
 
   final int? statusCode;

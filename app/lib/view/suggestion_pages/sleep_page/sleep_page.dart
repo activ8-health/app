@@ -1,9 +1,10 @@
-import "package:activ8/extensions/snapshot_loading.dart";
+import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/v1/get_sleep_recommendation.dart";
 import "package:activ8/managers/app_state.dart";
 import "package:activ8/managers/location_manager.dart";
 import "package:activ8/shorthands/gradient_scaffold.dart";
 import "package:activ8/shorthands/padding.dart";
+import "package:activ8/utils/future_widget_selector.dart";
 import "package:activ8/utils/snackbar.dart";
 import "package:activ8/view/suggestion_pages/sleep_page/sleep_time_widget.dart";
 import "package:flutter/material.dart";
@@ -39,8 +40,8 @@ class _SleepPageState extends State<SleepPage> {
 
     // Send the request
     final V1GetSleepRecommendationBody body = V1GetSleepRecommendationBody(date: dateToQuery, location: location);
-    final V1GetSleepRecommendationResponse sleepRecommendation =
-        await v1getSleepRecommendation(body, AppState.instance.auth);
+    final Auth auth = AppState.instance.auth;
+    final V1GetSleepRecommendationResponse sleepRecommendation = await v1getSleepRecommendation(body, auth);
 
     if (!sleepRecommendation.status.isSuccessful && mounted) {
       showSnackBar(context, "ERROR: ${sleepRecommendation.errorMessage}");
@@ -88,32 +89,28 @@ class _SleepPageState extends State<SleepPage> {
             FutureBuilder(
               future: sleepRecommendationFuture,
               builder: (BuildContext context, AsyncSnapshot<V1GetSleepRecommendationResponse> snapshot) {
-                // Animate between the pre- and post-loading screens
+                final Widget widget = futureWidgetSelector(
+                  snapshot,
+                  failureWidget: const SleepTimeWidget(key: ValueKey(1)),
+                  successWidgetBuilder: (V1GetSleepRecommendationResponse response) {
+                    return SleepTimeWidget(
+                      key: const ValueKey(0),
+                      sleepTime: response.sleepRangeStart,
+                      wakeTime: response.sleepRangeEnd,
+                      date: dateToQuery,
+                    );
+                  },
+                );
+
                 return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
-                  child: _getWidget(snapshot),
+                  child: widget,
                 );
               },
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _getWidget(AsyncSnapshot<V1GetSleepRecommendationResponse> snapshot) {
-    if (snapshot.isLoading) return const SleepTimeWidget(key: ValueKey(1));
-
-    // Get data from the API
-    final V1GetSleepRecommendationResponse data = snapshot.data!;
-
-    if (!data.status.isSuccessful) return const SleepTimeWidget(key: ValueKey(1));
-
-    return SleepTimeWidget(
-      key: const ValueKey(0),
-      sleepTime: data.sleepRangeStart,
-      wakeTime: data.sleepRangeEnd,
-      date: dateToQuery,
     );
   }
 

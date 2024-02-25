@@ -1,10 +1,10 @@
 import "package:activ8/managers/location_manager.dart";
+import "package:activ8/shorthands/padding.dart";
 import "package:activ8/utils/logger.dart";
 import "package:activ8/utils/snackbar.dart";
 import "package:activ8/view/setup_pages/setup_state.dart";
 import "package:activ8/view/setup_pages/widgets/large_icon.dart";
 import "package:activ8/view/widgets/custom_navigation_bar.dart";
-import "package:activ8/shorthands/padding.dart";
 import "package:app_settings/app_settings.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";

@@ -45,7 +45,14 @@ def calc_exercise_score(exercise_data):
 def calc_food_score(food_data):
     food_log = food_data['food_log']
     food_goal = food_data['weight_goal']
-    return 1
+    avg_cals = 0
+    # for i in range(7):
+    #     avg_cals += food_log[list(food_log.keys())[i]]
+    # avg_cals /= 7
+    ideal_cals = 2500
+    avg_cals = 1000
+    food_score = 0 #1 - (((avg_cals - ideal_cals) / 600) ** 2)
+    return food_score, (avg_cals < ideal_cals)
 
 def get_lifestyle_score(email):
     user_data = get_user_data(email)
@@ -53,8 +60,8 @@ def get_lifestyle_score(email):
     print('sleep_score:', sleep_score)
     exercise_score = calc_exercise_score(user_data['exercise'])
     print('exercise_score:', exercise_score)
-    food_score = calc_food_score(user_data['food'])
-    print('(default to 1 for now) food_score:', food_score)
+    food_score, cals_check = calc_food_score(user_data['food'])
+    print('food_score:', food_score)
     lifestyle_score = (sleep_score + exercise_score + food_score) / 3
     print('lifestyle_score:', lifestyle_score)
     if sleep_score < exercise_score and sleep_score < food_score:
@@ -62,7 +69,10 @@ def get_lifestyle_score(email):
     elif exercise_score < sleep_score and exercise_score < food_score:
         return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should exercise more.'}
     else:
-        return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should eat more/less.'}
+        if cals_check:
+            return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should eat more.'}
+        else:
+            return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should eat less.'}
 
 
 print('result:', get_lifestyle_score('5'))

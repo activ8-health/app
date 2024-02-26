@@ -29,7 +29,8 @@ def calc_sleep_score(sleep_data):
             i+=1
         avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
     avg_sleep_time /= 7
-    return avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS
+    sleep_score = (avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS)
+    return min(sleep_score, 1)
 
 def calc_exercise_score(exercise_data):
     step_goal = exercise_data['step_goal']
@@ -38,7 +39,8 @@ def calc_exercise_score(exercise_data):
     for i in range(7):
         avg_steps += step_data[list(step_data.keys())[i]]
     avg_steps /= 7
-    return avg_steps / step_goal
+    exercise_score = avg_steps / step_goal
+    return min(exercise_score, 1)
 
 def calc_food_score(food_data):
     return

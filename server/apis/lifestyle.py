@@ -43,12 +43,26 @@ def calc_exercise_score(exercise_data):
     return min(exercise_score, 1)
 
 def calc_food_score(food_data):
-    return
+    food_log = food_data['food_log']
+    food_goal = food_data['weight_goal']
+    return 1
 
 def get_lifestyle_score(email):
     user_data = get_user_data(email)
     sleep_score = calc_sleep_score(user_data['sleep'])
+    print('sleep_score:', sleep_score)
     exercise_score = calc_exercise_score(user_data['exercise'])
+    print('exercise_score:', exercise_score)
     food_score = calc_food_score(user_data['food'])
+    print('(default to 1 for now) food_score:', food_score)
+    lifestyle_score = (sleep_score + exercise_score + food_score) / 3
+    print('lifestyle_score:', lifestyle_score)
+    if sleep_score < exercise_score and sleep_score < food_score:
+        return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should sleep more.'}
+    elif exercise_score < sleep_score and exercise_score < food_score:
+        return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should exercise more.'}
+    else:
+        return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should eat more/less.'}
 
-get_lifestyle_score('5')
+
+print('result:', get_lifestyle_score('5'))

@@ -1,4 +1,3 @@
-import "package:activ8/constants.dart";
 import "package:activ8/shorthands/padding.dart";
 import "package:activ8/view/suggestion_pages/exercise_page/exercise_page.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_page.dart";
@@ -14,52 +13,46 @@ class SuggestionSelectorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClearCard(
-      child: ClipRRect(
-        borderRadius: homeCardBorderRadius,
-        child: Material(
-          color: Colors.transparent,
-          child: Column(children: [
-            _SuggestionEntry(
-              title: const Text("Food"),
-              description: const Text("Get your energy for the day"),
-              icon: const Icon(Icons.restaurant_menu),
-              action: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const FoodPage(),
-                  ),
-                );
-              },
-            ),
-            const ClearCardDivider(),
-            _SuggestionEntry(
-              title: const Text("Exercise"),
-              description: const Text("Never a bad idea to get moving"),
-              icon: const Icon(Icons.directions_run),
-              action: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ExercisePage(),
-                  ),
-                );
-              },
-            ),
-            const ClearCardDivider(),
-            _SuggestionEntry(
-              title: const Text("Sleep"),
-              description: const Text("Happy days start with happy sleep"),
-              icon: const Icon(Icons.bedtime_outlined),
-              action: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const SleepPage(),
-                  ),
-                );
-              },
-            ),
-          ]),
+      child: Column(children: [
+        _SuggestionEntry(
+          title: const Text("Food"),
+          description: const Text("Get your energy for the day"),
+          icon: const Icon(Icons.restaurant_menu),
+          action: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const FoodPage(),
+              ),
+            );
+          },
         ),
-      ),
+        const ClearCardDivider(),
+        _SuggestionEntry(
+          title: const Text("Exercise"),
+          description: const Text("Never a bad idea to get moving"),
+          icon: const Icon(Icons.directions_run),
+          action: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ExercisePage(),
+              ),
+            );
+          },
+        ),
+        const ClearCardDivider(),
+        _SuggestionEntry(
+          title: const Text("Sleep"),
+          description: const Text("Happy days start with happy sleep"),
+          icon: const Icon(Icons.bedtime_outlined),
+          action: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const SleepPage(),
+              ),
+            );
+          },
+        ),
+      ]),
     );
   }
 }

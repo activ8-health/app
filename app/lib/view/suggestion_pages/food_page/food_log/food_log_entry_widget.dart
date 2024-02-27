@@ -1,3 +1,4 @@
+import "package:activ8/extensions/date_time_same_day.dart";
 import "package:activ8/shorthands/padding.dart";
 import "package:activ8/types/food/menu.dart";
 import "package:flutter/material.dart";
@@ -5,9 +6,10 @@ import "package:google_fonts/google_fonts.dart";
 import "package:intl/intl.dart";
 
 class FoodLogEntryWidget extends StatelessWidget {
-  final FoodLogEntry foodLogItem;
+  final FoodLogEntry foodLogEntry;
+  final bool showDate;
 
-  const FoodLogEntryWidget({super.key, required this.foodLogItem});
+  const FoodLogEntryWidget({super.key, required this.foodLogEntry, this.showDate = true});
 
   void openEditAction() {
     // TODO open edit action
@@ -15,12 +17,12 @@ class FoodLogEntryWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String foodName = foodLogItem.item.name;
-    final int calories = foodLogItem.item.calories;
+    final String foodName = foodLogEntry.item.name;
+    final int calories = foodLogEntry.item.calories;
 
-    final double servingSize = foodLogItem.servingSize;
-    final int logRating = foodLogItem.rating;
-    final DateTime date = foodLogItem.date;
+    final double servingSize = foodLogEntry.servingSize;
+    final int logRating = foodLogEntry.rating;
+    final DateTime date = foodLogEntry.date;
 
     final NumberFormat decimalFormatter = NumberFormat.decimalPattern();
 
@@ -47,7 +49,7 @@ class FoodLogEntryWidget extends StatelessWidget {
                 padding(1),
                 Row(
                   children: [
-                    _getDate(date),
+                    (showDate) ? _getDate(date) : _getTime(date),
 
                     // Padding
                     const Expanded(child: SizedBox.shrink()),
@@ -123,8 +125,8 @@ class FoodLogEntryWidget extends StatelessWidget {
 
   Widget _getDate(DateTime date) {
     // Special case for Today
-    final DateTime now = DateTime.now();
-    if (now.day == date.day && now.month == date.month && now.year == date.year) {
+    final DateTime today = DateTime.now();
+    if (date.isSameDay(today)) {
       return Text(
         "Today",
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.8)),
@@ -133,7 +135,7 @@ class FoodLogEntryWidget extends StatelessWidget {
 
     // Special case for Yesterday
     final DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
-    if (yesterday.day == date.day && yesterday.month == date.month && yesterday.year == date.year) {
+    if (date.isSameDay(yesterday)) {
       return Text(
         "Yesterday",
         style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.8)),
@@ -155,6 +157,13 @@ class FoodLogEntryWidget extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.6)),
         ),
       ],
+    );
+  }
+
+  Widget _getTime(DateTime date) {
+    return Text(
+      DateFormat.jm().format(DateTime.now()),
+      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.6)),
     );
   }
 }

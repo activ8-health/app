@@ -1,4 +1,4 @@
-import "package:activ8/extensions/position.dart";
+import "package:activ8/extensions/position_serializer.dart";
 import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/api_worker.dart";
 import "package:activ8/managers/api/interfaces.dart";

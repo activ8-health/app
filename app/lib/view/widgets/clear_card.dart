@@ -21,17 +21,23 @@ class ClearCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: color.withOpacity(backgroundOpacity),
-        borderRadius: homeCardBorderRadius,
-        border: Border.all(
-          color: color.withOpacity(borderOpacity),
-          width: borderWidth,
+    return ClipRRect(
+      borderRadius: homeCardBorderRadius,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: color.withOpacity(backgroundOpacity),
+            borderRadius: homeCardBorderRadius,
+            border: Border.all(
+              color: color.withOpacity(borderOpacity),
+              width: borderWidth,
+            ),
+          ),
+          padding: padding,
+          child: child,
         ),
       ),
-      padding: padding,
-      child: child,
     );
   }
 }

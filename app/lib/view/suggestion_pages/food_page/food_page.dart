@@ -1,16 +1,10 @@
 import "package:activ8/shorthands/gradient_scaffold.dart";
 import "package:activ8/shorthands/padding.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_log/add_food_entry_fab.dart";
-import "package:activ8/view/suggestion_pages/food_page/food_log/preview.dart";
+import "package:activ8/view/suggestion_pages/food_page/food_log/food_log_preview_widget.dart";
+import "package:activ8/view/suggestion_pages/food_page/shared.dart";
 import "package:activ8/view/widgets/category_marker.dart";
 import "package:flutter/material.dart";
-
-// uiGradients (Crazy Orange I)
-const LinearGradient _backgroundGradient = LinearGradient(
-  colors: [Color(0xAA348F50), Color(0x8856B4D3)],
-  begin: Alignment.topLeft,
-  end: Alignment.bottomRight,
-);
 
 class FoodPage extends StatefulWidget {
   const FoodPage({super.key});
@@ -26,7 +20,7 @@ class _FoodPageState extends State<FoodPage> {
     return GradientScaffold(
       floatingActionButton: const AddFoodEntryFAB(),
       hasBackButton: true,
-      backgroundGradient: _backgroundGradient,
+      backgroundGradient: backgroundGradient,
       child: _allowRefresh(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,

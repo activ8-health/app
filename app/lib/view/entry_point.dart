@@ -1,6 +1,7 @@
 import "package:activ8/extensions/snapshot_loading.dart";
 import "package:activ8/managers/api/v1/update_health_data.dart";
 import "package:activ8/managers/app_state.dart";
+import "package:activ8/managers/food_manager.dart";
 import "package:activ8/managers/health_manager.dart";
 import "package:activ8/managers/location_manager.dart";
 import "package:activ8/shorthands/padding.dart";
@@ -19,12 +20,23 @@ class EntryPoint extends StatefulWidget {
 }
 
 class _EntryPointState extends State<EntryPoint> {
-  late Future<bool> hasUserFuture = AppState.instance.initialize();
+  late Future<bool> initializeSuccessFuture = initialize();
+
+  Future<bool> initialize() async {
+    final bool hasUser = await AppState.instance.initialize();
+
+    if (hasUser) {
+      _updateHealthData();
+      await FoodManager.instance.initialize();
+    }
+
+    return hasUser;
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: hasUserFuture,
+      future: initializeSuccessFuture,
       builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
         // Animate the loading screen to the target screen
         return Container(
@@ -48,7 +60,6 @@ class _EntryPointState extends State<EntryPoint> {
       return const SetupPage(key: ValueKey(4));
     }
 
-    _updateHealthData();
     return const HomePage(key: ValueKey(2));
   }
 }

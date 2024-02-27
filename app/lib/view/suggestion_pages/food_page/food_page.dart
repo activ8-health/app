@@ -1,5 +1,8 @@
 import "package:activ8/shorthands/gradient_scaffold.dart";
 import "package:activ8/shorthands/padding.dart";
+import "package:activ8/view/suggestion_pages/food_page/food_log/add_food_entry_fab.dart";
+import "package:activ8/view/suggestion_pages/food_page/food_log/preview.dart";
+import "package:activ8/view/widgets/category_marker.dart";
 import "package:flutter/material.dart";
 
 // uiGradients (Crazy Orange I)
@@ -21,33 +24,58 @@ class _FoodPageState extends State<FoodPage> {
   Widget build(BuildContext context) {
     // TODO
     return GradientScaffold(
+      floatingActionButton: const AddFoodEntryFAB(),
       hasBackButton: true,
       backgroundGradient: _backgroundGradient,
-      child: SizedBox.expand(
-        child: RefreshIndicator(
-          displacement: 80,
-          backgroundColor: Colors.white.withOpacity(0.2),
-          color: Colors.white,
-          onRefresh: () async {
-            // TODO refresh logic
-            setState(() {});
-          },
+      child: _allowRefresh(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            padding(58),
+
+            // Icon
+            const Icon(Icons.restaurant_menu, size: 60),
+            padding(12),
+
+            // Title
+            Text("Food & Nutrition", style: Theme.of(context).textTheme.headlineLarge),
+            padding(8),
+
+            // TODO calorie counter
+            // Calories
+            const CategoryMarker(label: "CALORIES CONSUMED"),
+
+            // TODO recommendations
+            // Recommendations
+            const CategoryMarker(label: "FOOD RECOMMENDATIONS"),
+
+            // Food Log
+            const CategoryMarker(label: "FOOD LOG"),
+            const FoodLogPreviewWidget(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _allowRefresh({required Widget child}) {
+    // TODO perhaps these allowRefreshes can be combined?
+    return Align(
+      alignment: Alignment.topCenter,
+      child: RefreshIndicator(
+        displacement: 80,
+        backgroundColor: Colors.white.withOpacity(0.2),
+        color: Colors.white,
+        onRefresh: () async {
+          // TODO refresh
+          setState(() {});
+        },
+        child: SizedBox(
+          width: 370,
           child: SizedBox.expand(
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(), // TODO remove if not necessary
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  padding(58),
-                  const Icon(Icons.restaurant_menu, size: 60),
-                  padding(12),
-                  Text(
-                    "Food & Nutrition",
-                    style: Theme.of(context).textTheme.headlineLarge,
-                  ),
-                  padding(8),
-                ],
-              ),
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: child,
             ),
           ),
         ),

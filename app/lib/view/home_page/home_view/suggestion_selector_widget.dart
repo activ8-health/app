@@ -11,14 +11,6 @@ const double _indent = 15;
 class SuggestionSelectorWidget extends StatelessWidget {
   const SuggestionSelectorWidget({super.key});
 
-  Widget get _divider => Divider(
-        color: Colors.white.withOpacity(0.6),
-        thickness: 1,
-        indent: _indent,
-        height: 0,
-        endIndent: _indent,
-      );
-
   @override
   Widget build(BuildContext context) {
     return ClearCard(
@@ -39,7 +31,7 @@ class SuggestionSelectorWidget extends StatelessWidget {
                 );
               },
             ),
-            _divider,
+            const ClearCardDivider(),
             _SuggestionEntry(
               title: const Text("Exercise"),
               description: const Text("Never a bad idea to get moving"),
@@ -52,7 +44,7 @@ class SuggestionSelectorWidget extends StatelessWidget {
                 );
               },
             ),
-            _divider,
+            const ClearCardDivider(),
             _SuggestionEntry(
               title: const Text("Sleep"),
               description: const Text("Happy days start with happy sleep"),

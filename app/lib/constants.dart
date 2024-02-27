@@ -7,7 +7,10 @@ const String defaultServerAddress = "127.0.0.1:8080";
 final BorderRadius largeIconBorderRadius = BorderRadius.circular(28);
 
 /// Border radius of home cards
-final BorderRadius homeCardBorderRadius = BorderRadius.circular(35);
+final BorderRadius homeCardBorderRadius = BorderRadius.circular(28);
 
 /// Retrieve health points from the last 90 days
 const int healthHistoryLength = 90;
+
+/// The number of food log entries to show in the preview
+const int foodLogPreviewCount = 3;

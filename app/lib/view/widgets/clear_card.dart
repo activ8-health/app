@@ -35,3 +35,20 @@ class ClearCard extends StatelessWidget {
     );
   }
 }
+
+class ClearCardDivider extends StatelessWidget {
+  static const double _dividerIndent = 15;
+
+  const ClearCardDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Divider(
+      color: Colors.white.withOpacity(0.6),
+      thickness: 1,
+      indent: _dividerIndent,
+      height: 0,
+      endIndent: _dividerIndent,
+    );
+  }
+}

@@ -22,5 +22,7 @@ class FoodManager {
       FoodLogEntry(item: items[2], date: DateTime.now().subtract(const Duration(days: 1)), servingSize: 0.7, rating: 3),
       FoodLogEntry(item: items[2], date: DateTime.now(), servingSize: 0.7, rating: 3),
     ];
+
+    log.sort((a, b) => b.date.compareTo(a.date));
   }
 }

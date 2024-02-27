@@ -25,6 +25,7 @@ class _FoodLogPageState extends State<FoodLogPage> {
     // Prepare food log items, grouped by date
     final List<FoodLogEntry> foodLog = FoodManager.instance.log;
     final Map<DateTime, List<FoodLogEntry>> logByDate = foodLog.groupListsBy((entry) => entry.date.extractDate());
+    // Sort headers
     final List<DateTime> dates = logByDate.keys.toList().sorted((a, b) => b.compareTo(a));
 
     return GradientScaffold(

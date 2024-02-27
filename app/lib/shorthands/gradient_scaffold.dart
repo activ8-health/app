@@ -6,11 +6,14 @@ class GradientScaffold extends StatelessWidget {
   final LinearGradient backgroundGradient;
   final bool hasBackButton;
 
+  final Widget? floatingActionButton;
+
   const GradientScaffold({
     super.key,
     required this.child,
     required this.backgroundGradient,
     this.hasBackButton = false,
+    this.floatingActionButton,
   });
 
   @override
@@ -27,6 +30,7 @@ class GradientScaffold extends StatelessWidget {
           child: child,
         ),
       ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }

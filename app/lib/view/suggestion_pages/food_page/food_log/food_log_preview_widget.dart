@@ -1,14 +1,13 @@
 import "dart:math";
 
-import "package:activ8/extensions/date_time_same_day.dart";
 import "package:activ8/managers/food_manager.dart";
 import "package:activ8/shorthands/padding.dart";
 import "package:activ8/types/food/menu.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_log/food_log_entry_widget.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_log/food_log_page.dart";
 import "package:activ8/view/widgets/clear_card.dart";
-import "package:collection/collection.dart";
 import "package:flutter/material.dart";
+import "package:google_fonts/google_fonts.dart";
 
 // Shows 3 most recent food items
 class FoodLogPreviewWidget extends StatelessWidget {
@@ -26,9 +25,7 @@ class FoodLogPreviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<FoodLogEntry> foodLog = FoodManager.instance.log.sorted((a, b) {
-      return b.date.extractDate().compareTo(a.date.extractDate());
-    });
+    final List<FoodLogEntry> foodLog = FoodManager.instance.log;
     final int stopIndex = min(numberToDisplay, foodLog.length);
     final Iterable<FoodLogEntry> items = foodLog.sublist(0, stopIndex);
 
@@ -37,9 +34,17 @@ class FoodLogPreviewWidget extends StatelessWidget {
         children: [
           for (FoodLogEntry item in items) ...[
             FoodLogEntryWidget(foodLogEntry: item),
-            const ClearCardDivider(),
+            if (item != items.last) const ClearCardDivider(),
           ],
-          _createSeeMoreButton(context),
+
+          // Show notice if food log is empty
+          if (foodLog.isEmpty) _createEmptyFoodLogNotice(),
+
+          // Show the See More button if there is more to see
+          if (stopIndex != foodLog.length) ...[
+            const ClearCardDivider(),
+            _createSeeMoreButton(context),
+          ],
         ],
       ),
     );
@@ -59,6 +64,33 @@ class FoodLogPreviewWidget extends StatelessWidget {
             ),
             padding(4),
             const Icon(Icons.chevron_right),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _createEmptyFoodLogNotice() {
+    return SizedBox(
+      height: 80,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            RichText(
+              text: TextSpan(
+                children: const [
+                  TextSpan(text: "Your food log is empty. Tap the"),
+                  WidgetSpan(child: Icon(Icons.add)),
+                  TextSpan(text: "button at the bottom to get started."),
+                ],
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ],
         ),
       ),

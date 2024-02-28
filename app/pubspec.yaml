@@ -18,6 +18,8 @@ dependencies:
   collection: ^1.18.0
   dots_indicator: ^3.0.0
   email_validator: ^2.1.17
+  flutter_rating_bar: ^4.0.1
+  fuzzywuzzy: ^1.1.6
   geolocator: ^10.1.0
   google_fonts: ^6.1.0
   health: ^8.1.0

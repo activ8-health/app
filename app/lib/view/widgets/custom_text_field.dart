@@ -12,6 +12,8 @@ class CustomTextField extends StatelessWidget {
   final bool Function(String)? validator;
   final bool obscureText;
   final bool readOnly;
+  final AutovalidateMode? autovalidateMode;
+  final bool showErrorText;
 
   const CustomTextField({
     super.key,
@@ -25,6 +27,8 @@ class CustomTextField extends StatelessWidget {
     this.validator,
     this.obscureText = false,
     this.readOnly = false,
+    this.autovalidateMode,
+    this.showErrorText = false,
   });
 
   @override
@@ -32,7 +36,13 @@ class CustomTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: TextFormField(
-        decoration: createInputDecoration(context, label, suffix: suffix),
+        autovalidateMode: autovalidateMode,
+        decoration: createInputDecoration(
+          context,
+          label,
+          suffix: suffix,
+          showErrorText: showErrorText,
+        ),
         initialValue: initialValue,
         autocorrect: false,
         keyboardType: inputType,
@@ -59,12 +69,12 @@ class CustomTextField extends StatelessWidget {
 }
 
 /// Creates a custom [InputDecoration] for the [CustomTextField]
-InputDecoration createInputDecoration(context, String label, {String? suffix}) {
+InputDecoration createInputDecoration(context, String label, {String? suffix, bool showErrorText = false}) {
   return InputDecoration(
     labelText: label,
     suffix: (suffix == null) ? null : Text(suffix),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    errorStyle: const TextStyle(height: 0),
+    errorStyle: showErrorText ? null : const TextStyle(height: 0),
     filled: true,
     fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.07),
   );

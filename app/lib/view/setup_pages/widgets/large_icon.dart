@@ -18,15 +18,16 @@ class LargeIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget childWidget = (child != null) ? child! : Icon(icon, size: 72);
     return Container(
-        width: 128,
-        height: 128,
-        decoration: BoxDecoration(
-          borderRadius: largeIconBorderRadius,
-          color: color,
-        ),
-        child: ClipRRect(
-          borderRadius: largeIconBorderRadius,
-          child: childWidget,
-        ));
+      width: 128,
+      height: 128,
+      decoration: BoxDecoration(
+        borderRadius: largeIconBorderRadius,
+        color: color,
+      ),
+      child: ClipRRect(
+        borderRadius: largeIconBorderRadius,
+        child: childWidget,
+      ),
+    );
   }
 }

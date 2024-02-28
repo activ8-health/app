@@ -8,6 +8,7 @@ class GradientScaffold extends StatelessWidget {
 
   final Widget? floatingActionButton;
   final Widget? title;
+  final Function()? onBack;
 
   const GradientScaffold({
     super.key,
@@ -16,6 +17,7 @@ class GradientScaffold extends StatelessWidget {
     this.hasBackButton = false,
     this.floatingActionButton,
     this.title,
+    this.onBack,
   });
 
   @override
@@ -23,7 +25,7 @@ class GradientScaffold extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
-      appBar: (hasBackButton) ? BackButtonAppBar(title: title) : null,
+      appBar: (hasBackButton) ? BackButtonAppBar(title: title, onBack: onBack) : null,
       body: Container(
         color: Colors.black,
         child: Container(

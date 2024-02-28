@@ -16,9 +16,8 @@ class FoodPage extends StatefulWidget {
 class _FoodPageState extends State<FoodPage> {
   @override
   Widget build(BuildContext context) {
-    // TODO
     return GradientScaffold(
-      floatingActionButton: const AddFoodEntryFAB(),
+      floatingActionButton: AddFoodEntryFAB(refresh: () => setState(() {})),
       hasBackButton: true,
       backgroundGradient: backgroundGradient,
       child: _allowRefresh(
@@ -45,7 +44,7 @@ class _FoodPageState extends State<FoodPage> {
 
             // Food Log
             const CategoryMarker(label: "FOOD LOG"),
-            const FoodLogPreviewWidget(),
+            FoodLogPreviewWidget(refresh: () => setState(() {})),
           ],
         ),
       ),

@@ -12,8 +12,9 @@ import "package:google_fonts/google_fonts.dart";
 // Shows 3 most recent food items
 class FoodLogPreviewWidget extends StatelessWidget {
   final int numberToDisplay;
+  final Function()? refresh;
 
-  const FoodLogPreviewWidget({super.key, this.numberToDisplay = 3});
+  const FoodLogPreviewWidget({super.key, this.numberToDisplay = 3, this.refresh});
 
   void _seeFoodLogAction(BuildContext context) {
     Navigator.of(context).push(
@@ -33,7 +34,7 @@ class FoodLogPreviewWidget extends StatelessWidget {
       child: Column(
         children: [
           for (FoodLogEntry item in items) ...[
-            FoodLogEntryWidget(foodLogEntry: item),
+            FoodLogEntryWidget(foodLogEntry: item, refresh: refresh),
             if (item != items.last) const ClearCardDivider(),
           ],
 
@@ -71,28 +72,23 @@ class FoodLogPreviewWidget extends StatelessWidget {
   }
 
   Widget _createEmptyFoodLogNotice() {
-    return SizedBox(
+    return Container(
       height: 80,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            RichText(
-              text: TextSpan(
-                children: const [
-                  TextSpan(text: "Your food log is empty. Tap the"),
-                  WidgetSpan(child: Icon(Icons.add)),
-                  TextSpan(text: "button at the bottom to get started."),
-                ],
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
+      padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RichText(
+            text: TextSpan(
+              children: const [
+                TextSpan(text: "Your food log is empty. Tap the"),
+                WidgetSpan(child: Icon(Icons.add)),
+                TextSpan(text: "button at the bottom to get started."),
+              ],
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -143,36 +143,37 @@ class FoodLogEntryWidget extends StatelessWidget {
 
   /// Only used when [showDate] is true
   Widget _getDate(DateTime date) {
+    // Day of the week OR "Today" / "Yesterday"
+    String firstPart = DateFormat.EEEE().format(date);
+
+    // Date OR time of day
+    String secondPart = "  ${DateFormat.yMd().format(date)}";
+
     // Special case for Today
     final DateTime today = DateTime.now();
     if (date.isSameDay(today)) {
-      return Text(
-        "Today",
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.8)),
-      );
+      firstPart = "Today";
+      secondPart = " at ${DateFormat.jm().format(date)}";
     }
 
     // Special case for Yesterday
     final DateTime yesterday = DateTime.now().subtract(const Duration(days: 1));
     if (date.isSameDay(yesterday)) {
-      return Text(
-        "Yesterday",
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.8)),
-      );
+      firstPart = "Yesterday";
+      secondPart = " at ${DateFormat.jm().format(date)}";
     }
 
     return Row(
       children: [
         // Day of the week
         Text(
-          DateFormat.EEEE().format(DateTime.now()),
+          firstPart,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.8)),
         ),
-        padding(4),
 
         // Date
         Text(
-          DateFormat.yMd().format(DateTime.now()),
+          secondPart,
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.6)),
         ),
       ],

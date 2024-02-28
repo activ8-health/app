@@ -33,7 +33,7 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
   late FoodMenuItem? item = widget.sourceEntry?.item;
   late DateTime date = widget.sourceEntry?.date ?? DateTime.now();
   late double? servings = widget.sourceEntry?.servings ?? 1.0;
-  late int rating = widget.sourceEntry?.rating ?? 5;
+  late int rating = widget.sourceEntry?.rating ?? 3;
 
   bool get isComplete => item != null && servings != null;
 

@@ -1,6 +1,8 @@
-import "package:activ8/extensions/date_time_same_day.dart";
+import "package:activ8/extensions/date_time_day_utils.dart";
+import "package:activ8/managers/food_manager.dart";
 import "package:activ8/shorthands/padding.dart";
 import "package:activ8/types/food/menu.dart";
+import "package:activ8/view/suggestion_pages/food_page/food_log/edit_food_log_entry_page.dart";
 import "package:flutter/material.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:intl/intl.dart";
@@ -8,11 +10,23 @@ import "package:intl/intl.dart";
 class FoodLogEntryWidget extends StatelessWidget {
   final FoodLogEntry foodLogEntry;
   final bool showDate;
+  final Function()? refresh;
 
-  const FoodLogEntryWidget({super.key, required this.foodLogEntry, this.showDate = true});
+  const FoodLogEntryWidget({super.key, required this.foodLogEntry, this.showDate = true, this.refresh});
 
-  void openEditAction() {
-    // TODO open edit action
+  Future<void> openEditAction(context) async {
+    final FoodLogEntry? entry = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return EditFoodLogEntryPage(sourceEntry: foodLogEntry);
+    }));
+
+    if (entry == foodLogEntry) return;
+    FoodManager.instance.removeFoodLogEntry(foodLogEntry);
+
+    if (entry != null) {
+      FoodManager.instance.addFoodLogEntry(entry);
+    }
+
+    if (refresh != null) refresh!();
   }
 
   @override
@@ -20,14 +34,12 @@ class FoodLogEntryWidget extends StatelessWidget {
     final String foodName = foodLogEntry.item.name;
     final int calories = foodLogEntry.item.calories;
 
-    final double servingSize = foodLogEntry.servingSize;
+    final double servings = foodLogEntry.servings;
     final int logRating = foodLogEntry.rating;
     final DateTime date = foodLogEntry.date;
 
-    final NumberFormat decimalFormatter = NumberFormat.decimalPattern();
-
     return InkWell(
-      onTap: openEditAction,
+      onTap: () async => await openEditAction(context),
       child: SizedBox(
         height: 80,
         child: SizedBox.expand(
@@ -36,31 +48,9 @@ class FoodLogEntryWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Expanded(child: _getHeading(context, foodName, servingSize)),
-
-                    // Emergency Padding
-                    padding(8),
-
-                    _getRating(logRating),
-                  ],
-                ),
+                _getHeader(context, foodName, servings, logRating),
                 padding(1),
-                Row(
-                  children: [
-                    (showDate) ? _getDate(date) : _getTime(date),
-
-                    // Padding
-                    const Expanded(child: SizedBox.shrink()),
-
-                    // Calories
-                    Text(
-                      "${decimalFormatter.format(calories)} cal",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.8)),
-                    ),
-                  ],
-                ),
+                _getDescription(date, calories, servings),
               ],
             ),
           ),
@@ -69,26 +59,21 @@ class FoodLogEntryWidget extends StatelessWidget {
     );
   }
 
-  Widget _getHeading(BuildContext context, String foodName, double servingSize) {
+  /// Combines the title/servings with the rating
+  Widget _getHeader(BuildContext context, String foodName, double servings, int logRating) {
     return Row(
       children: [
-        // Title
-        Flexible(child: _getTitle(context, foodName)),
-        padding(3),
-
-        // Cross Icon
-        Icon(Icons.close, size: 16, color: Colors.white.withOpacity(0.8)),
-        padding(4),
-
-        // Serving Size
-        _getServingSize(servingSize),
+        Expanded(child: _getTitleAndServings(context, foodName, servings)),
+        padding(8),
+        _getRating(logRating),
       ],
     );
   }
 
-  Widget _getTitle(context, String title) {
-    return Text(
-      title,
+  /// Displays the food name and servings as "<food name> x <servings>"
+  Widget _getTitleAndServings(BuildContext context, String foodName, double servings) {
+    final Widget title = Text(
+      foodName,
       style: GoogleFonts.poppins(
         fontSize: 20,
         fontWeight: FontWeight.w600,
@@ -97,21 +82,34 @@ class FoodLogEntryWidget extends StatelessWidget {
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
-  }
 
-  Widget _getServingSize(double servingSize) {
-    final bool shouldTruncate = servingSize.truncateToDouble() == servingSize;
-
-    return Text(
-      servingSize.toStringAsFixed(shouldTruncate ? 0 : 1),
+    final bool shouldTruncateServings = servings.truncateToDouble() == servings;
+    final Widget servingsText = Text(
+      servings.toStringAsFixed(shouldTruncateServings ? 0 : 1),
       style: GoogleFonts.poppins(
         color: Colors.white.withOpacity(0.6),
         fontWeight: FontWeight.bold,
         fontSize: 18,
       ),
     );
+
+    return Row(
+      children: [
+        // Title
+        Flexible(child: title),
+        padding(3),
+
+        // Cross Icon
+        Icon(Icons.close, size: 16, color: Colors.white.withOpacity(0.8)),
+        padding(4),
+
+        // Serving Size
+        servingsText,
+      ],
+    );
   }
 
+  /// Displays the rating with a star icon
   Widget _getRating(int rating) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,6 +121,27 @@ class FoodLogEntryWidget extends StatelessWidget {
     );
   }
 
+  /// Displays the date/time and calories as a subtitle
+  Widget _getDescription(DateTime date, int calories, double servings) {
+    final NumberFormat decimalFormatter = NumberFormat.decimalPattern();
+
+    return Row(
+      children: [
+        (showDate) ? _getDate(date) : _getTime(date),
+
+        // Padding
+        const Expanded(child: SizedBox.shrink()),
+
+        // Calories
+        Text(
+          "${decimalFormatter.format(calories * servings)} cal",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.8)),
+        ),
+      ],
+    );
+  }
+
+  /// Only used when [showDate] is true
   Widget _getDate(DateTime date) {
     // Special case for Today
     final DateTime today = DateTime.now();
@@ -160,9 +179,10 @@ class FoodLogEntryWidget extends StatelessWidget {
     );
   }
 
+  /// Only used when [showDate] is false
   Widget _getTime(DateTime date) {
     return Text(
-      DateFormat.jm().format(DateTime.now()),
+      DateFormat.jm().format(date),
       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.6)),
     );
   }

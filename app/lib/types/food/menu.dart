@@ -10,6 +10,20 @@ class FoodMenuItem {
     required this.calories,
     required this.nutritionFacts,
   });
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! FoodMenuItem) return false;
+    return name == other.name;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
+
+  @override
+  String toString() {
+    return "FoodMenuItem(name: $name, calories: $calories, nutritionFacts: $nutritionFacts)";
+  }
 }
 
 class FoodLogEntry {
@@ -18,14 +32,28 @@ class FoodLogEntry {
   final String id;
   final FoodMenuItem item;
   final DateTime date;
-  final double servingSize;
+  final double servings;
   final int rating;
 
   FoodLogEntry({
     required this.item,
     required this.date,
-    required this.servingSize,
+    required this.servings,
     required this.rating,
     String? id,
   }) : id = id ?? _uuid.v4();
+
+  @override
+  bool operator ==(Object other) {
+    if (other is! FoodLogEntry) return false;
+    return id == other.id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  String toString() {
+    return "FoodLogEntry(id: $id, item: $item, date: $date, servings: $servings, rating: $rating)";
+  }
 }

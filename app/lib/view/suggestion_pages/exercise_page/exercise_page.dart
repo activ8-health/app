@@ -101,7 +101,7 @@ class _ExercisePageState extends State<ExercisePage> {
           width: 370,
           child: SizedBox.expand(
             child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(), // TODO remove if not necessary
+              physics: const AlwaysScrollableScrollPhysics(),
               child: child,
             ),
           ),

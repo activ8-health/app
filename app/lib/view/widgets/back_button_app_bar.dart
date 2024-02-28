@@ -3,8 +3,9 @@ import "package:flutter/material.dart";
 /// An [AppBar] with invisible background, only showing the back button
 class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? title;
+  final Function()? onBack;
 
-  const BackButtonAppBar({super.key, this.title});
+  const BackButtonAppBar({super.key, this.title, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.only(left: 16),
         child: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
-          onPressed: Navigator.of(context).pop,
+          onPressed: onBack ?? Navigator.of(context).pop,
         ),
       ),
     );

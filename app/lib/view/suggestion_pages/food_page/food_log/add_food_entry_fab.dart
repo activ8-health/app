@@ -1,8 +1,25 @@
+import "package:activ8/managers/food_manager.dart";
+import "package:activ8/shorthands/blur_under.dart";
 import "package:activ8/shorthands/padding.dart";
+import "package:activ8/types/food/menu.dart";
+import "package:activ8/view/suggestion_pages/food_page/food_log/edit_food_log_entry_page.dart";
 import "package:flutter/material.dart";
 
 class AddFoodEntryFAB extends StatelessWidget {
-  const AddFoodEntryFAB({super.key});
+  final Function()? refresh;
+
+  const AddFoodEntryFAB({super.key, this.refresh});
+
+  Future<void> _addFoodLogAction(context) async {
+    final FoodLogEntry? entry = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return const EditFoodLogEntryPage();
+    }));
+
+    if (entry != null) {
+      FoodManager.instance.addFoodLogEntry(entry);
+      if (refresh != null) refresh!();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,12 +27,11 @@ class AddFoodEntryFAB extends StatelessWidget {
       tag: "AddFoodEntryFAB",
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-              onTap: () {
-                // TODO go to food log adding page
-              },
+        child: BlurUnder(
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () async => await _addFoodLogAction(context),
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -38,7 +54,9 @@ class AddFoodEntryFAB extends StatelessWidget {
                     padding(2),
                   ],
                 ),
-              )),
+              ),
+            ),
+          ),
         ),
       ),
     );

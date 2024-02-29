@@ -66,7 +66,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
     final bool success = await action();
 
     if (success && mounted) {
-      Navigator.pushReplacement(
+      await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (BuildContext context) => const HomePage(),

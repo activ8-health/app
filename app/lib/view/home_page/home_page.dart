@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
     Navigator.of(context).popUntil((route) => route.isFirst);
 
     // Open new page
-    Navigator.pushReplacement(
+    await Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const EntryPoint()),
     );

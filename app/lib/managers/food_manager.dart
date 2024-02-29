@@ -1,8 +1,15 @@
+import "dart:async";
+
+import "package:activ8/managers/api/v1/add_food_log_entry.dart";
+import "package:activ8/managers/api/v1/remove_food_log_entry.dart";
+import "package:activ8/managers/app_state.dart";
+import "package:activ8/managers/location_manager.dart";
 import "package:activ8/types/food/menu.dart";
 import "package:activ8/utils/logger.dart";
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:fuzzywuzzy/model/extracted_result.dart";
 import "package:fuzzywuzzy/ratios/partial_ratio.dart";
+import "package:geolocator/geolocator.dart";
 
 class FoodManager {
   static FoodManager instance = FoodManager._();
@@ -33,6 +40,9 @@ class FoodManager {
 
   /// Search with partial fuzzy matching
   Iterable<FoodMenuItem> searchFoodItems(String query) {
+    // Empty query, give top few results
+    if (query.isEmpty) return items.take(4);
+
     // Fuzzy match results
     final List<ExtractedResult<FoodMenuItem>> results = extractTop<FoodMenuItem>(
       query: query,
@@ -53,6 +63,8 @@ class FoodManager {
     log.add(entry);
     log.sort((a, b) => b.date.compareTo(a.date));
     // TODO save to disk
+
+    unawaited(_sendAddFoodLogEntryRequest(entry));
   }
 
   /// Removes a new food item [entry] from [log] and saves to disk
@@ -60,5 +72,21 @@ class FoodManager {
     logger.i("Removing food log entry: $entry");
     log.remove(entry);
     // TODO save to disk
+
+    unawaited(_sendRemoveFoodLogEntryRequest(entry));
+  }
+
+  /// Send the add request to the server using the addFoodLogEntry API
+  Future<void> _sendAddFoodLogEntryRequest(FoodLogEntry entry) async {
+    final Position location = await LocationManager.instance.getLocation();
+    final V1AddFoodLogEntryBody body = V1AddFoodLogEntryBody(entry: entry, location: location);
+    await v1addFoodLogEntry(body, AppState.instance.auth);
+  }
+
+  /// Send the remove request to the server using the removeFoodLogEntry API
+  Future<void> _sendRemoveFoodLogEntryRequest(FoodLogEntry entry) async {
+    final Position location = await LocationManager.instance.getLocation();
+    final V1RemoveFoodLogEntryBody body = V1RemoveFoodLogEntryBody(entry: entry, location: location);
+    await v1removeFoodLogEntry(body, AppState.instance.auth);
   }
 }

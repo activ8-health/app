@@ -1,4 +1,5 @@
 import "dart:async";
+import "dart:convert";
 
 import "package:activ8/managers/api/v1/add_food_log_entry.dart";
 import "package:activ8/managers/api/v1/remove_food_log_entry.dart";
@@ -6,10 +7,12 @@ import "package:activ8/managers/app_state.dart";
 import "package:activ8/managers/location_manager.dart";
 import "package:activ8/types/food/menu.dart";
 import "package:activ8/utils/logger.dart";
+import "package:flutter/services.dart" show rootBundle;
 import "package:fuzzywuzzy/fuzzywuzzy.dart";
 import "package:fuzzywuzzy/model/extracted_result.dart";
 import "package:fuzzywuzzy/ratios/partial_ratio.dart";
 import "package:geolocator/geolocator.dart";
+import "package:shared_preferences/shared_preferences.dart";
 
 class FoodManager {
   static FoodManager instance = FoodManager._();
@@ -19,20 +22,33 @@ class FoodManager {
   List<FoodMenuItem> items = [];
   List<FoodLogEntry> log = [];
 
-  Future<void> initialize() async {
-    // TODO load items and log from disk
-    items = [
-      FoodMenuItem(name: "Pizza", calories: 650, nutritionFacts: {}),
-      FoodMenuItem(name: "Brocolini", calories: 650, nutritionFacts: {}),
-      FoodMenuItem(name: "Chicken Tortellini with Bacon Alfredo Sauce", calories: 30000, nutritionFacts: {}),
-    ];
+  late SharedPreferences _sharedPreferences;
 
-    log = [
-      FoodLogEntry(item: items[0], date: DateTime.now().subtract(const Duration(days: 2)), servings: 1.5, rating: 5),
-      FoodLogEntry(item: items[1], date: DateTime.now().subtract(const Duration(days: 1)), servings: 0.7, rating: 3),
-      FoodLogEntry(item: items[2], date: DateTime.now().subtract(const Duration(days: 1)), servings: 0.7, rating: 3),
-      FoodLogEntry(item: items[2], date: DateTime.now(), servings: 0.7, rating: 3),
-    ];
+  Future<void> initialize() async {
+    logger.i("Loading food items from disk");
+    items = [];
+    final String menuDataContent = await rootBundle.loadString("assets/menu_data.json");
+    final Map<String, dynamic> menuData = jsonDecode(menuDataContent);
+
+    for (Map<String, dynamic> food in menuData["food"]!) {
+      items.add(FoodMenuItem(
+        name: food["Food Name"].toString(),
+        calories: int.parse(food["Calories"]),
+        nutritionFacts: {},
+      ));
+    }
+    logger.i("Loaded ${items.length} food items from disk");
+
+    // Load log from disk
+    logger.i("Loading food log from disk");
+    log = [];
+    _sharedPreferences = await SharedPreferences.getInstance();
+    final String? data = _sharedPreferences.getString("food_log");
+    if (data != null) {
+      final List<dynamic> logData = jsonDecode(data);
+      log = logData.map((dynamic entry) => FoodLogEntry.fromJson(entry, items)).toList();
+    }
+    logger.i("Loaded ${log.length} food log entries from disk");
 
     items.sort((a, b) => a.name.compareTo(b.name));
     log.sort((a, b) => b.date.compareTo(a.date));
@@ -41,14 +57,13 @@ class FoodManager {
   /// Search with partial fuzzy matching
   Iterable<FoodMenuItem> searchFoodItems(String query) {
     // Empty query, give top few results
-    if (query.isEmpty) return items.take(4);
+    if (query.isEmpty) return items;
 
     // Fuzzy match results
-    final List<ExtractedResult<FoodMenuItem>> results = extractTop<FoodMenuItem>(
+    final List<ExtractedResult<FoodMenuItem>> results = extractAllSorted<FoodMenuItem>(
       query: query,
       choices: FoodManager.instance.items,
-      limit: 4,
-      cutoff: 60,
+      cutoff: 70,
       ratio: PartialRatio(),
       getter: (FoodMenuItem item) => item.name,
     );
@@ -62,8 +77,8 @@ class FoodManager {
     logger.i("Adding food log entry: $entry");
     log.add(entry);
     log.sort((a, b) => b.date.compareTo(a.date));
-    // TODO save to disk
 
+    unawaited(_saveFoodLogToDisk());
     unawaited(_sendAddFoodLogEntryRequest(entry));
   }
 
@@ -71,8 +86,8 @@ class FoodManager {
   void removeFoodLogEntry(FoodLogEntry entry) {
     logger.i("Removing food log entry: $entry");
     log.remove(entry);
-    // TODO save to disk
 
+    unawaited(_saveFoodLogToDisk());
     unawaited(_sendRemoveFoodLogEntryRequest(entry));
   }
 
@@ -88,5 +103,10 @@ class FoodManager {
     final Position location = await LocationManager.instance.getLocation();
     final V1RemoveFoodLogEntryBody body = V1RemoveFoodLogEntryBody(entry: entry, location: location);
     await v1removeFoodLogEntry(body, AppState.instance.auth);
+  }
+
+  Future<void> _saveFoodLogToDisk() async {
+    final String data = jsonEncode(log.map((FoodLogEntry entry) => entry.toJson()).toList());
+    await _sharedPreferences.setString("food_log", data);
   }
 }

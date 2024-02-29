@@ -74,7 +74,7 @@ class FoodLogPreviewWidget extends StatelessWidget {
   Widget _createEmptyFoodLogNotice() {
     return Container(
       height: 80,
-      padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16).copyWith(top: 13),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

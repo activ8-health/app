@@ -50,6 +50,7 @@ flutter:
 
   assets:
     - assets/icon.png
+    - assets/menu_data.json
 
 
 flutter_launcher_icons:

@@ -56,4 +56,8 @@ class FoodLogEntry {
   String toString() {
     return "FoodLogEntry(id: $id, item: $item, date: $date, servings: $servings, rating: $rating)";
   }
+
+  bool isIdentical(FoodLogEntry other) {
+    return item == other.item && date == other.date && servings == other.servings && rating == other.rating;
+  }
 }

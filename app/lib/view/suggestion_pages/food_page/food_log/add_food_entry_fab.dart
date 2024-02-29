@@ -1,3 +1,5 @@
+import "dart:ui";
+
 import "package:activ8/managers/food_manager.dart";
 import "package:activ8/shorthands/blur_under.dart";
 import "package:activ8/shorthands/padding.dart";
@@ -11,10 +13,28 @@ class AddFoodEntryFAB extends StatelessWidget {
   const AddFoodEntryFAB({super.key, this.refresh});
 
   Future<void> _addFoodLogAction(context) async {
-    final FoodLogEntry? entry = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return const EditFoodLogEntryPage();
-    }));
+    final FoodLogEntry? entry = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      // Prevent the user from dismissing outside of the "back" button, which messes up return values
+      isDismissible: false,
+      enableDrag: false,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: const FractionallySizedBox(
+            heightFactor: 0.85,
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+              child: EditFoodLogEntryPage(),
+            ),
+          ),
+        );
+      },
+    );
 
+    // If a new entry is to be added
     if (entry != null) {
       FoodManager.instance.addFoodLogEntry(entry);
       if (refresh != null) refresh!();

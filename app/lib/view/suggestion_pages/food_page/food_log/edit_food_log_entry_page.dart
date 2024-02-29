@@ -69,62 +69,43 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
           }
         },
         backgroundGradient: backgroundGradient,
-        child: _allowRefresh(
-          child: SafeArea(
-            child: Column(
-              children: [
-                padding(12),
-
-                // Food Item Selector
-                _createFoodItemSelector(),
-                padding(12),
-
-                // Date and Time Picker
-                Row(
-                  children: [
-                    Flexible(child: _createDatePicker()),
-                    padding(6),
-                    SizedBox(
-                      width: 150,
-                      child: _createTimePicker(),
-                    ),
-                  ],
-                ),
-                padding(8),
-
-                // Servings and Rating
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(width: 100, child: _createServingInput()),
-                    _createRatingInput(),
-                  ],
-                ),
-                padding(26),
-
-                // Action Row (Save/Delete)
-                _createActionRow(),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _allowRefresh({required Widget child}) {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: RefreshIndicator(
-        displacement: 80,
-        backgroundColor: Colors.white.withOpacity(0.2),
-        color: Colors.white,
-        onRefresh: () async => setState(() {}),
         child: SizedBox(
           width: 370,
-          child: SizedBox.expand(
-            child: child,
+          child: ListView(
+            children: [
+              padding(12),
+
+              // Food Item Selector
+              _createFoodItemSelector(),
+              padding(12),
+
+              // Date and Time Picker
+              Row(
+                children: [
+                  Flexible(child: _createDatePicker()),
+                  padding(6),
+                  SizedBox(
+                    width: 150,
+                    child: _createTimePicker(),
+                  ),
+                ],
+              ),
+              padding(8),
+
+              // Servings and Rating
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(width: 100, child: _createServingInput()),
+                  _createRatingInput(),
+                ],
+              ),
+              padding(16),
+
+              // Action Row (Save/Delete)
+              _createActionRow(),
+            ],
           ),
         ),
       ),
@@ -183,6 +164,7 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
       child: SizedBox(
         width: width,
         child: BlurUnder(
+          strength: 8,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(24.0).copyWith(topLeft: Radius.zero, topRight: Radius.zero),
             child: Material(

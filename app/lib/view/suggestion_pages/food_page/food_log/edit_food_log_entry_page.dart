@@ -280,7 +280,7 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
       onChanged: (String value) {
         servings = double.tryParse(value);
         if (servings != null) {
-          // Truncate to 1 decimal place
+          // Truncate (or round) to 1 decimal place
           servings = double.parse(servings!.toStringAsFixed(1));
         }
         setState(() {});

@@ -35,7 +35,7 @@ class CustomNavigationBar extends StatelessWidget {
         if (pageController.page != null && pageController.page! < 0.5) {
           Navigator.of(context).pop();
         }
-        pageController.previousPage(
+        await pageController.previousPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutQuart,
         );
@@ -53,7 +53,7 @@ class CustomNavigationBar extends StatelessWidget {
       action = () async {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-        pageController.nextPage(
+        await pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOutQuart,
         );

@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:activ8/extensions/snapshot_loading.dart";
 import "package:activ8/managers/api/v1/update_health_data.dart";
 import "package:activ8/managers/app_state.dart";
@@ -26,7 +28,7 @@ class _EntryPointState extends State<EntryPoint> {
     final bool hasUser = await AppState.instance.initialize();
 
     if (hasUser) {
-      _updateHealthData();
+      unawaited(_updateHealthData());
       await FoodManager.instance.initialize();
     }
 

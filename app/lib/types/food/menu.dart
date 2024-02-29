@@ -57,6 +57,25 @@ class FoodLogEntry {
     return "FoodLogEntry(id: $id, item: $item, date: $date, servings: $servings, rating: $rating)";
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "item": item.name,
+      "date": date.toIso8601String(),
+      "servings": servings,
+      "rating": rating,
+    };
+  }
+
+  static FoodLogEntry fromJson(Map<String, dynamic> json, List<FoodMenuItem> items) {
+    final String id = json["id"];
+    final FoodMenuItem item = items.firstWhere((FoodMenuItem item) => item.name == json["item"]);
+    final DateTime date = DateTime.parse(json["date"]);
+    final double servings = json["servings"];
+    final int rating = json["rating"];
+    return FoodLogEntry(item: item, date: date, servings: servings, rating: rating, id: id);
+  }
+
   bool isIdentical(FoodLogEntry other) {
     return item == other.item && date == other.date && servings == other.servings && rating == other.rating;
   }

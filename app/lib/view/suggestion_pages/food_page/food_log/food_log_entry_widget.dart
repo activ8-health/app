@@ -1,3 +1,5 @@
+import "dart:ui";
+
 import "package:activ8/extensions/date_time_day_utils.dart";
 import "package:activ8/managers/food_manager.dart";
 import "package:activ8/shorthands/padding.dart";
@@ -15,16 +17,34 @@ class FoodLogEntryWidget extends StatelessWidget {
   const FoodLogEntryWidget({super.key, required this.foodLogEntry, this.showDate = true, this.refresh});
 
   Future<void> openEditAction(context) async {
-    final FoodLogEntry? entry = await Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return EditFoodLogEntryPage(sourceEntry: foodLogEntry);
-    }));
+    final FoodLogEntry? entry = await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      // Prevent the user from dismissing outside of the "back" button, which messes up return values
+      isDismissible: false,
+      enableDrag: false,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+          child: FractionallySizedBox(
+            heightFactor: 0.85,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+              child: EditFoodLogEntryPage(sourceEntry: foodLogEntry),
+            ),
+          ),
+        );
+      },
+    );
 
-    if (entry == foodLogEntry) return;
+    if (entry == foodLogEntry || (entry?.isIdentical(foodLogEntry) ?? false)) return;
+
+    // Remove current entry (for both remove and update)
     FoodManager.instance.removeFoodLogEntry(foodLogEntry);
 
-    if (entry != null) {
-      FoodManager.instance.addFoodLogEntry(entry);
-    }
+    // Add new entry (update)
+    if (entry != null) FoodManager.instance.addFoodLogEntry(entry);
 
     if (refresh != null) refresh!();
   }

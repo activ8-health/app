@@ -223,7 +223,7 @@ class _SetupHandshakePageState extends State<SetupHandshakePage> {
           children: [
             _createEmailField(),
             _createPasswordField(),
-            _createServerAddressField(),
+            if (allowChangingServerAddress) _createServerAddressField(),
           ],
         ),
       ),

@@ -33,6 +33,7 @@ class FoodManager {
     for (Map<String, dynamic> food in menuData["food"]!) {
       items.add(FoodMenuItem(
         name: food["Food Name"].toString(),
+        description: food["Description"].toString(),
         calories: int.parse(food["Calories"]),
         nutritionFacts: {},
       ));

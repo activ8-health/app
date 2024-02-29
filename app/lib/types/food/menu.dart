@@ -2,11 +2,13 @@ import "package:uuid/uuid.dart";
 
 class FoodMenuItem {
   final String name;
+  final String description;
   final int calories;
   final Map<String, String> nutritionFacts; // TODO do we need this?
 
   FoodMenuItem({
     required this.name,
+    required this.description,
     required this.calories,
     required this.nutritionFacts,
   });

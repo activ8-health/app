@@ -27,7 +27,7 @@ class AddFoodEntryFAB extends StatelessWidget {
             heightFactor: 0.85,
             child: ClipRRect(
               borderRadius: BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-              child: EditFoodLogEntryPage(),
+              child: EditFoodLogEntryPage(isEditing: false),
             ),
           ),
         );

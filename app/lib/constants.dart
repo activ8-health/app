@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 
 /// The server address use by default
 const String defaultServerAddress = "127.0.0.1:8080";
+const bool allowChangingServerAddress = true;
 
 /// Border radius of large icons
 final BorderRadius largeIconBorderRadius = BorderRadius.circular(28);
@@ -14,3 +15,6 @@ const int healthHistoryLength = 90;
 
 /// The number of food log entries to show in the preview
 const int foodLogPreviewCount = 3;
+
+/// The number of stars to default to when asking users for a rating
+const int defaultRatingStars = 3;

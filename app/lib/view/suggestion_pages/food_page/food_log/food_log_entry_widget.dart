@@ -31,7 +31,7 @@ class FoodLogEntryWidget extends StatelessWidget {
             heightFactor: 0.85,
             child: ClipRRect(
               borderRadius: const BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
-              child: EditFoodLogEntryPage(sourceEntry: foodLogEntry),
+              child: EditFoodLogEntryPage(sourceEntry: foodLogEntry, isEditing: true),
             ),
           ),
         );
@@ -62,17 +62,15 @@ class FoodLogEntryWidget extends StatelessWidget {
       onTap: () async => await openEditAction(context),
       child: SizedBox(
         height: 80,
-        child: SizedBox.expand(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _getHeader(context, foodName, servings, logRating),
-                padding(1),
-                _getDescription(date, calories, servings),
-              ],
-            ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _getHeader(context, foodName, servings, logRating),
+              padding(1),
+              _getDescription(date, calories, servings),
+            ],
           ),
         ),
       ),

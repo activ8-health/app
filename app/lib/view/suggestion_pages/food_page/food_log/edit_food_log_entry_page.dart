@@ -1,3 +1,4 @@
+import "package:activ8/constants.dart";
 import "package:activ8/extensions/date_time_day_utils.dart";
 import "package:activ8/managers/food_manager.dart";
 import "package:activ8/shorthands/blur_under.dart";
@@ -21,8 +22,9 @@ import "package:intl/intl.dart";
 ///   Add -> new entry
 class EditFoodLogEntryPage extends StatefulWidget {
   final FoodLogEntry? sourceEntry;
+  final bool isEditing;
 
-  const EditFoodLogEntryPage({super.key, this.sourceEntry});
+  const EditFoodLogEntryPage({super.key, this.sourceEntry, required this.isEditing});
 
   @override
   State<EditFoodLogEntryPage> createState() => _EditFoodLogEntryPageState();
@@ -33,11 +35,9 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
   late FoodMenuItem? item = widget.sourceEntry?.item;
   late DateTime date = widget.sourceEntry?.date ?? DateTime.now();
   late double? servings = widget.sourceEntry?.servings ?? 1.0;
-  late int rating = widget.sourceEntry?.rating ?? 3;
+  late int rating = widget.sourceEntry?.rating ?? defaultRatingStars;
 
   bool get isComplete => item != null && servings != null;
-
-  bool get isEditing => widget.sourceEntry != null;
 
   void save() {
     Navigator.pop(
@@ -53,7 +53,7 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final String appBarTitle = (isEditing) ? "Edit Food Log Entry" : "Add Food Log Entry";
+    final String appBarTitle = (widget.isEditing) ? "Edit Food Log Entry" : "Add Food Log Entry";
 
     return GestureDetector(
       // Allow tapping outside to dismiss keyboard
@@ -61,8 +61,9 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
       child: GradientScaffold(
         title: Text(appBarTitle),
         hasBackButton: true,
+        backIcon: const Icon(Icons.close_rounded, size: 32),
         onBack: () {
-          if (isEditing) {
+          if (widget.isEditing) {
             Navigator.pop(context, widget.sourceEntry);
           } else {
             Navigator.pop(context, null);
@@ -189,6 +190,8 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
 
   /// Each option inside the dropdown
   Widget _buildOption(BuildContext context, Function(FoodMenuItem) onSelected, FoodMenuItem item) {
+    final NumberFormat decimalFormatter = NumberFormat.decimalPattern();
+
     return InkWell(
       onTap: () => onSelected(item),
       child: Container(
@@ -199,7 +202,7 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
           children: [
             Expanded(child: Text(item.name, maxLines: 2, overflow: TextOverflow.ellipsis)),
             Text(
-              "${item.calories} cal",
+              "${decimalFormatter.format(item.calories)} cal",
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.6)),
             ),
           ],
@@ -319,7 +322,7 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
   Widget _createActionRow() {
     return Row(
       children: [
-        if (isEditing)
+        if (widget.isEditing)
           TextButton.icon(
             icon: const Icon(Icons.delete_forever),
             onPressed: () => Navigator.pop(context, null),
@@ -338,7 +341,7 @@ class _EditFoodLogEntryPageState extends State<EditFoodLogEntryPage> {
             ),
           ),
           onPressed: !isComplete ? null : save,
-          child: Text(isEditing ? "Save" : "Add"),
+          child: Text(widget.isEditing ? "Save" : "Add"),
         ),
       ],
     );

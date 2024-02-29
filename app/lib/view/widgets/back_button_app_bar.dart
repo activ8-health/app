@@ -4,8 +4,9 @@ import "package:flutter/material.dart";
 class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? title;
   final Function()? onBack;
+  final Widget? backIcon;
 
-  const BackButtonAppBar({super.key, this.title, this.onBack});
+  const BackButtonAppBar({super.key, this.title, this.onBack, this.backIcon});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class BackButtonAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: Padding(
         padding: const EdgeInsets.only(left: 16),
         child: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: backIcon ?? const Icon(Icons.arrow_back_ios),
           onPressed: onBack ?? Navigator.of(context).pop,
         ),
       ),

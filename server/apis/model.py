@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from apis import food_log
 from enum import Enum
 
 
@@ -126,7 +127,7 @@ class User:
 class Food:
     weight_goal: str
     dietary: list
-    food_log: list
+    food_log: dict
 
     def __post_init__(self):
         if not isinstance(self.weight_goal, str):
@@ -226,7 +227,7 @@ class UserProfile:
             self.food = Food(weight_goal=(food_data['weight_goal'] if flag
                                           else WeightGoal(food_data['weight_goal']).name),
                              dietary=food_data['dietary'],
-                             food_log=food_data['food_log'] if flag else None)
+                             food_log=food_data['food_log'] if flag else dict())
         except ValueError as e:
             raise ValueError('Invalid food data: ' + str(e))
 
@@ -258,13 +259,11 @@ class UserProfile:
         self.exercise.step_data = format_step_data(step_data)
 
     def update_food_data(self, food_data):
-        pass
+        self.food.food_log.update(food_data)
 
     def update_location(self, location_data) -> None:
-        print(location_data)
         if location_data[0] is not None and location_data[1] is not None:
             self.location = Location(lat=location_data[0], long=location_data[1])
-            print(self.location)
 
     def serialize(self):
         return ({

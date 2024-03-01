@@ -28,6 +28,7 @@ def calc_sleep_score(sleep_data: dict) -> int:
     '''
     days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     avg_sleep_time = 0
+    num_days = 0
     for day in days:
         # if there are data points that within 30 mins of each other, they are combined
         # other than those cases, only one data point should be taken from each day
@@ -43,8 +44,9 @@ def calc_sleep_score(sleep_data: dict) -> int:
             else:
                 break
             i+=1
+        num_days += 1
         avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
-    avg_sleep_time /= 7
+    avg_sleep_time /= num_days
     sleep_score = (avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS)
     return min(sleep_score, 1.0)
 
@@ -58,23 +60,36 @@ def calc_exercise_score(exercise_data: dict) -> int:
     '''
     step_goal = exercise_data['step_goal']
     step_data = exercise_data['step_data']
-    avg_steps = 0
-    for i in range(7):
-        avg_steps += step_data[list(step_data.keys())[i]]
-    avg_steps /= 7
+    total_steps = 0
+    step_data_dates = list(step_data.keys())
+    i = 0
+    while i < 7 and i < len(step_data_dates):
+        total_steps += step_data[step_data_dates[i]]
+        i += 1
+    avg_steps = total_steps / min(len(step_data_dates), 7)
     exercise_score = avg_steps / step_goal
     return min(exercise_score, 1.0)
 
 def calc_food_score(food_data: dict) -> tuple[int, bool]:
-    food_log = food_data['food_log']
-    food_goal = food_data['weight_goal']
-    avg_cals = 0
-    # for i in range(7):
-    #     avg_cals += food_log[list(food_log.keys())[i]]
-    # avg_cals /= 7
-    ideal_cals = 2000
-    # avg_cals = 3250
-    # food_score = 1 - min((((avg_cals - ideal_cals) / 750) ** 2), 1.0)
+    '''
+    food data: a dictionary including the user's food log and weight goal
+    returns the user's food score
+
+    the user's average calorie is calculated for the first 7 food data
+    then this equation is used to calculate the score: 1 - min((((average calories - ideal calories goal) / (30% of ideal calories goal))^ 2), 1.0)
+    if the user goes over or under their ideal calories goal by 30%, their food score is automatically 0
+    '''
+    # food_log = food_data['food_log']
+    # total_cals = 0
+    # food_log_dates = list(food_log.keys())
+    # i = 0
+    # while i < 7 and i < len(food_log_dates):
+    #     food_log_dict = food_log[food_log_dates[i]]
+    #     for key in list(food_log_dict.keys()):
+    #         total_cals += food_log_dict[key]['total_calories']
+    #     i += 1
+    # avg_cals = total_cals / min(len(food_log_dates), 7)
+    ideal_cals = 2000 # will be replaced by cal func in food files
     avg_cals = 1900
     food_score = 1 - min((((avg_cals - ideal_cals) / (ideal_cals * 0.3)) ** 2), 1.0)
     return food_score, (avg_cals < ideal_cals)

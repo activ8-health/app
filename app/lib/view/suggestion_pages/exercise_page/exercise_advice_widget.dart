@@ -4,10 +4,10 @@ import "package:activ8/utils/future_widget_selector.dart";
 import "package:activ8/view/widgets/clear_card.dart";
 import "package:flutter/material.dart";
 
-class RecommendationMessage extends StatelessWidget {
+class ExerciseAdviceWidget extends StatelessWidget {
   final Future<V1GetActivityRecommendationResponse> activityRecommendationFuture;
 
-  const RecommendationMessage({super.key, required this.activityRecommendationFuture});
+  const ExerciseAdviceWidget({super.key, required this.activityRecommendationFuture});
 
   @override
   Widget build(BuildContext context) {

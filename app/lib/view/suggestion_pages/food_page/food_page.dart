@@ -5,6 +5,7 @@ import "package:activ8/managers/location_manager.dart";
 import "package:activ8/shorthands/gradient_scaffold.dart";
 import "package:activ8/shorthands/padding.dart";
 import "package:activ8/utils/snackbar.dart";
+import "package:activ8/view/suggestion_pages/food_page/food_calories_widget.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_log/add_food_entry_fab.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_log/food_log_preview_widget.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_recommendation_widget.dart";
@@ -60,9 +61,9 @@ class _FoodPageState extends State<FoodPage> {
             Text("Food & Nutrition", style: Theme.of(context).textTheme.headlineLarge),
             padding(8),
 
-            // TODO calorie counter
             // Calories
             const CategoryMarker(label: "CALORIES CONSUMED"),
+            FoodCaloriesWidget(foodRecommendationFuture: foodRecommendationFuture),
 
             padding(20),
 
@@ -78,7 +79,7 @@ class _FoodPageState extends State<FoodPage> {
             padding(20),
 
             // Food Log
-            const CategoryMarker(label: "FOOD LOG"),
+            const CategoryMarker(label: "YOUR FOOD LOG"),
             FoodLogPreviewWidget(refresh: () => setState(() {})),
 
             // Bottom padding to prevent the FAB from cutting off items

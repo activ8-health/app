@@ -9,10 +9,10 @@ import "package:url_launcher/url_launcher_string.dart";
 const String _articleLabel = "Physical Activity for a Healthy Weight";
 const String _articleUrl = "https://www.cdc.gov/healthyweight/physical_activity/index.html";
 
-class CaloriesMessage extends StatelessWidget {
+class ExerciseCaloriesWidget extends StatelessWidget {
   final Future<V1GetActivityRecommendationResponse> activityRecommendationFuture;
 
-  const CaloriesMessage({super.key, required this.activityRecommendationFuture});
+  const ExerciseCaloriesWidget({super.key, required this.activityRecommendationFuture});
 
   @override
   Widget build(BuildContext context) {

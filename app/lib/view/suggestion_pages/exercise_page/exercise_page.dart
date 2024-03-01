@@ -5,8 +5,8 @@ import "package:activ8/managers/location_manager.dart";
 import "package:activ8/shorthands/gradient_scaffold.dart";
 import "package:activ8/shorthands/padding.dart";
 import "package:activ8/utils/snackbar.dart";
-import "package:activ8/view/suggestion_pages/exercise_page/calories_message.dart";
-import "package:activ8/view/suggestion_pages/exercise_page/recommendation_message.dart";
+import "package:activ8/view/suggestion_pages/exercise_page/exercise_calories_widget.dart";
+import "package:activ8/view/suggestion_pages/exercise_page/exercise_advice_widget.dart";
 import "package:activ8/view/suggestion_pages/exercise_page/step_progress_widget.dart";
 import "package:activ8/view/widgets/category_marker.dart";
 import "package:flutter/material.dart";
@@ -73,12 +73,12 @@ class _ExercisePageState extends State<ExercisePage> {
 
             // Calories
             const CategoryMarker(label: "CALORIES"),
-            CaloriesMessage(activityRecommendationFuture: activityRecommendationFuture),
+            ExerciseCaloriesWidget(activityRecommendationFuture: activityRecommendationFuture),
             padding(12),
 
             // Message
             const CategoryMarker(label: "RECOMMENDATION"),
-            RecommendationMessage(activityRecommendationFuture: activityRecommendationFuture),
+            ExerciseAdviceWidget(activityRecommendationFuture: activityRecommendationFuture),
           ],
         ),
       ),

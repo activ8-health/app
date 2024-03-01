@@ -46,7 +46,7 @@ def calc_sleep_score(sleep_data: dict) -> int:
         avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
     avg_sleep_time /= 7
     sleep_score = (avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS)
-    return min(sleep_score, 1)
+    return min(sleep_score, 1.0)
 
 def calc_exercise_score(exercise_data: dict) -> int:
     '''
@@ -63,7 +63,7 @@ def calc_exercise_score(exercise_data: dict) -> int:
         avg_steps += step_data[list(step_data.keys())[i]]
     avg_steps /= 7
     exercise_score = avg_steps / step_goal
-    return min(exercise_score, 1)
+    return min(exercise_score, 1.0)
 
 def calc_food_score(food_data: dict) -> tuple[int, bool]:
     food_log = food_data['food_log']
@@ -72,9 +72,11 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
     # for i in range(7):
     #     avg_cals += food_log[list(food_log.keys())[i]]
     # avg_cals /= 7
-    ideal_cals = 2500
-    avg_cals = 1000
-    food_score = 0 #1 - (((avg_cals - ideal_cals) / 600) ** 2)
+    ideal_cals = 2000
+    # avg_cals = 3250
+    # food_score = 1 - min((((avg_cals - ideal_cals) / 750) ** 2), 1.0)
+    avg_cals = 1900
+    food_score = 1 - min((((avg_cals - ideal_cals) / (ideal_cals * 0.3)) ** 2), 1.0)
     return food_score, (avg_cals < ideal_cals)
 
 def get_lifestyle_score(email: str) -> dict:

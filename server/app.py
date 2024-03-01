@@ -8,8 +8,10 @@ import sys
 from datetime import datetime, timedelta
 from apis import sleep
 from apis import exercise
+from apis import food
 import apis.state as manage_instance
 import apis.update as update
+import apis.food_entry as food_entry
 
 import apis.utilities as utilities
 
@@ -50,12 +52,12 @@ def v1sleep_recommendation():
         return email_or_error_message, status
 
     sleep_args = request.args
-    utilities.update_location(sleep_args, instance)
+    utilities.update_location(email_or_error_message, sleep_args, instance)
 
     date = sleep_args.get('date')
     if date is None:
         date = (datetime.now() - timedelta(hours=6)).isoformat()
-    return sleep.get_sleep_recommendation(email_or_error_message, date), 200
+    return sleep.get_sleep_recommendation(email_or_error_message, date)
 
 
 @app.route("/v1/getFoodRecommendation", methods=['GET'])
@@ -66,9 +68,21 @@ def v1food_recommendation():
         return email_or_error_message, status
 
     food_args = request.args
-    utilities.update_location(food_args, instance)
+    utilities.update_location(email_or_error_message, food_args, instance)
 
-    return "Hello, World!"
+    return food.get_food_recommendation(email_or_error_message, instance)
+
+
+@app.route("/v1/addFoodLogEntry", methods=['POST'])
+def v1addFoodLogEntry():
+    authentication, status = utilities.check_authorization(request.headers)
+    if status != 200:
+        return authentication, status
+
+    data_retrieved_food_log = request.data
+    decoded_data_food_log = data_retrieved_food_log.decode('utf-8')
+    instance = manage_instance.ProfileManager.instance()
+    return food_entry.add_food_entry(authentication, decoded_data_food_log, instance)
 
 
 @app.route("/v1/getActivityRecommendation", methods=['GET'])
@@ -79,7 +93,7 @@ def v1activity_recommendation():
         return email_or_error_message, status
 
     exercise_args = request.args
-    utilities.update_location(exercise_args, instance)
+    utilities.update_location(email_or_error_message, exercise_args, instance)
     return exercise.get_activity_recommendation(email_or_error_message, datetime.now().isoformat())
 
 

@@ -32,3 +32,21 @@ def add_food_entry(authentication, food_data, instance):
         return user_or_error_message, status
     instance.update_user(email, user_or_error_message)
     return {}, 200
+
+
+def delete_food_entry(authentication, entry_data, instance):
+    email, password = utilities.get_email_password(authentication)
+    check_login = utilities.check_email_password(email, password, instance, 1)
+    if check_login != 200:
+        return {'error_message': 'Incorrect email or password'}, 401
+
+    entry_data_load = json.loads(entry_data)
+    _, user = instance.get_user(email, 1)
+    user.update_location(entry_data_load['location'])
+
+    if entry_data_load['entry_id'] not in user.food.food_log:
+        return {'error_message': 'Entry does not exist'}, 404
+
+    user.food.food_log.pop(entry_data_load['entry_id'])
+    instance.update_user(email, user)
+    return {}, 200

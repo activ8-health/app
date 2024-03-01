@@ -85,6 +85,18 @@ def v1addFoodLogEntry():
     return food_entry.add_food_entry(authentication, decoded_data_food_log, instance)
 
 
+@app.route("/v1/removeFoodLogEntry", methods=['POST'])
+def v1removeFoodLogEntry():
+    authentication, status = utilities.check_authorization(request.headers)
+    if status != 200:
+        return authentication, status
+
+    data_retrieved_entry_data = request.data
+    decoded_data_entry_data = data_retrieved_entry_data.decode('utf-8')
+    instance = manage_instance.ProfileManager.instance()
+    return food_entry.delete_food_entry(authentication, decoded_data_entry_data, instance)
+
+
 @app.route("/v1/getActivityRecommendation", methods=['GET'])
 def v1activity_recommendation():
     instance = manage_instance.ProfileManager.instance()

@@ -29,7 +29,7 @@ class ProfileManager:
             self.login_data = {}
 
         try:
-            with open("./menu/menu_data.json", "r") as menu_data_file:
+            with open("./data/menu_data.json", "r") as menu_data_file:
                 self.menu_data = json.load(menu_data_file)
         except FileNotFoundError:
             self.menu_data = {}

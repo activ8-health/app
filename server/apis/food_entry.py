@@ -17,9 +17,7 @@ def create_food_entry(user, data, menu_data):
                                  date=data['date'], portion_eaten=data['portion_eaten'],
                                  total_calories=float(food_item['Calories']), rating=data['rating'])
 
-    date = datetime.fromisoformat(data['date']).strftime('%Y-%m-%d')
-    user.update_food_data(date, food_item.to_dict())
-    return user, 200
+    return food_item, 200
 
 
 def add_food_entry(authentication, food_data, instance):
@@ -32,10 +30,14 @@ def add_food_entry(authentication, food_data, instance):
     food_log_data_load = json.loads(food_data)
     user.update_location(food_log_data_load['location'])
 
-    user_or_error_message, status = create_food_entry(user, food_log_data_load, instance)
+    food_item_or_error_message, status = create_food_entry(user, food_log_data_load, instance)
     if status != 200:
-        return user_or_error_message, status
-    instance.update_user(email, user_or_error_message)
+        return food_item_or_error_message, status
+
+    date = datetime.fromisoformat(food_log_data_load['date']).strftime('%Y-%m-%d')
+    user.add_food_data(date, food_item_or_error_message.to_dict())
+
+    instance.update_user(email, user)
     return {}, 200
 
 
@@ -49,9 +51,10 @@ def delete_food_entry(authentication, entry_data, instance):
     _, user = instance.get_user(email, 1)
     user.update_location(entry_data_load['location'])
 
-    if entry_data_load['entry_id'] not in user.food.food_log:
+    date = datetime.fromisoformat(entry_data_load['date']).strftime('%Y-%m-%d')
+    if entry_data_load['date'] not in user.food.food_log or entry_data_load['entry_id'] not in user.food.food_log[date]:
         return {'error_message': 'Entry does not exist'}, 404
 
-    user.food.food_log.pop(entry_data_load['entry_id'])
+    user.delete_food_data(date, entry_data_load['entry_id'])
     instance.update_user(email, user)
     return {}, 200

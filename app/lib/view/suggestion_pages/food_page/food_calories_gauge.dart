@@ -1,23 +1,26 @@
 import "dart:math";
 
+import "package:activ8/constants.dart";
 import "package:flutter/material.dart";
+import "package:material_symbols_icons/symbols.dart";
 import "package:syncfusion_flutter_gauges/gauges.dart";
 
 class FoodCaloriesGauge extends StatelessWidget {
-  final int caloriesGoal;
-  final int caloriesConsumed;
+  final int? caloriesConsumed;
+  final int? caloriesGoal;
 
-  const FoodCaloriesGauge({super.key, caloriesGoal, caloriesConsumed})
-      : caloriesGoal = caloriesGoal ?? 2000,
-        caloriesConsumed = caloriesConsumed ?? 0;
+  const FoodCaloriesGauge({super.key, this.caloriesConsumed, this.caloriesGoal});
 
   final double width = 20;
   final double degreesUnder = 45;
 
-  bool get consumedExcess => caloriesConsumed >= caloriesGoal + 400;
-
   @override
   Widget build(BuildContext context) {
+    final int caloriesConsumed = this.caloriesConsumed ?? 0;
+    final int caloriesGoal = this.caloriesGoal ?? 2000;
+
+    final bool consumedExcess = (caloriesConsumed >= caloriesGoal + caloriesOverWarningThreshold);
+
     // The gradient that colors the gauge
     final GaugePointer gaugePointer = RangePointer(
       // The minimum value should be 12 to prevent the corners from becoming flat
@@ -26,7 +29,7 @@ class FoodCaloriesGauge extends StatelessWidget {
       enableAnimation: true,
       animationDuration: 1200,
       sizeUnit: GaugeSizeUnit.logicalPixel,
-      // color: (consumedExcess) ? Colors.red : Colors.white,
+      color: (consumedExcess) ? Colors.red : null,
       gradient: const SweepGradient(
         colors: [
           Color(0xFFFFDEA9),
@@ -58,16 +61,68 @@ class FoodCaloriesGauge extends StatelessWidget {
           annotations: [
             GaugeAnnotation(
               angle: 90,
-              positionFactor: 0.15,
-              widget: Icon(
-                Icons.local_fire_department,
-                color: Colors.orange.shade100,
-                size: 64,
-              ),
+              positionFactor: 0.06,
+              widget: _getTextLabel(context),
             )
           ],
           showAxisLine: false,
           canScaleToFit: true,
+        ),
+      ],
+    );
+  }
+
+  Widget _getTextLabel(context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Symbols.nutrition, size: 30, color: Colors.white.withOpacity(0.8)),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: RichText(
+            text: TextSpan(
+              children: [
+                (caloriesConsumed != null)
+                    ? TextSpan(
+                        text: "$caloriesConsumed",
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+                      )
+                    : WidgetSpan(
+                        child: Container(
+                          width: 28 * 1.5,
+                          height: 28,
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
+                      ),
+                TextSpan(
+                  text: " cal",
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.white.withOpacity(0.8)),
+                ),
+              ],
+            ),
+          ),
+        ),
+        RichText(
+          text: TextSpan(
+            children: [
+              const TextSpan(text: "of "),
+              (caloriesGoal != null)
+                  ? TextSpan(text: "$caloriesGoal")
+                  : WidgetSpan(
+                      child: Container(
+                        width: 18 * 1.5,
+                        height: 18,
+                        color: Colors.grey.withOpacity(0.5),
+                      ),
+                    ),
+            ],
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.white.withOpacity(0.7),
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
         ),
       ],
     );

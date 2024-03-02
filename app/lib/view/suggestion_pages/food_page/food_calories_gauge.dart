@@ -14,7 +14,7 @@ class FoodCaloriesGauge extends StatelessWidget {
   final double width = 20;
   final double degreesUnder = 45;
 
-  bool get consumedExcess => caloriesConsumed >= caloriesGoal + 200;
+  bool get consumedExcess => caloriesConsumed >= caloriesGoal + 400;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,13 @@ class FoodCaloriesGauge extends StatelessWidget {
       enableAnimation: true,
       animationDuration: 1200,
       sizeUnit: GaugeSizeUnit.logicalPixel,
-      color: (consumedExcess) ? Colors.red : Colors.white,
+      // color: (consumedExcess) ? Colors.red : Colors.white,
+      gradient: const SweepGradient(
+        colors: [
+          Color(0xFFFFDEA9),
+          Color(0xFFFFFFFF),
+        ],
+      ),
       width: width,
     );
 
@@ -55,7 +61,7 @@ class FoodCaloriesGauge extends StatelessWidget {
               positionFactor: 0.15,
               widget: Icon(
                 Icons.local_fire_department,
-                color: Colors.orange.shade300,
+                color: Colors.orange.shade100,
                 size: 64,
               ),
             )

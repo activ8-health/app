@@ -3,7 +3,6 @@ from datetime import datetime
 from apis import food_log
 from enum import Enum
 
-
 PREFERENCES = {'vegan', 'vegetarian', 'kosher', 'halal', 'pescetarian', 'sesame_free',
                'soy_free', 'gluten_free', 'lactose_intolerance', 'nut_allergy',
                'peanut_allergy', 'shellfish_allergy', 'wheat_allergy'}
@@ -258,11 +257,19 @@ class UserProfile:
     def replace_step_data(self, step_data) -> None:
         self.exercise.step_data = format_step_data(step_data)
 
-    def update_food_data(self, date, food_data):
+    def add_food_data(self, date, food_data):
         if date not in self.food.food_log:
             self.food.food_log.update(food_data)
         else:
             self.food.food_log[date].update(food_data[date])
+
+    def delete_food_data(self, date, entry_id):
+        if date not in self.food.food_log:
+            raise ValueError('Entry does not exist')
+        else:
+            self.food.food_log[date].pop(entry_id)
+            if self.food.food_log[date] == {}:
+                self.food.food_log.pop(date)
 
     def update_location(self, location_data) -> None:
         if location_data[0] is not None and location_data[1] is not None:

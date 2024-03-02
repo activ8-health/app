@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from apis import utilities
 from apis import food_log
 
@@ -11,9 +12,13 @@ def create_food_entry(user, data, menu_data):
     if data['food_id'] not in menu_data.get_all_menu_items():
         return {'error_message': 'Food item does not exist'}, 400
 
+    food_item = menu_data.get_menu_data(data['food_id'])
     food_item = food_log.FoodLog(entry_id=data['entry_id'], food_name=data['food_id'],
-                                 date=data['date'], portion_eaten=data['portion_eaten'], rating=data['rating'])
-    user.update_food_data(food_item.to_dict())
+                                 date=data['date'], portion_eaten=data['portion_eaten'],
+                                 total_calories=float(food_item['Calories']), rating=data['rating'])
+
+    date = datetime.fromisoformat(data['date']).strftime('%Y-%m-%d')
+    user.update_food_data(date, food_item.to_dict())
     return user, 200
 
 

@@ -23,6 +23,7 @@ class FoodCaloriesWidget extends StatelessWidget {
               key: const ValueKey(0),
               caloriesGoal: response.caloriesGoal,
               caloriesConsumed: response.caloriesConsumed,
+              message: response.message,
             );
           },
         );
@@ -39,47 +40,39 @@ class FoodCaloriesWidget extends StatelessWidget {
 class _Widget extends StatelessWidget {
   final int? caloriesGoal;
   final int? caloriesConsumed;
+  final String? message;
 
-  const _Widget({super.key, this.caloriesGoal, this.caloriesConsumed});
+  const _Widget({super.key, this.caloriesGoal, this.caloriesConsumed, this.message});
 
   @override
   Widget build(BuildContext context) {
     return ClearCard(
-      child: SizedBox(
-        width: double.infinity,
-        height: 150,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          padding(8),
+          Expanded(
+            child: SizedBox(
+              height: 180,
               child: FoodCaloriesGauge(
                 caloriesGoal: caloriesGoal,
                 caloriesConsumed: caloriesConsumed,
               ),
             ),
-            _createLabel(context),
-            padding(16),
-          ],
-        ),
+          ),
+          padding(8),
+          _createMessage(context),
+          padding(8),
+        ],
       ),
     );
   }
 
-  Widget _createLabel(context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(text: "${caloriesConsumed ?? "--"}", style: Theme.of(context).textTheme.headlineLarge),
-              TextSpan(text: " cal", style: Theme.of(context).textTheme.headlineMedium),
-            ],
-          ),
-        ),
-        Text("of ${caloriesGoal ?? "--"}", style: Theme.of(context).textTheme.headlineSmall),
-      ],
+  Widget _createMessage(context) {
+    return Container(
+      width: 140,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: Text(message ?? "Loading...", style: Theme.of(context).textTheme.bodyLarge),
     );
   }
 }

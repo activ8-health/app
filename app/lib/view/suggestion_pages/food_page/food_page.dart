@@ -8,7 +8,6 @@ import "package:activ8/utils/snackbar.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_calories_widget.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_log/add_food_entry_fab.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_log/food_log_preview_widget.dart";
-import "package:activ8/view/suggestion_pages/food_page/food_message_widget.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_recommendation_widget.dart";
 import "package:activ8/view/suggestion_pages/food_page/shared.dart";
 import "package:activ8/view/widgets/category_marker.dart";
@@ -62,15 +61,11 @@ class _FoodPageState extends State<FoodPage> {
             Text("Food & Nutrition", style: Theme.of(context).textTheme.headlineLarge),
             padding(8),
 
-            // Calories
+            // Calories and Message
             const CategoryMarker(label: "CALORIES CONSUMED"),
             FoodCaloriesWidget(foodRecommendationFuture: foodRecommendationFuture),
-            padding(8),
-            FoodMessageWidget(foodRecommendationFuture: foodRecommendationFuture),
 
             padding(20),
-
-            // TODO show message
 
             // Recommendations
             const CategoryMarker(label: "FOOD RECOMMENDATIONS"),

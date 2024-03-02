@@ -18,3 +18,6 @@ const int foodLogPreviewCount = 3;
 
 /// The number of stars to default to when asking users for a rating
 const int defaultRatingStars = 3;
+
+/// How much over the calorie goal is should the gauge turn red
+const int caloriesOverWarningThreshold = 400;

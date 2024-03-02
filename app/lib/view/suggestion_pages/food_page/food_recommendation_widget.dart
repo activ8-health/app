@@ -25,7 +25,7 @@ class FoodRecommendationWidget extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<V1GetFoodRecommendationResponse> snapshot) {
         final Widget widget = futureWidgetSelector(
           snapshot,
-          failureWidget: _Widget(key: const ValueKey(1), recommendations: const [], refresh: refresh),
+          failureWidget: _Widget(key: const ValueKey(1), refresh: refresh),
           successWidgetBuilder: (V1GetFoodRecommendationResponse response) {
             return _Widget(key: const ValueKey(0), recommendations: response.recommendations, refresh: refresh);
           },
@@ -41,23 +41,24 @@ class FoodRecommendationWidget extends StatelessWidget {
 }
 
 class _Widget extends StatelessWidget {
-  final List<FoodMenuItem> recommendations;
+  final List<FoodMenuItem>? recommendations;
   final Function()? refresh;
 
-  const _Widget({super.key, required this.recommendations, this.refresh});
+  const _Widget({super.key, this.recommendations, this.refresh});
 
   @override
   Widget build(BuildContext context) {
+    if (recommendations == null) return _createLoadingLog();
     // Only show message (other widget) if no recommendations
-    if (recommendations.isEmpty) return _createEmptyLog();
+    if (recommendations!.isEmpty) return _createEmptyLog();
 
     return ClearCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (final FoodMenuItem recommendation in recommendations) ...[
+          for (final FoodMenuItem recommendation in recommendations!) ...[
             _createFoodCard(context, recommendation),
-            if (recommendation != recommendations.last) const ClearCardDivider(),
+            if (recommendation != recommendations!.last) const ClearCardDivider(),
           ],
         ],
       ),
@@ -166,6 +167,24 @@ class _Widget extends StatelessWidget {
           children: [
             Text(
               "You have no recommendations for now. Come back later!",
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _createLoadingLog() {
+    return ClearCard(
+      child: Container(
+        height: 50,
+        padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(top: 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              "Loading...",
               style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
             ),
           ],

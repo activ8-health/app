@@ -49,7 +49,7 @@ class _Widget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Only show message (other widget) if no recommendations
-    if (recommendations.isEmpty) return const SizedBox.shrink();
+    if (recommendations.isEmpty) return _createEmptyLog();
 
     return ClearCard(
       child: Column(
@@ -153,6 +153,24 @@ class _Widget extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.6)),
         ),
       ],
+    );
+  }
+
+  Widget _createEmptyLog() {
+    return ClearCard(
+      child: Container(
+        height: 80,
+        padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(top: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              "You have no recommendations for now. Come back later!",
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

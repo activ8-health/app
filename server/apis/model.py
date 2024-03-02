@@ -258,8 +258,11 @@ class UserProfile:
     def replace_step_data(self, step_data) -> None:
         self.exercise.step_data = format_step_data(step_data)
 
-    def update_food_data(self, food_data):
-        self.food.food_log.update(food_data)
+    def update_food_data(self, date, food_data):
+        if date not in self.food.food_log:
+            self.food.food_log.update(food_data)
+        else:
+            self.food.food_log[date].update(food_data[date])
 
     def update_location(self, location_data) -> None:
         if location_data[0] is not None and location_data[1] is not None:

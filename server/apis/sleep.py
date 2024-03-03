@@ -21,6 +21,7 @@ def get_data(email: str) -> dict:
     '''
     user_file = open('./data/user_profile.json', 'r')
     user_data = json.load(user_file)
+    user_file.close()
     return user_data[email]['sleep']
 
 def get_core_hours(user_data: dict) -> dict:

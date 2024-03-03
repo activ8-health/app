@@ -95,6 +95,7 @@ def get_user_data(email: str) -> dict:
     '''
     user_file = open('./data/user_profile.json', 'r')
     user_data = json.load(user_file)
+    user_file.close()
     exercise = user_data[email]['exercise']
     location = user_data[email]['location']
     user_profile = user_data[email]['user_profile']

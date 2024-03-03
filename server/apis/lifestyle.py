@@ -13,6 +13,7 @@ def get_user_data(email: str) -> dict:
     '''
     user_file = open('./data/user_profile.json', 'r')
     user_data = json.load(user_file)
+    user_file.close()
     exercise = user_data[email]['exercise']
     sleep = user_data[email]['sleep']['sleep_data']
     food = user_data[email]['food']

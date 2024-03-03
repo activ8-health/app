@@ -24,7 +24,9 @@ def calc_sleep_score(sleep_data: dict) -> int:
     sleep_data: a dictionary for list of sleep data points for each day of the week
     returns the user's sleep score
 
-    a user's sleep score is calculated by getting the average sleep time for 7 days divided by the ideal sleep range
+    a user's sleep score is calculated by getting the average sleep time for 7 days 
+    (if there are less than 7, take however many there are)
+    divided by the ideal sleep range
     the score is maxed at 1
     '''
     days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -56,7 +58,9 @@ def calc_exercise_score(exercise_data: dict) -> int:
     exercise_data: a dictionary including the user's step data for each day and their step goal
     returns the user's exercise score
 
-    a user's exercise score is calculated by getting the first 7 step data and averaging them before dividing them by the step goal
+    a user's exercise score is calculated by getting the first 7 step data 
+    (if there are less than 7, take however many there are)
+    and averaging them before dividing them by the step goal
     the score is maxed at 1
     '''
     step_goal = exercise_data['step_goal']
@@ -76,7 +80,7 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
     food data: a dictionary including the user's food log and weight goal
     returns the user's food score
 
-    the user's average calorie is calculated for the first 7 food data
+    the user's average calorie is calculated for the first 7 food data (if there are less than 7, just take however many there are)
     then this equation is used to calculate the score: 1 - min((((average calories - ideal calories goal) / (30% of ideal calories goal))^ 2), 1.0)
     if the user goes over or under their ideal calories goal by 30%, their food score is automatically 0
     '''

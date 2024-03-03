@@ -28,6 +28,7 @@ class V1RemoveFoodLogEntryBody implements IBody {
   Map<String, dynamic> toJson() {
     return {
       "entry_id": entry.id,
+      "date": entry.date.toIso8601String(),
       "location": location?.asLatLonList(),
     };
   }

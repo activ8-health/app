@@ -108,6 +108,10 @@ def prefilter_food_rec(user, menu, menu_mapping, remaining_calories):
                 if dietary == 'pescetarian':
                     if food['Filters']['IsVegan'] or food['Filters']['ContainsFish']:
                         prefilter_food.append(menu_mapping[food['Food Name']])
+                elif dietary in ['lactose_intolerant', 'peanut_allergy', 'sesame_allergy',
+                                 'shellfish_allergy', 'soy_allergy', 'nut_allergy', 'wheat_allergy']:
+                    if not food['Filters'][Dietary[dietary].value] or food['Filters'][Dietary[dietary].value] is None:
+                        prefilter_food.append(menu_mapping[food['Food Name']])
                 else:
                     if food['Filters'][Dietary[dietary].value] or food['Filters'][Dietary[dietary].value] is None:
                         prefilter_food.append(menu_mapping[food['Food Name']])
@@ -165,9 +169,9 @@ def get_food_recommendation(email, date, instance):
     menu_mapping_food_id, menu_mapping_id_food, menu_feature_names, menu_feature = instance.get_menu_feature()
     daily_target = int(get_daily_target(user_profile))
     consumed_today = get_calories_consumed_today(user_profile, date)
+    remaining_calories = daily_target - consumed_today
 
     food_recommendations = []
-    remaining_calories = daily_target - consumed_today
     if len(user_profile.food.food_log) == 0:
         message = "No food logs found. Logging food will provide better recommendations."
         return {'calories': {

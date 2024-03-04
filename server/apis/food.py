@@ -173,7 +173,8 @@ def get_food_recommendation(email, date, instance):
 
     food_recommendations = []
     if len(user_profile.food.food_log) == 0:
-        message = "No food logs found. Logging food will provide better recommendations."
+        message = ("We're still trying to figure out what you like. Get started by logging some food you've eaten in "
+                   "the past few days!")
         return {'calories': {
             'daily_target': daily_target,
             'consumed_today': consumed_today},
@@ -181,9 +182,10 @@ def get_food_recommendation(email, date, instance):
             'message': message}
 
     if 50 <= remaining_calories <= -50:
-        message = 'You have reached your daily calorie intake.'
+        message = 'Congratulations! You have reached your daily calorie intake.'
     elif remaining_calories < -50:
-        message = 'You have exceeded your daily calorie intake.'
+        message = ('You have exceeded your daily calorie intake. If you\'re still hungry, look for a light calorie '
+                   'snack!')
     else:
         prefilter_food = prefilter_food_rec(user_profile, menu, menu_mapping_food_id, remaining_calories)
         food_label, food = get_food_based_on_preferences(user_profile, date, prefilter_food,

@@ -20,4 +20,4 @@ const int foodLogPreviewCount = 3;
 const int defaultRatingStars = 3;
 
 /// How much over the calorie goal is should the gauge turn red
-const int caloriesOverWarningThreshold = 400;
+const int caloriesOverWarningThreshold = 150;

@@ -1,5 +1,6 @@
 import "package:activ8/managers/api/v1/get_home_view.dart";
 import "package:activ8/managers/app_state.dart";
+import "package:activ8/managers/food_manager.dart";
 import "package:activ8/managers/location_manager.dart";
 import "package:activ8/shorthands/gradient_scaffold.dart";
 import "package:activ8/shorthands/padding.dart";
@@ -49,6 +50,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> signOutAction() async {
     logger.i("Signing out and restarting app");
     await AppState.instance.signOut();
+    await FoodManager.instance.clear();
 
     if (!mounted) return;
 

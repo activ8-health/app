@@ -24,18 +24,20 @@ class FoodCaloriesGauge extends StatelessWidget {
     // The gradient that colors the gauge
     final GaugePointer gaugePointer = RangePointer(
       // The minimum value should be 12 to prevent the corners from becoming flat
-      value: max(0.14 * (caloriesGoal), caloriesConsumed.toDouble()),
+      value: max(0.13 * (caloriesGoal), caloriesConsumed.toDouble()),
       cornerStyle: CornerStyle.bothCurve,
       enableAnimation: true,
       animationDuration: 1200,
       sizeUnit: GaugeSizeUnit.logicalPixel,
-      color: (consumedExcess) ? Colors.red : null,
-      gradient: const SweepGradient(
-        colors: [
-          Color(0xFFFFDEA9),
-          Color(0xFFFFFFFF),
-        ],
-      ),
+      color: (consumedExcess) ? Colors.red.shade400 : null,
+      gradient: (consumedExcess)
+          ? null
+          : const SweepGradient(
+              colors: [
+                Color(0xFFFFDEA9),
+                Color(0xFFFFFFFF),
+              ],
+            ),
       width: width,
     );
 

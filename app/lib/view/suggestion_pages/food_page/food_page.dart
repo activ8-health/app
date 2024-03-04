@@ -1,6 +1,7 @@
 import "package:activ8/managers/api/api_auth.dart";
 import "package:activ8/managers/api/v1/get_food_recommendation.dart";
 import "package:activ8/managers/app_state.dart";
+import "package:activ8/managers/food_manager.dart";
 import "package:activ8/managers/location_manager.dart";
 import "package:activ8/shorthands/gradient_scaffold.dart";
 import "package:activ8/shorthands/padding.dart";
@@ -41,10 +42,16 @@ class _FoodPageState extends State<FoodPage> {
     return response;
   }
 
+  Future<void> refresh() async {
+    foodRecommendationFuture = _loadApi();
+    await foodRecommendationFuture;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
-      floatingActionButton: AddFoodEntryFAB(refresh: () => setState(() {})),
+      floatingActionButton: AddFoodEntryFAB(refresh: refresh),
       hasBackButton: true,
       backgroundGradient: backgroundGradient,
       child: _allowRefresh(
@@ -69,16 +76,13 @@ class _FoodPageState extends State<FoodPage> {
 
             // Recommendations
             const CategoryMarker(label: "FOOD RECOMMENDATIONS"),
-            FoodRecommendationWidget(
-              foodRecommendationFuture: foodRecommendationFuture,
-              refresh: () => setState(() {}),
-            ),
+            FoodRecommendationWidget(foodRecommendationFuture: foodRecommendationFuture, refresh: refresh),
 
             padding(20),
 
             // Food Log
-            const CategoryMarker(label: "YOUR FOOD LOG"),
-            FoodLogPreviewWidget(refresh: () => setState(() {})),
+            CategoryMarker(label: "YOUR FOOD LOG (${FoodManager.instance.log.length})"),
+            FoodLogPreviewWidget(refresh: refresh),
 
             // Bottom padding to prevent the FAB from cutting off items
             padding(52),
@@ -96,11 +100,7 @@ class _FoodPageState extends State<FoodPage> {
         displacement: 80,
         backgroundColor: Colors.white.withOpacity(0.2),
         color: Colors.white,
-        onRefresh: () async {
-          foodRecommendationFuture = _loadApi();
-          await foodRecommendationFuture;
-          setState(() {});
-        },
+        onRefresh: refresh,
         child: SizedBox(
           width: 370,
           child: SizedBox.expand(

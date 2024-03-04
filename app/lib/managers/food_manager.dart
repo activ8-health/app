@@ -110,4 +110,9 @@ class FoodManager {
     final String data = jsonEncode(log.map((FoodLogEntry entry) => entry.toJson()).toList());
     await _sharedPreferences.setString("food_log", data);
   }
+
+  Future<void> clear() async {
+    logger.i("Deleting food log from disk");
+    await _sharedPreferences.remove("food_log");
+  }
 }

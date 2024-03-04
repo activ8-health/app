@@ -14,8 +14,9 @@ dependencies:
   cupertino_icons: ^1.0.6
 
   app_settings: ^5.1.1
-  day_night_time_picker: ^1.3.0+1
+  auto_hyphenating_text: ^0.2.0
   collection: ^1.18.0
+  day_night_time_picker: ^1.3.0+1
   dots_indicator: ^3.0.0
   email_validator: ^2.1.17
   flutter_rating_bar: ^4.0.1

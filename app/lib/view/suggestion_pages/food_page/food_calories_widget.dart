@@ -3,6 +3,7 @@ import "package:activ8/shorthands/padding.dart";
 import "package:activ8/utils/future_widget_selector.dart";
 import "package:activ8/view/suggestion_pages/food_page/food_calories_gauge.dart";
 import "package:activ8/view/widgets/clear_card.dart";
+import "package:auto_hyphenating_text/auto_hyphenating_text.dart";
 import "package:flutter/material.dart";
 
 class FoodCaloriesWidget extends StatelessWidget {
@@ -70,9 +71,13 @@ class _Widget extends StatelessWidget {
 
   Widget _createMessage(context) {
     return Container(
-      width: 140,
+      width: 150,
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Text(message ?? "Loading...", style: Theme.of(context).textTheme.bodyLarge),
+      child: AutoHyphenatingText(
+        message ?? "Loading...",
+        style: Theme.of(context).textTheme.bodyLarge,
+        softWrap: true,
+      ),
     );
   }
 }

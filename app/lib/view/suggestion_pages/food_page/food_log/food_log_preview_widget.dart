@@ -16,12 +16,14 @@ class FoodLogPreviewWidget extends StatelessWidget {
 
   const FoodLogPreviewWidget({super.key, this.numberToDisplay = 3, this.refresh});
 
-  void _seeFoodLogAction(BuildContext context) {
-    Navigator.of(context).push(
+  Future<void> _seeFoodLogAction(BuildContext context) async {
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (BuildContext context) => const FoodLogPage(),
       ),
     );
+
+    if (refresh != null) refresh!();
   }
 
   @override

@@ -11,6 +11,7 @@ import "package:activ8/types/health_data.dart";
 import "package:activ8/view/home_page/home_page.dart";
 import "package:activ8/view/setup_pages/setup_page.dart";
 import "package:activ8/view/setup_pages/widgets/large_icon.dart";
+import "package:auto_hyphenating_text/auto_hyphenating_text.dart";
 import "package:flutter/material.dart";
 import "package:geolocator/geolocator.dart";
 
@@ -26,10 +27,11 @@ class _EntryPointState extends State<EntryPoint> {
 
   Future<bool> initialize() async {
     final bool hasUser = await AppState.instance.initialize();
+    await initHyphenation();
+    await FoodManager.instance.initialize();
 
     if (hasUser) {
       unawaited(_updateHealthData());
-      await FoodManager.instance.initialize();
     }
 
     return hasUser;

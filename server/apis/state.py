@@ -1,4 +1,6 @@
+import csv
 import json
+from collections import defaultdict
 import apis.utilities as utilities
 
 
@@ -36,13 +38,36 @@ class ProfileManager:
         except json.JSONDecodeError:
             self.menu_data = {}
 
-    def get_menu_data(self, food):
+        self.menu_id_food = defaultdict(str)
+        self.menu_food_id = defaultdict(int)
+        self.menu_feature_names = []
+        self.menu_feature = []
+        try:
+            with open("./data/menu_data2.csv", "r") as menu_data_feature:
+                menu_feature = csv.DictReader(menu_data_feature)
+                for count, menu in enumerate(menu_feature):
+                    self.menu_food_id[menu['food_name']] = count
+                    self.menu_id_food[count] = menu['food_name']
+                    menu.pop('food_name')
+                    self.menu_feature.append([float(value) for _, value in menu.items()])
+                self.menu_feature_names = [key for key, _ in menu.items()]
+
+        except FileNotFoundError:
+            self.menu_feature = {}
+
+    def get_menu_feature(self):
+        return self.menu_food_id, self.menu_id_food, self.menu_feature_names, self.menu_feature
+
+    def get_menu_data(self):
+        return self.menu_data['food']
+
+    def get_menu_data_food(self, food):
         for food_item in self.menu_data['food']:
             if food_item['Food Name'] == food:
                 return food_item
         return None
 
-    def get_all_menu_items(self):
+    def get_all_menu_items_name(self):
         return set(food['Food Name'] for food in self.menu_data['food'])
 
     def get_login_data(self, email):

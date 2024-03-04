@@ -6,13 +6,14 @@ from apis import food_log
 
 def create_food_entry(user, data, menu_data):
     user_food_log = user.food.food_log
-    if data['entry_id'] in user_food_log:
-        return {'error_message': 'Entry already exists'}, 409
+    for _, entry_id in user_food_log.items():
+        if data['entry_id'] in entry_id:
+            return {'error_message': 'Entry already exists'}, 409
 
-    if data['food_id'] not in menu_data.get_all_menu_items():
+    if data['food_id'] not in menu_data.get_all_menu_items_name():
         return {'error_message': 'Food item does not exist'}, 400
 
-    food_item = menu_data.get_menu_data(data['food_id'])
+    food_item = menu_data.get_menu_data_food(data['food_id'])
     food_item = food_log.FoodLog(entry_id=data['entry_id'], food_name=data['food_id'],
                                  date=data['date'], portion_eaten=data['portion_eaten'],
                                  total_calories=float(food_item['Calories']), rating=data['rating'])
@@ -30,11 +31,11 @@ def add_food_entry(authentication, food_data, instance):
     food_log_data_load = json.loads(food_data)
     user.update_location(food_log_data_load['location'])
 
+    date = datetime.fromisoformat(food_log_data_load['date']).strftime('%Y-%m-%d')
     food_item_or_error_message, status = create_food_entry(user, food_log_data_load, instance)
     if status != 200:
         return food_item_or_error_message, status
 
-    date = datetime.fromisoformat(food_log_data_load['date']).strftime('%Y-%m-%d')
     user.add_food_data(date, food_item_or_error_message.to_dict())
 
     instance.update_user(email, user)

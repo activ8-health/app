@@ -2,6 +2,7 @@ flask
 waitress
 requests
 python-dateutil
+scikit-learn
 
 
 

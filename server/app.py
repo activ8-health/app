@@ -69,8 +69,8 @@ def v1food_recommendation():
 
     food_args = request.args
     utilities.update_location(email_or_error_message, food_args, instance)
-
-    return food.get_food_recommendation(email_or_error_message, instance)
+    date = datetime.now() if food_args.get('date') is None else food_args.get('date')
+    return food.get_food_recommendation(email_or_error_message, date, instance)
 
 
 @app.route("/v1/addFoodLogEntry", methods=['POST'])
@@ -129,6 +129,8 @@ if __name__ == '__main__':
 
     if len(sys.argv) > 1:
         PORT = sys.argv[1]
+
+    manage_instance.ProfileManager.instance()
 
     if mode == 'dev':
         app.run(host='localhost', port=int(PORT), debug=True)

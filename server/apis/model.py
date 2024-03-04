@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from apis import food_log
 from enum import Enum
 
 PREFERENCES = {'vegan', 'vegetarian', 'kosher', 'halal', 'pescetarian', 'sesame_free',

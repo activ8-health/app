@@ -181,9 +181,9 @@ def get_food_recommendation(email, date, instance):
             'food_recommendations': food_recommendations,
             'message': message}
 
-    if 50 <= remaining_calories <= -50:
+    if -150 <= remaining_calories <= 50:
         message = 'Congratulations! You have reached your daily calorie intake.'
-    elif remaining_calories < -50:
+    elif remaining_calories < -150:
         message = ('You have exceeded your daily calorie intake. If you\'re still hungry, look for a light calorie '
                    'snack!')
     else:
@@ -191,7 +191,11 @@ def get_food_recommendation(email, date, instance):
         food_label, food = get_food_based_on_preferences(user_profile, date, prefilter_food,
                                                          menu_mapping_food_id, menu_feature)
         food_recommendations = get_top_3_food_recommendations(food_label, food, menu_mapping_id_food)
-        message = "You still have a ways to go. Try some of our recommendations below! Remember to log what you eat."
+        if remaining_calories > 200:
+            message = ("You still have a ways to go. Try some of our recommendations below! Remember to log what you "
+                       "eat.")
+        else:
+            message = "You're almost there! Try some of our recommendations below! Remember to log what you eat."
 
     return {'calories': {
         'daily_target': daily_target,

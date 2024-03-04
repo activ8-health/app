@@ -53,7 +53,7 @@ def delete_food_entry(authentication, entry_data, instance):
     user.update_location(entry_data_load['location'])
 
     date = datetime.fromisoformat(entry_data_load['date']).strftime('%Y-%m-%d')
-    if entry_data_load['date'] not in user.food.food_log or entry_data_load['entry_id'] not in user.food.food_log[date]:
+    if date not in user.food.food_log or entry_data_load['entry_id'] not in user.food.food_log[date]:
         return {'error_message': 'Entry does not exist'}, 404
 
     user.delete_food_data(date, entry_data_load['entry_id'])

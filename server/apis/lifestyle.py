@@ -92,10 +92,16 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
     food_log = food_data['food']['food_log']
     total_cals = 0
     food_log_dates = list(food_log.keys())
-    not_enough_data = len(food_log_dates) < 7
+    date = datetime.datetime.now()
+    date_str = date.strftime('%Y-%m-%d')
+    if date_str == food_log_dates[0]:
+        not_enough_data = (len(food_log_dates) - 1) < 7
+    else:
+        not_enough_data = len(food_log_dates) < 7
+
     if not not_enough_data:
-        for i in range(1,7):
-            total_cals += food.get_calories_consumed_today(food_data, (datetime.datetime.now() - datetime.timedelta(days=i)))
+        for i in range(1,8):
+            total_cals += food.get_calories_consumed_today(food_data, (date - datetime.timedelta(days=i)))
     else:
         for date in food_log_dates:
            food_log_dict = food_log[date]

@@ -259,6 +259,7 @@ class UserProfile:
     def add_food_data(self, date, food_data):
         if date not in self.food.food_log:
             self.food.food_log.update(food_data)
+            self.food.food_log = dict(sorted(self.food.food_log.items(), reverse=True))
         else:
             self.food.food_log[date].update(food_data[date])
 

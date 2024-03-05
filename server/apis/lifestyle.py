@@ -42,16 +42,16 @@ def calc_sleep_score(sleep_data: dict) -> int:
         # other than those cases, only one data point should be taken from each day
         # i = 1
         date = sleep_data[day][0]
-        while i < len(sleep_data[day]):
-            next_date = sleep_data[day][i]
-            date_from = parser.isoparse(date['date_from'])
-            date_to = parser.isoparse(sleep_data[day][i]['date_to'])
-            diff = date_from - date_to
-            if (diff.total_seconds() / 60) <= 30:
-                date['date_from'] = next_date['date_from']
-            else:
-                break
-            i+=1
+        # while i < len(sleep_data[day]):
+        #     next_date = sleep_data[day][i]
+        #     date_from = parser.isoparse(date['date_from'])
+        #     date_to = parser.isoparse(sleep_data[day][i]['date_to'])
+        #     diff = date_from - date_to
+        #     if (diff.total_seconds() / 60) <= 30:
+        #         date['date_from'] = next_date['date_from']
+        #     else:
+        #         break
+        #     i+=1
         num_days += 1
         avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
     avg_sleep_time /= num_days

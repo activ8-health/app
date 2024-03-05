@@ -1,7 +1,12 @@
-import json
-import sleep
-from dateutil import parser
+import sys
+if sys.path[0].endswith('/apis'):
+    sys.path[0] = sys.path[0][0:-(len('/apis'))]
 
+import datetime
+import json
+from apis import sleep
+from dateutil import parser
+from apis import food
 
 def get_user_data(email: str) -> dict:
     '''
@@ -16,7 +21,7 @@ def get_user_data(email: str) -> dict:
     user_file.close()
     exercise = user_data[email]['exercise']
     sleep = user_data[email]['sleep']['sleep_data']
-    food = user_data[email]['food']
+    food = user_data[email]
     return {'sleep': sleep, 'exercise': exercise, 'food': food}
 
 def calc_sleep_score(sleep_data: dict) -> int:
@@ -35,7 +40,7 @@ def calc_sleep_score(sleep_data: dict) -> int:
     for day in days:
         # if there are data points that within 30 mins of each other, they are combined
         # other than those cases, only one data point should be taken from each day
-        i = 1
+        # i = 1
         date = sleep_data[day][0]
         while i < len(sleep_data[day]):
             next_date = sleep_data[day][i]
@@ -84,20 +89,32 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
     then this equation is used to calculate the score: 1 - min((((average calories - ideal calories goal) / (30% of ideal calories goal))^ 2), 1.0)
     if the user goes over or under their ideal calories goal by 30%, their food score is automatically 0
     '''
-    # food_log = food_data['food_log']
-    # total_cals = 0
-    # food_log_dates = list(food_log.keys())
+    food_log = food_data['food']['food_log']
+    total_cals = 0
+    food_log_dates = list(food_log.keys())
+    not_enough_data = len(food_log_dates) < 7
+    if not not_enough_data:
+        for i in range(1,7):
+            total_cals += food.get_calories_consumed_today(food_data, (datetime.datetime.now() - datetime.timedelta(days=i)))
+    else:
+        for date in food_log_dates:
+           food_log_dict = food_log[date]
+           for key in list(food_log_dict.keys()):
+            total_cals += food_log_dict[key]['total_calories']
     # i = 0
     # while i < 7 and i < len(food_log_dates):
     #     food_log_dict = food_log[food_log_dates[i]]
     #     for key in list(food_log_dict.keys()):
     #         total_cals += food_log_dict[key]['total_calories']
     #     i += 1
-    # avg_cals = total_cals / min(len(food_log_dates), 7)
-    ideal_cals = 2000 # will be replaced by cal func in food files
-    avg_cals = 1900
+    avg_cals = total_cals / min(len(food_log_dates), 7)
+    print(avg_cals)
+    ideal_cals = food.get_daily_target(food_data)
+    print(ideal_cals)
+    # ideal_cals = 2000 # will be replaced by cal func in food files
+    # avg_cals = 1900
     food_score = 1 - min((((avg_cals - ideal_cals) / (ideal_cals * 0.3)) ** 2), 1.0)
-    return food_score, (avg_cals < ideal_cals)
+    return food_score, (avg_cals < ideal_cals), not_enough_data
 
 def get_lifestyle_score(email: str) -> dict:
     '''
@@ -113,19 +130,22 @@ def get_lifestyle_score(email: str) -> dict:
     print('sleep_score:', sleep_score)
     exercise_score = calc_exercise_score(user_data['exercise'])
     print('exercise_score:', exercise_score)
-    food_score, cals_check = calc_food_score(user_data['food'])
+    food_score, cals_check, not_enough_data = calc_food_score(user_data['food'])
     print('food_score:', food_score)
     lifestyle_score = (sleep_score + exercise_score + food_score) / 3
     print('lifestyle_score:', lifestyle_score)
     if sleep_score < exercise_score and sleep_score < food_score:
-        return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should sleep more.'}
+        message = 'You should sleep more.'
     elif exercise_score < sleep_score and exercise_score < food_score:
-        return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should exercise more.'}
+        message = 'You should exercise more.'
     else:
         if cals_check:
-            return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should eat more.'}
+            message = 'You should eat more.'
         else:
-            return {'fitness_score': round(lifestyle_score * 100), 'message': 'You should eat less.'}
+            message = 'You should eat less.'
+    if not_enough_data:
+        message += ' There are less than 7 days of food logs recorded so your score may be inaccurate. Make sure to keep your food log up to date for a more accurate score.'
+    return {'fitness_score': round(lifestyle_score * 100), 'message': message}
 
 
-print('result:', get_lifestyle_score('5'))
+print('result:', get_lifestyle_score('2'))

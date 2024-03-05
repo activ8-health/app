@@ -104,6 +104,10 @@ def prefilter_food_rec(user, menu, menu_mapping, remaining_calories):
     lower_bound = 200 if remaining_calories > 400 else 0
     for food in menu:
         if remaining_calories >= float(food['Calories']) > lower_bound:
+            if not user.food.dietary:
+                prefilter_food = [food_id for food_id in menu_mapping.values()]
+                return prefilter_food
+
             for dietary in user.food.dietary:
                 if dietary == 'pescetarian':
                     if food['Filters']['IsVegan'] or food['Filters']['ContainsFish']:

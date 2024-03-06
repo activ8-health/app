@@ -13,7 +13,7 @@ def get_user_data(email: str) -> dict:
     returns necessary user data
 
     opens and loads the user data from json file 
-    retrieves the user's exercise data, sleep data, and food data to use for calculations
+    retrieves the necessary data for exercise score, sleep score, and food score calculations
     '''
     user_file = open('./data/user_profile.json', 'r')
     user_data = json.load(user_file)
@@ -26,10 +26,10 @@ def get_user_data(email: str) -> dict:
 def calc_sleep_score(sleep_data: dict, date: str) -> int:
     '''
     sleep_data: a dictionary for list of sleep data points for each day of the week
+    date: date string in iso format
     returns the user's sleep score
 
-    a user's sleep score is calculated by getting the average sleep time for 7 days 
-    (if there are less than 7, take however many there are)
+    a user's sleep score is calculated by getting the average sleep time for the past 7 days 
     divided by the ideal sleep range
     the score is maxed at 1
     '''
@@ -46,14 +46,18 @@ def calc_sleep_score(sleep_data: dict, date: str) -> int:
             # print(date_from)
             # print(date_from <= today)
             # print(date_from >= today - datetime.timedelta(days=8))
+            # if the date is within ~1 week from the date given, it will be counted in the calculation
+            # if the date is not, it is assumed that a date is missing and will be counted as 0 sleep for said day
             if date_from <= today and date_from >= (today - datetime.timedelta(days=8)):
                 # print(date_from)
                 total_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(sleep_log_date['date_from']), 
                                                             sleep.convert_to_time_of_day(sleep_log_date['date_to']))
             num_days += 1
         except IndexError:
+            # if there is no sleep data for a day, continue to next day
             continue
     if num_days == 0:
+        # this is to prevent division by zero error
         num_days = 1
     avg_sleep_time = total_sleep_time / num_days
     sleep_score = (avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS)
@@ -62,9 +66,10 @@ def calc_sleep_score(sleep_data: dict, date: str) -> int:
 def calc_exercise_score(exercise_data: dict, date: str) -> int:
     '''
     exercise_data: a dictionary including the user's step data for each day and their step goal
+    date: date string in iso format
     returns the user's exercise score
 
-    a user's exercise score is calculated by getting the first 7 step data 
+    a user's exercise score is calculated by getting the first 7 step data excluding data from the date given
     (if there are less than 7, take however many there are)
     and averaging them before dividing them by the step goal
     the score is maxed at 1
@@ -75,24 +80,35 @@ def calc_exercise_score(exercise_data: dict, date: str) -> int:
     step_data_dates = list(step_data.keys())
     today = parser.isoparse(date).date()
     date_str = today.strftime('%Y-%m-%d')
+    num_step_data_dates = len(step_data_dates)
     i = 0
     k = 7
     if date_str == step_data_dates[0]:
+        # if the first data is for the date given, skip it and shift everything down
+        # only consider data for the first 7 dates after the date given
+        num_step_data_dates -= 1
         i = 1
         k = 8
     while i < k and i < len(step_data_dates):
         total_steps += step_data[step_data_dates[i]]
         i += 1
-    avg_steps = total_steps / min(len(step_data_dates), 7)
+    avg_steps = total_steps / min(num_step_data_dates, 7)
     exercise_score = avg_steps / step_goal
     return min(exercise_score, 1.0)
 
 def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
     '''
     food data: a dictionary including the user's food log and weight goal
+    date: date string in iso format
     returns the user's food score
 
-    the user's average calorie is calculated for the first 7 food data (if there are less than 7, just take however many there are)
+    the user's average calorie is calculated for food data for the past 7 days
+    if there are less than 7 days worth of food log data, the day differences between the dates will be looked at
+    if each date is within a day of each other, it is assumed that they are a new user and their average will only be taken with what's available
+    if that is not the case, the missing dates will be counted as 0's in the total calories count
+    ex 1: date: 3/5 food log: 3/4, 3/1, 2/27, 2/26 -> (3/4 + 0 (3/3) + 0(3/2) + 3/1 + 0(2/29) + 0(2/28) + 2/27) / 7
+    ex 2: date: 3/5 food log: 3/4, 3/3, 3/2, 3/1-> (3/4 + 3/3 + 3/2 + 3/1) / 4
+    ex 3: date: 3/5 food log: 3/3, 3/1 -> (0(3/4) + 3/3 + 0(3/2) + 3/1)  / 4
     then this equation is used to calculate the score: 1 - min((((average calories - ideal calories goal) / (30% of ideal calories goal))^ 2), 1.0)
     if the user goes over or under their ideal calories goal by 30%, their food score is automatically 0
     '''
@@ -143,6 +159,7 @@ def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
                 break
             prev_date = food_log_date
     if num_days == 0:
+        # this is to prevent division by zero error
         num_days = 1
     avg_cals = total_cals / num_days
     # print(avg_cals)
@@ -154,6 +171,7 @@ def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
 def get_lifestyle_score(email: str, date: str) -> dict:
     '''
     email: email of the user to retrieve user data from
+    date: date string in iso format
     returns an object containing the user's lifestyle score and some advice to improve their lowest scoring category
 
     calculates the sleep, exercise, and food score before averaging all of them
@@ -171,23 +189,31 @@ def get_lifestyle_score(email: str, date: str) -> dict:
     print('lifestyle_score:', lifestyle_score)
     message = ''
     if sleep_score == exercise_score and sleep_score == food_score and sleep_score == 1.0:
+        # user is excelling in all categories
         message += "You're doing a good job! Keep up the good work!"
     elif sleep_score < exercise_score and sleep_score < food_score:
+        # lowest category is sleep
         message += "It looks like you haven't been sleeping enough lately. Try to sleep more if possible."
     elif exercise_score < sleep_score and exercise_score < food_score:
+        # lowest category is exercise
         message += "It looks like you haven't been meeting your daily step goal lately."
         message += " Remember to set aside some time to get your steps in."
     elif food_score < exercise_score and food_score < sleep_score:
+        # lowest category is food
         if not_eating_enough:
+            # average calorie is less than ideal calorie goal
             message += "It looks like you haven't been meeting your daily calorie target lately."
             message += " Remember to take breaks to get food and make sure to keep your food log up to date."
         else:
+            # average calorie is greater than ideal calorie goal
             message += "It looks like you have been exceeding your daily calorie target lately." 
             message += " Try to eat less."
     elif sleep_score == exercise_score and sleep_score < food_score:
+        # both sleep and exercise are equally low
         message += "It looks like you haven't been sleeping enough nor meeting your daily step goal lately." 
         message += " Remember to set aside some time to get your steps in and try to sleep more if possible."
     elif sleep_score == food_score and sleep_score < exercise_score:
+        # both sleep and food are equally low
         message += "It looks like you haven't been sleeping enough"
         if not_eating_enough:
             message += " nor meeting your daily calorie target lately."
@@ -196,6 +222,7 @@ def get_lifestyle_score(email: str, date: str) -> dict:
             message += " and have been exceeding your daily calorie target lately."
             message += " Try to sleep more if possible and eat less."
     elif exercise_score == food_score and exercise_score < sleep_score:
+        # both exercise and food are equally low
         message += "It looks like you haven't been meeting your daily step goal"
         if not_eating_enough:
             message += " nor your daily calorie target lately."
@@ -204,6 +231,7 @@ def get_lifestyle_score(email: str, date: str) -> dict:
             message += " and have been exceeding your daily calorie target lately."
             message += " Remember to set aside some time to get your steps in and try to eat less."
     else:
+        # all categories are equally low
         if not_eating_enough:
             message += "Remember to set aside some time to get your steps in and to eat. Make sure to keep your food log updated and try to sleep more if possible."
         else:
@@ -214,3 +242,5 @@ def get_lifestyle_score(email: str, date: str) -> dict:
 print('result:', get_lifestyle_score('2', '2024-02-19T00:07:30.929870'))
 print()
 print('result:', get_lifestyle_score('4', '2024-03-02T00:07:30.929870'))
+print()
+print('result:', get_lifestyle_score('2', datetime.datetime.now().isoformat()))

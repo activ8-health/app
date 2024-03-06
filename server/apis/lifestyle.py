@@ -35,13 +35,24 @@ def calc_sleep_score(sleep_data: dict) -> int:
     the score is maxed at 1
     '''
     days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    avg_sleep_time = 0
+    total_sleep_time = 0
     num_days = 0
+    today = datetime.date.today()
+    # print(today)
+    # print(today - datetime.timedelta(days=8))
     for day in days:
         # if there are data points that within 30 mins of each other, they are combined
         # other than those cases, only one data point should be taken from each day
         # i = 1
-        date = sleep_data[day][0]
+        try:
+            date = sleep_data[day][0]
+            date_from = parser.isoparse(date['date_from']).date()
+            # print(date_from)
+            # print(date_from <= today)
+            # print(date_from >= today - datetime.timedelta(days=8))
+            if date_from <= today and date_from >= (today - datetime.timedelta(days=8)):
+                avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
+            # if date['date_from']
         # while i < len(sleep_data[day]):
         #     next_date = sleep_data[day][i]
         #     date_from = parser.isoparse(date['date_from'])
@@ -52,9 +63,13 @@ def calc_sleep_score(sleep_data: dict) -> int:
         #     else:
         #         break
         #     i+=1
-        num_days += 1
-        avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
-    avg_sleep_time /= num_days
+            num_days += 1
+            # avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
+        except IndexError:
+            continue
+    if num_days == 0:
+        num_days = 1
+    avg_sleep_time = total_sleep_time / num_days
     sleep_score = (avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS)
     return min(sleep_score, 1.0)
 

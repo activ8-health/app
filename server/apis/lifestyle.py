@@ -23,7 +23,7 @@ def get_user_data(email: str) -> dict:
     food = user_data[email]
     return {'sleep': sleep, 'exercise': exercise, 'food': food}
 
-def calc_sleep_score(sleep_data: dict) -> int:
+def calc_sleep_score(sleep_data: dict, date: str) -> int:
     '''
     sleep_data: a dictionary for list of sleep data points for each day of the week
     returns the user's sleep score
@@ -36,34 +36,21 @@ def calc_sleep_score(sleep_data: dict) -> int:
     days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     total_sleep_time = 0
     num_days = 0
-    today = datetime.date.today()
+    today = parser.isoparse(date).date()
     # print(today)
     # print(today - datetime.timedelta(days=8))
     for day in days:
-        # if there are data points that within 30 mins of each other, they are combined
-        # other than those cases, only one data point should be taken from each day
-        # i = 1
         try:
-            date = sleep_data[day][0]
-            date_from = parser.isoparse(date['date_from']).date()
+            sleep_log_date = sleep_data[day][0]
+            date_from = parser.isoparse(sleep_log_date['date_from']).date()
             # print(date_from)
             # print(date_from <= today)
             # print(date_from >= today - datetime.timedelta(days=8))
             if date_from <= today and date_from >= (today - datetime.timedelta(days=8)):
-                avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
-            # if date['date_from']
-        # while i < len(sleep_data[day]):
-        #     next_date = sleep_data[day][i]
-        #     date_from = parser.isoparse(date['date_from'])
-        #     date_to = parser.isoparse(sleep_data[day][i]['date_to'])
-        #     diff = date_from - date_to
-        #     if (diff.total_seconds() / 60) <= 30:
-        #         date['date_from'] = next_date['date_from']
-        #     else:
-        #         break
-        #     i+=1
+                # print(date_from)
+                total_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(sleep_log_date['date_from']), 
+                                                            sleep.convert_to_time_of_day(sleep_log_date['date_to']))
             num_days += 1
-            # avg_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(date['date_from']), sleep.convert_to_time_of_day(date['date_to']))
         except IndexError:
             continue
     if num_days == 0:
@@ -72,7 +59,7 @@ def calc_sleep_score(sleep_data: dict) -> int:
     sleep_score = (avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS)
     return min(sleep_score, 1.0)
 
-def calc_exercise_score(exercise_data: dict) -> int:
+def calc_exercise_score(exercise_data: dict, date: str) -> int:
     '''
     exercise_data: a dictionary including the user's step data for each day and their step goal
     returns the user's exercise score
@@ -86,15 +73,21 @@ def calc_exercise_score(exercise_data: dict) -> int:
     step_data = exercise_data['step_data']
     total_steps = 0
     step_data_dates = list(step_data.keys())
+    today = parser.isoparse(date).date()
+    date_str = today.strftime('%Y-%m-%d')
     i = 0
-    while i < 7 and i < len(step_data_dates):
+    k = 7
+    if date_str == step_data_dates[0]:
+        i = 1
+        k = 8
+    while i < k and i < len(step_data_dates):
         total_steps += step_data[step_data_dates[i]]
         i += 1
     avg_steps = total_steps / min(len(step_data_dates), 7)
     exercise_score = avg_steps / step_goal
     return min(exercise_score, 1.0)
 
-def calc_food_score(food_data: dict) -> tuple[int, bool]:
+def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
     '''
     food data: a dictionary including the user's food log and weight goal
     returns the user's food score
@@ -106,7 +99,7 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
     food_log = food_data['food']['food_log']
     total_cals = 0
     food_log_dates = list(food_log.keys())
-    today = datetime.datetime.now()
+    today = parser.isoparse(date).date()
     date_str = today.strftime('%Y-%m-%d')
     num_days = 0
     if date_str == food_log_dates[0]:
@@ -119,17 +112,16 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
             total_cals += food.get_calories_consumed_today(food_data, (today - datetime.timedelta(days=i)))
         num_days = 7
     else:
-        prev_date = today.date()
+        prev_date = today
         # print(prev_date)
-        for date in food_log_dates:
-            food_log_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+        for food_log_key in food_log_dates:
+            food_log_date = datetime.datetime.strptime(food_log_key, '%Y-%m-%d').date()
             # print(food_log_date)
-            if food_log_date == today.date():
+            if food_log_date == today:
                 continue
             day_diff = (prev_date - food_log_date).days
             # print(day_diff)
             if day_diff > 1:
-                # # print(prev_date, food_log_date)
                 # print(prev_date)
                 # for i in range(1, day_diff):
                 #     print(prev_date - datetime.timedelta(days=i))
@@ -142,7 +134,7 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
                 continue
             # else:
             #     print(food_log_date)
-            food_log_dict = food_log[date]
+            food_log_dict = food_log[food_log_key]
             # print('adding ', food_log_date)
             for key in list(food_log_dict.keys()):
                 total_cals += food_log_dict[key]['total_calories']
@@ -150,25 +142,16 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
             if num_days == 7:
                 break
             prev_date = food_log_date
-    # i = 0
-    # while i < 7 and i < len(food_log_dates):
-    #     food_log_dict = food_log[food_log_dates[i]]
-    #     for key in list(food_log_dict.keys()):
-    #         total_cals += food_log_dict[key]['total_calories']
-    #     i += 1
-    # print(num_days)
     if num_days == 0:
         num_days = 1
     avg_cals = total_cals / num_days
-    print(avg_cals)
+    # print(avg_cals)
     ideal_cals = food.get_daily_target(food_data)
-    print(ideal_cals)
-    # ideal_cals = 2000 # will be replaced by cal func in food files
-    # avg_cals = 1900
+    # print(ideal_cals)
     food_score = 1 - min((((avg_cals - ideal_cals) / (ideal_cals * 0.3)) ** 2), 1.0)
     return food_score, (avg_cals < ideal_cals)
 
-def get_lifestyle_score(email: str) -> dict:
+def get_lifestyle_score(email: str, date: str) -> dict:
     '''
     email: email of the user to retrieve user data from
     returns an object containing the user's lifestyle score and some advice to improve their lowest scoring category
@@ -178,11 +161,11 @@ def get_lifestyle_score(email: str) -> dict:
     the food score related message changes based on whether the user exceeds their calorie goal or fails to meet it
     '''
     user_data = get_user_data(email)
-    sleep_score = calc_sleep_score(user_data['sleep'])
+    sleep_score = calc_sleep_score(user_data['sleep'], date)
     print('sleep_score:', sleep_score)
-    exercise_score = calc_exercise_score(user_data['exercise'])
+    exercise_score = calc_exercise_score(user_data['exercise'], date)
     print('exercise_score:', exercise_score)
-    food_score, not_eating_enough = calc_food_score(user_data['food'])
+    food_score, not_eating_enough = calc_food_score(user_data['food'], date)
     print('food_score:', food_score)
     lifestyle_score = (sleep_score + exercise_score + food_score) / 3
     print('lifestyle_score:', lifestyle_score)
@@ -228,4 +211,6 @@ def get_lifestyle_score(email: str) -> dict:
     return {'fitness_score': round(lifestyle_score * 100), 'message': message}
 
 
-print('result:', get_lifestyle_score('2'))
+print('result:', get_lifestyle_score('2', '2024-02-19T00:07:30.929870'))
+print()
+print('result:', get_lifestyle_score('4', '2024-03-02T00:07:30.929870'))

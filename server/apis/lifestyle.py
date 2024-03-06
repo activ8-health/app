@@ -4,9 +4,8 @@ if sys.path[0].endswith('/apis'):
 
 import datetime
 import json
-from apis import sleep
+from apis import sleep, food
 from dateutil import parser
-from apis import food
 
 def get_user_data(email: str) -> dict:
     '''
@@ -107,8 +106,9 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
     food_log = food_data['food']['food_log']
     total_cals = 0
     food_log_dates = list(food_log.keys())
-    date = datetime.datetime.now()
-    date_str = date.strftime('%Y-%m-%d')
+    today = datetime.datetime.now()
+    date_str = today.strftime('%Y-%m-%d')
+    num_days = 0
     if date_str == food_log_dates[0]:
         not_enough_data = (len(food_log_dates) - 1) < 7
     else:
@@ -116,19 +116,50 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
 
     if not not_enough_data:
         for i in range(1,8):
-            total_cals += food.get_calories_consumed_today(food_data, (date - datetime.timedelta(days=i)))
+            total_cals += food.get_calories_consumed_today(food_data, (today - datetime.timedelta(days=i)))
+        num_days = 7
     else:
+        prev_date = today.date()
+        # print(prev_date)
         for date in food_log_dates:
-           food_log_dict = food_log[date]
-           for key in list(food_log_dict.keys()):
-            total_cals += food_log_dict[key]['total_calories']
+            food_log_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+            # print(food_log_date)
+            if food_log_date == today.date():
+                continue
+            day_diff = (prev_date - food_log_date).days
+            # print(day_diff)
+            if day_diff > 1:
+                # # print(prev_date, food_log_date)
+                # print(prev_date)
+                # for i in range(1, day_diff):
+                #     print(prev_date - datetime.timedelta(days=i))
+                # print(food_log_date)
+                num_days += (day_diff - 1)
+                if num_days >= 7:
+                    num_days = 7
+                    break
+            elif day_diff < 0:
+                continue
+            # else:
+            #     print(food_log_date)
+            food_log_dict = food_log[date]
+            # print('adding ', food_log_date)
+            for key in list(food_log_dict.keys()):
+                total_cals += food_log_dict[key]['total_calories']
+            num_days += 1
+            if num_days == 7:
+                break
+            prev_date = food_log_date
     # i = 0
     # while i < 7 and i < len(food_log_dates):
     #     food_log_dict = food_log[food_log_dates[i]]
     #     for key in list(food_log_dict.keys()):
     #         total_cals += food_log_dict[key]['total_calories']
     #     i += 1
-    avg_cals = total_cals / min(len(food_log_dates), 7)
+    # print(num_days)
+    if num_days == 0:
+        num_days = 1
+    avg_cals = total_cals / num_days
     print(avg_cals)
     ideal_cals = food.get_daily_target(food_data)
     print(ideal_cals)
@@ -142,7 +173,7 @@ def get_lifestyle_score(email: str) -> dict:
     email: email of the user to retrieve user data from
     returns an object containing the user's lifestyle score and some advice to improve their lowest scoring category
 
-    calculates the sleep, exercise, and food score before average all of them
+    calculates the sleep, exercise, and food score before averaging all of them
     then converts the score to be out of 100 and returns a message based on the category with the lowest score
     the food score related message changes based on whether the user exceeds their calorie goal or fails to meet it
     '''

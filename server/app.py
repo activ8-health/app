@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from apis import sleep
 from apis import exercise
 from apis import food
+from apis import lifestyle
 import apis.state as manage_instance
 import apis.update as update
 import apis.food_entry as food_entry
@@ -107,6 +108,17 @@ def v1activity_recommendation():
     exercise_args = request.args
     utilities.update_location(email_or_error_message, exercise_args, instance)
     return exercise.get_activity_recommendation(email_or_error_message, datetime.now().isoformat())
+
+@app.route("/v1/getHomeView", methods=['GET'])
+def v1get_home_view():
+    instance = manage_instance.ProfileManager.instance()
+    email_or_error_message, status = utilities.check_authentication_login(request.headers, instance)
+    if status != 200:
+        return email_or_error_message, status
+
+    home_args = request.args
+    utilities.update_location(email_or_error_message, home_args, instance)
+    return lifestyle.get_lifestyle_score(email_or_error_message, datetime.now().isoformat())
 
 
 @app.route("/v1/updateHealthData", methods=['POST'])

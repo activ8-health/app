@@ -166,7 +166,7 @@ def calc_food_score(food_data: dict) -> tuple[int, bool]:
     # ideal_cals = 2000 # will be replaced by cal func in food files
     # avg_cals = 1900
     food_score = 1 - min((((avg_cals - ideal_cals) / (ideal_cals * 0.3)) ** 2), 1.0)
-    return food_score, (avg_cals < ideal_cals), not_enough_data
+    return food_score, (avg_cals < ideal_cals)
 
 def get_lifestyle_score(email: str) -> dict:
     '''
@@ -182,21 +182,49 @@ def get_lifestyle_score(email: str) -> dict:
     print('sleep_score:', sleep_score)
     exercise_score = calc_exercise_score(user_data['exercise'])
     print('exercise_score:', exercise_score)
-    food_score, cals_check, not_enough_data = calc_food_score(user_data['food'])
+    food_score, not_eating_enough = calc_food_score(user_data['food'])
     print('food_score:', food_score)
     lifestyle_score = (sleep_score + exercise_score + food_score) / 3
     print('lifestyle_score:', lifestyle_score)
-    if sleep_score < exercise_score and sleep_score < food_score:
-        message = 'You should sleep more.'
+    message = ''
+    if sleep_score == exercise_score and sleep_score == food_score and sleep_score == 1.0:
+        message += "You're doing a good job! Keep up the good work!"
+    elif sleep_score < exercise_score and sleep_score < food_score:
+        message += "It looks like you haven't been sleeping enough lately. Try to sleep more if possible."
     elif exercise_score < sleep_score and exercise_score < food_score:
-        message = 'You should exercise more.'
-    else:
-        if cals_check:
-            message = 'You should eat more.'
+        message += "It looks like you haven't been meeting your daily step goal lately."
+        message += " Remember to set aside some time to get your steps in."
+    elif food_score < exercise_score and food_score < sleep_score:
+        if not_eating_enough:
+            message += "It looks like you haven't been meeting your daily calorie target lately."
+            message += " Remember to take breaks to get food and make sure to keep your food log up to date."
         else:
-            message = 'You should eat less.'
-    if not_enough_data:
-        message += ' There are less than 7 days of food logs recorded so your score may be inaccurate. Make sure to keep your food log up to date for a more accurate score.'
+            message += "It looks like you have been exceeding your daily calorie target lately." 
+            message += " Try to eat less."
+    elif sleep_score == exercise_score and sleep_score < food_score:
+        message += "It looks like you haven't been sleeping enough nor meeting your daily step goal lately." 
+        message += " Remember to set aside some time to get your steps in and try to sleep more if possible."
+    elif sleep_score == food_score and sleep_score < exercise_score:
+        message += "It looks like you haven't been sleeping enough"
+        if not_eating_enough:
+            message += " nor meeting your daily calorie target lately."
+            message += " Try to sleep more if possible and remember to take breaks to get food. Also, make sure to keep your food log up to date."
+        else:
+            message += " and have been exceeding your daily calorie target lately."
+            message += " Try to sleep more if possible and eat less."
+    elif exercise_score == food_score and exercise_score < sleep_score:
+        message += "It looks like you haven't been meeting your daily step goal"
+        if not_eating_enough:
+            message += " nor your daily calorie target lately."
+            message += " Remember to set aside some time to get your steps in and to take breaks to get food. Also, make sure to keep your food log up to date."
+        else:
+            message += " and have been exceeding your daily calorie target lately."
+            message += " Remember to set aside some time to get your steps in and try to eat less."
+    else:
+        if not_eating_enough:
+            message += "Remember to set aside some time to get your steps in and to eat. Make sure to keep your food log updated and try to sleep more if possible."
+        else:
+            message += "Remember to set aside some time to get your steps in. Try to sleep more if possible and eat less."
     return {'fitness_score': round(lifestyle_score * 100), 'message': message}
 
 

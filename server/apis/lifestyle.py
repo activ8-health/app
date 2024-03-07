@@ -37,19 +37,13 @@ def calc_sleep_score(sleep_data: dict, date: str) -> int:
     total_sleep_time = 0
     num_days = 0
     today = parser.isoparse(date).date()
-    # print(today)
-    # print(today - datetime.timedelta(days=8))
     for day in days:
         try:
             sleep_log_date = sleep_data[day][0]
             date_from = parser.isoparse(sleep_log_date['date_from']).date()
-            # print(date_from)
-            # print(date_from <= today)
-            # print(date_from >= today - datetime.timedelta(days=8))
             # if the date is within ~1 week from the date given, it will be counted in the calculation
             # if the date is not, it is assumed that a date is missing and will be counted as 0 sleep for said day
             if date_from <= today and date_from >= (today - datetime.timedelta(days=8)):
-                # print(date_from)
                 total_sleep_time += sleep.calculate_sleeptime(sleep.convert_to_time_of_day(sleep_log_date['date_from']), 
                                                             sleep.convert_to_time_of_day(sleep_log_date['date_to']))
             num_days += 1
@@ -129,29 +123,19 @@ def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
         num_days = 7
     else:
         prev_date = today
-        # print(prev_date)
         for food_log_key in food_log_dates:
             food_log_date = datetime.datetime.strptime(food_log_key, '%Y-%m-%d').date()
-            # print(food_log_date)
             if food_log_date == today:
                 continue
             day_diff = (prev_date - food_log_date).days
-            # print(day_diff)
             if day_diff > 1:
-                # print(prev_date)
-                # for i in range(1, day_diff):
-                #     print(prev_date - datetime.timedelta(days=i))
-                # print(food_log_date)
                 num_days += (day_diff - 1)
                 if num_days >= 7:
                     num_days = 7
                     break
             elif day_diff < 0:
                 continue
-            # else:
-            #     print(food_log_date)
             food_log_dict = food_log[food_log_key]
-            # print('adding ', food_log_date)
             for key in list(food_log_dict.keys()):
                 total_cals += food_log_dict[key]['total_calories']
             num_days += 1
@@ -162,9 +146,7 @@ def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
         # this is to prevent division by zero error
         num_days = 1
     avg_cals = total_cals / num_days
-    # print(avg_cals)
     ideal_cals = food.get_daily_target(food_data)
-    # print(ideal_cals)
     food_score = 1 - min((((avg_cals - ideal_cals) / (ideal_cals * 0.3)) ** 2), 1.0)
     return food_score, (avg_cals < ideal_cals)
 
@@ -180,13 +162,13 @@ def get_lifestyle_score(email: str, date: str) -> dict:
     '''
     user_data = get_user_data(email)
     sleep_score = calc_sleep_score(user_data['sleep'], date)
-    print('sleep_score:', sleep_score)
+    # print('sleep_score:', sleep_score)
     exercise_score = calc_exercise_score(user_data['exercise'], date)
-    print('exercise_score:', exercise_score)
+    # print('exercise_score:', exercise_score)
     food_score, not_eating_enough = calc_food_score(user_data['food'], date)
-    print('food_score:', food_score)
+    # print('food_score:', food_score)
     lifestyle_score = (sleep_score + exercise_score + food_score) / 3
-    print('lifestyle_score:', lifestyle_score)
+    # print('lifestyle_score:', lifestyle_score)
     message = ''
     if sleep_score == exercise_score and sleep_score == food_score and sleep_score == 1.0:
         # user is excelling in all categories
@@ -237,7 +219,6 @@ def get_lifestyle_score(email: str, date: str) -> dict:
         else:
             message += "Remember to set aside some time to get your steps in. Try to sleep more if possible and eat less."
     return {'fitness_score': round(lifestyle_score * 100), 'message': message}
-
 
 print('result:', get_lifestyle_score('2', '2024-02-19T00:07:30.929870'))
 print()

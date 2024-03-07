@@ -11,8 +11,6 @@ DAY_OF_WEEK_CONVERT = {1: 'Monday',
                        6: 'Saturday',
                        7: 'Sunday'}
 
-# data = {'core_hours': {"start": 12*60, "end": 15*60}} # for testing purposes
-
 def get_data(email: str) -> dict:
     '''
     email: email of the user to retrieve the user data
@@ -344,21 +342,3 @@ def get_sleep_recommendation(email: str, date: str) -> dict:
     rec_start, rec_end = get_recommended_sleep_time(avg_start, avg_end, core_hours)
 
     return {"ideal_sleep_range": {'start': rec_start, 'end': rec_end}}
-
-
-# some testing
-# test = '2022-09-27T23:00:00.000'
-# test2 = '2022-09-28T11:00:00.000'
-# day_diff = get_day_diff(test, test2)
-# print('day diff', day_diff)
-# print('sleep time in hrs before adjustment', convert_to_hours(calculate_sleeptime(convert_to_time_of_day(test), ((day_diff*24*60)+convert_to_time_of_day(test2)))))
-# print('core hours')
-# print('core start', convert_to_hours(get_core_hours(data)['start']))
-# print('core end' ,convert_to_hours(get_core_hours(data)['end']))
-# print('getting recommended sleep time')
-# start, end = get_recommended_sleep_time(convert_to_time_of_day(test),((day_diff*24*60)+convert_to_time_of_day(test2)), data['core_hours'])
-# print('rec start', start)
-# print('rec start hrs', convert_to_hours(start))
-# print('rec end', end)
-# print('rec end hrs', convert_to_hours(end))
-# print('rec sleep time in hrs', convert_to_hours(calculate_sleeptime(start, end)))

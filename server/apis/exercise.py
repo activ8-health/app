@@ -222,11 +222,3 @@ def get_activity_recommendation(email: str, date: str) -> dict:
             'steps': {'daily_target': step_goal,
                       'progress_today': steps},
             'message': message}
-
-# testing
-# print(get_weather_code(40.7128,74.0060))
-# print(calc_calories_burned(144.0, 15.875732950000002, 11524))
-# print(get_exercise_message(11524,23000,{'lat': 33.6897734, 'long': -117.82164237}))
-# print(get_exercise_message(11524,23000,{'lat': 40.7128, 'long': 74.0060}))
-# print(parser.isoparse('2024-01-30T02:00:37.000').date())
-# print(get_activity_recommendation('5', '2024-01-22T02:00:37.000'))

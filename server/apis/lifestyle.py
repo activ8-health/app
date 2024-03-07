@@ -37,6 +37,7 @@ def calc_sleep_score(sleep_data: dict, date: str) -> int:
     total_sleep_time = 0
     num_days = 0
     today = parser.isoparse(date).date()
+
     for day in days:
         try:
             sleep_log_date = sleep_data[day][0]
@@ -53,6 +54,7 @@ def calc_sleep_score(sleep_data: dict, date: str) -> int:
     if num_days == 0:
         # this is to prevent division by zero error
         num_days = 1
+
     avg_sleep_time = total_sleep_time / num_days
     sleep_score = (avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS)
     return min(sleep_score, 1.0)
@@ -83,9 +85,11 @@ def calc_exercise_score(exercise_data: dict, date: str) -> int:
         num_step_data_dates -= 1
         i = 1
         k = 8
+
     while i < k and i < len(step_data_dates):
         total_steps += step_data[step_data_dates[i]]
         i += 1
+
     avg_steps = total_steps / min(num_step_data_dates, 7)
     exercise_score = avg_steps / step_goal
     return min(exercise_score, 1.0)
@@ -112,6 +116,8 @@ def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
     today = parser.isoparse(date).date()
     date_str = today.strftime('%Y-%m-%d')
     num_days = 0
+
+    # check if there are 7 days worth of food data excluding data for the date given
     if date_str == food_log_dates[0]:
         not_enough_data = (len(food_log_dates) - 1) < 7
     else:
@@ -126,11 +132,14 @@ def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
         for food_log_key in food_log_dates:
             food_log_date = datetime.datetime.strptime(food_log_key, '%Y-%m-%d').date()
             if food_log_date == today:
+                # if date of food log is the date given, skip
                 continue
             day_diff = (prev_date - food_log_date).days
             if day_diff > 1:
+                # if day difference is greater than 1, count missing days as 0
                 num_days += (day_diff - 1)
                 if num_days >= 7:
+                    # break from loop once 7 days worth of data is used
                     num_days = 7
                     break
             elif day_diff < 0:
@@ -140,11 +149,13 @@ def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
                 total_cals += food_log_dict[key]['total_calories']
             num_days += 1
             if num_days == 7:
+                # break from loop once 7 days worth of data is used
                 break
             prev_date = food_log_date
     if num_days == 0:
         # this is to prevent division by zero error
         num_days = 1
+
     avg_cals = total_cals / num_days
     ideal_cals = food.get_daily_target(food_data)
     food_score = 1 - min((((avg_cals - ideal_cals) / (ideal_cals * 0.3)) ** 2), 1.0)
@@ -169,6 +180,7 @@ def get_lifestyle_score(email: str, date: str) -> dict:
     # print('food_score:', food_score)
     lifestyle_score = (sleep_score + exercise_score + food_score) / 3
     # print('lifestyle_score:', lifestyle_score)
+
     message = ''
     if sleep_score == exercise_score and sleep_score == food_score and sleep_score == 1.0:
         # user is excelling in all categories
@@ -218,6 +230,7 @@ def get_lifestyle_score(email: str, date: str) -> dict:
             message += "Remember to set aside some time to get your steps in and to eat. Make sure to keep your food log updated and try to sleep more if possible."
         else:
             message += "Remember to set aside some time to get your steps in. Try to sleep more if possible and eat less."
+
     return {'fitness_score': round(lifestyle_score * 100), 'message': message}
 
 print('result:', get_lifestyle_score('2', '2024-02-19T00:07:30.929870'))

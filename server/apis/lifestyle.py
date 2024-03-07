@@ -222,7 +222,7 @@ def get_lifestyle_message(sleep_score: float, exercise_score: float, food_score:
     return message
 
 
-def get_lifestyle_score(email: str, date: str) -> dict:
+def get_home_view(email: str, date: str) -> dict:
     '''
     email: email of the user to retrieve user data from
     date: date string in iso format
@@ -246,8 +246,8 @@ def get_lifestyle_score(email: str, date: str) -> dict:
 
     return {'fitness_score': round(lifestyle_score * 100), 'message': message}
 
-print('result:', get_lifestyle_score('2', '2024-02-19T00:07:30.929870'))
+print('result:', get_home_view('2', '2024-02-19T00:07:30.929870'))
 print()
-print('result:', get_lifestyle_score('4', '2024-03-02T00:07:30.929870'))
+print('result:', get_home_view('4', '2024-03-02T00:07:30.929870'))
 print()
-print('result:', get_lifestyle_score('2', datetime.datetime.now().isoformat()))
+print('result:', get_home_view('2', datetime.datetime.now().isoformat()))

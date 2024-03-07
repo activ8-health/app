@@ -1,7 +1,3 @@
-import sys
-if sys.path[0].endswith('/apis'):
-    sys.path[0] = sys.path[0][0:-(len('/apis'))]
-
 import datetime
 import json
 from apis import sleep, food
@@ -234,20 +230,13 @@ def get_home_view(email: str, date: str) -> dict:
     '''
     user_data = get_user_data(email)
     sleep_score = calc_sleep_score(user_data['sleep'], date)
-    # print('sleep_score:', sleep_score)
+
     exercise_score = calc_exercise_score(user_data['exercise'], date)
-    # print('exercise_score:', exercise_score)
+
     food_score, not_eating_enough = calc_food_score(user_data['food'], date)
-    # print('food_score:', food_score)
+
     lifestyle_score = (sleep_score + exercise_score + food_score) / 3
-    # print('lifestyle_score:', lifestyle_score)
 
     message = get_lifestyle_message(sleep_score, exercise_score, food_score, not_eating_enough)
 
     return {'fitness_score': round(lifestyle_score * 100), 'message': message}
-
-print('result:', get_home_view('2', '2024-02-19T00:07:30.929870'))
-print()
-print('result:', get_home_view('4', '2024-03-02T00:07:30.929870'))
-print()
-print('result:', get_home_view('2', datetime.datetime.now().isoformat()))

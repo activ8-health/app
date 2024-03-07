@@ -23,7 +23,7 @@ def get_user_data(email: str) -> dict:
     food = user_data[email]
     return {'sleep': sleep, 'exercise': exercise, 'food': food}
 
-def calc_sleep_score(sleep_data: dict, date: str) -> int:
+def calc_sleep_score(sleep_data: dict, date: str) -> float:
     '''
     sleep_data: a dictionary for list of sleep data points for each day of the week
     date: date string in iso format
@@ -59,7 +59,7 @@ def calc_sleep_score(sleep_data: dict, date: str) -> int:
     sleep_score = (avg_sleep_time / sleep.IDEAL_SLEEP_RANGE_IN_MINS)
     return min(sleep_score, 1.0)
 
-def calc_exercise_score(exercise_data: dict, date: str) -> int:
+def calc_exercise_score(exercise_data: dict, date: str) -> float:
     '''
     exercise_data: a dictionary including the user's step data for each day and their step goal
     date: date string in iso format
@@ -94,7 +94,7 @@ def calc_exercise_score(exercise_data: dict, date: str) -> int:
     exercise_score = avg_steps / step_goal
     return min(exercise_score, 1.0)
 
-def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
+def calc_food_score(food_data: dict, date: str) -> tuple[float, bool]:
     '''
     food data: a dictionary including the user's food log and weight goal
     date: date string in iso format
@@ -161,26 +161,14 @@ def calc_food_score(food_data: dict, date: str) -> tuple[int, bool]:
     food_score = 1 - min((((avg_cals - ideal_cals) / (ideal_cals * 0.3)) ** 2), 1.0)
     return food_score, (avg_cals < ideal_cals)
 
-def get_lifestyle_score(email: str, date: str) -> dict:
+def get_lifestyle_message(sleep_score: float, exercise_score: float, food_score: float, not_eating_enough: bool) -> str:
     '''
-    email: email of the user to retrieve user data from
-    date: date string in iso format
-    returns an object containing the user's lifestyle score and some advice to improve their lowest scoring category
-
-    calculates the sleep, exercise, and food score before averaging all of them
-    then converts the score to be out of 100 and returns a message based on the category with the lowest score
-    the food score related message changes based on whether the user exceeds their calorie goal or fails to meet it
+    sleep_score: user's sleep score for the past week
+    exercise_score: user's exercise score for the past week
+    food_score: user's food score for the past week if applicable
+    not_eating_enough: boolean to determine whether user's average calorie is less than their daily calorie target or not
+    returns a message on advice to improve in specific categories if needed
     '''
-    user_data = get_user_data(email)
-    sleep_score = calc_sleep_score(user_data['sleep'], date)
-    # print('sleep_score:', sleep_score)
-    exercise_score = calc_exercise_score(user_data['exercise'], date)
-    # print('exercise_score:', exercise_score)
-    food_score, not_eating_enough = calc_food_score(user_data['food'], date)
-    # print('food_score:', food_score)
-    lifestyle_score = (sleep_score + exercise_score + food_score) / 3
-    # print('lifestyle_score:', lifestyle_score)
-
     message = ''
     if sleep_score == exercise_score and sleep_score == food_score and sleep_score == 1.0:
         # user is excelling in all categories
@@ -230,6 +218,31 @@ def get_lifestyle_score(email: str, date: str) -> dict:
             message += "Remember to set aside some time to get your steps in and to eat. Make sure to keep your food log updated and try to sleep more if possible."
         else:
             message += "Remember to set aside some time to get your steps in. Try to sleep more if possible and eat less."
+    
+    return message
+
+
+def get_lifestyle_score(email: str, date: str) -> dict:
+    '''
+    email: email of the user to retrieve user data from
+    date: date string in iso format
+    returns an object containing the user's lifestyle score and some advice to improve their lowest scoring category
+
+    calculates the sleep, exercise, and food score before averaging all of them
+    then converts the score to be out of 100 and returns a message based on the category with the lowest score
+    the food score related message changes based on whether the user exceeds their calorie goal or fails to meet it
+    '''
+    user_data = get_user_data(email)
+    sleep_score = calc_sleep_score(user_data['sleep'], date)
+    # print('sleep_score:', sleep_score)
+    exercise_score = calc_exercise_score(user_data['exercise'], date)
+    # print('exercise_score:', exercise_score)
+    food_score, not_eating_enough = calc_food_score(user_data['food'], date)
+    # print('food_score:', food_score)
+    lifestyle_score = (sleep_score + exercise_score + food_score) / 3
+    # print('lifestyle_score:', lifestyle_score)
+
+    message = get_lifestyle_message(sleep_score, exercise_score, food_score, not_eating_enough)
 
     return {'fitness_score': round(lifestyle_score * 100), 'message': message}
 

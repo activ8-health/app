@@ -118,7 +118,7 @@ def v1get_home_view():
 
     home_args = request.args
     utilities.update_location(email_or_error_message, home_args, instance)
-    return lifestyle.get_lifestyle_score(email_or_error_message, datetime.now().isoformat())
+    return lifestyle.get_home_view(email_or_error_message, datetime.now().isoformat())
 
 
 @app.route("/v1/updateHealthData", methods=['POST'])

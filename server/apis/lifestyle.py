@@ -113,6 +113,10 @@ def calc_food_score(food_data: dict, date: str) -> tuple[float, bool]:
     date_str = today.strftime('%Y-%m-%d')
     num_days = 0
 
+    if len(food_log_dates) == 0:
+        # if food log is empty
+        return 0, True
+
     # check if there are 7 days worth of food data excluding data for the date given
     if date_str == food_log_dates[0]:
         not_enough_data = (len(food_log_dates) - 1) < 7

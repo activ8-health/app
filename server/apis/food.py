@@ -23,14 +23,16 @@ class Dietary(Enum):
     nut_allergy = 'ContainsTreeNuts'
     wheat_allergy = 'ContainsWheat'
     gluten_sensitive = 'IsGlutenFree'
-    hala = 'IsHalal'
+    halal = 'IsHalal'
     kosher = 'IsKosher'
     vegan = 'IsVegan'
     vegetarian = "IsVegetarian"
 
 
 def calculate_bmr(user_profile):
-    # (9.99 × weight[kg]) + (6.25 × height[cm]) − (4.92 × age[years]) + 5
+    # source: https://www.bmi-calculator.net/bmr-calculator
+    #         https://www.bmi-calculator.net/bmr-calculator/harris-benedict-equation/
+
     if type(user_profile) is not model.UserProfile:
         weight = user_profile['user_profile']['weight']
         height = user_profile['user_profile']['height']
@@ -97,28 +99,37 @@ def get_calories_consumed_today(user_profile, date):
 def prefilter_food_rec(user, menu, menu_mapping, remaining_calories):
     prefilter_food = []
 
-    if not user.food.dietary:
-        prefilter_food = [food_id for food_id in menu_mapping.values()]
-        return prefilter_food
-
     lower_bound = 200 if remaining_calories > 400 else 0
     for food in menu:
+        can_eat = None
         if remaining_calories >= float(food['Calories']) > lower_bound:
             if not user.food.dietary:
-                prefilter_food = [food_id for food_id in menu_mapping.values()]
-                return prefilter_food
+                prefilter_food.append(menu_mapping[food['Food Name']])
 
             for dietary in user.food.dietary:
+                if can_eat is False:
+                    break
                 if dietary == 'pescetarian':
                     if food['Filters']['IsVegan'] or food['Filters']['ContainsFish']:
-                        prefilter_food.append(menu_mapping[food['Food Name']])
-                elif dietary in ['lactose_intolerant', 'peanut_allergy', 'sesame_allergy',
-                                 'shellfish_allergy', 'soy_allergy', 'nut_allergy', 'wheat_allergy']:
+                        can_eat = True
+                    else:
+                        can_eat = False
+
+                if dietary in ['lactose_intolerant', 'peanut_allergy', 'sesame_allergy',
+                               'shellfish_allergy', 'soy_allergy', 'nut_allergy', 'wheat_allergy']:
                     if not food['Filters'][Dietary[dietary].value] or food['Filters'][Dietary[dietary].value] is None:
-                        prefilter_food.append(menu_mapping[food['Food Name']])
-                else:
+                        can_eat = True
+                    else:
+                        can_eat = False
+
+                if dietary in ['gluten_sensitive', 'halal', 'kosher', 'vegan', 'vegetarian']:
                     if food['Filters'][Dietary[dietary].value] or food['Filters'][Dietary[dietary].value] is None:
-                        prefilter_food.append(menu_mapping[food['Food Name']])
+                        can_eat = True
+                    else:
+                        can_eat = False
+            if can_eat:
+                prefilter_food.append(menu_mapping[food['Food Name']])
+
     return prefilter_food
 
 
@@ -138,6 +149,7 @@ def get_food_based_on_preferences(user, current_date, prefilter_food, menu_mappi
         if menu_mapping[exclude_food] in prefilter_food:
             testing_menu_feature_index.remove(menu_mapping[exclude_food])
 
+    # print(user.food.food_log)
     for date in user.food.food_log:
         for _, food_log in user.food.food_log[date].items():
             food_item_ratings[food_log['food_name']].append(food_log['rating'])

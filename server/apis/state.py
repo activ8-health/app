@@ -31,7 +31,7 @@ class ProfileManager:
             self.login_data = {}
 
         try:
-            with open("./data/menu_data.json", "r") as menu_data_file:
+            with open("./data/menu_data.json", "r", encoding='utf-8') as menu_data_file:
                 self.menu_data = json.load(menu_data_file)
         except FileNotFoundError:
             self.menu_data = {}
@@ -43,7 +43,7 @@ class ProfileManager:
         self.menu_feature_names = []
         self.menu_feature = []
         try:
-            with open("./data/menu_data2.csv", "r") as menu_data_feature:
+            with open("./data/menu_data2.csv", "r", encoding='utf-8') as menu_data_feature:
                 menu_feature = csv.DictReader(menu_data_feature)
                 for count, menu in enumerate(menu_feature):
                     self.menu_food_id[menu['food_name']] = count

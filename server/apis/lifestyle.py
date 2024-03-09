@@ -108,7 +108,7 @@ def calc_food_score(food_data: dict, date: str) -> tuple[float, bool]:
     '''
     food_log = food_data['food']['food_log']
     total_cals = 0
-    food_log_dates = list(food_log.keys())
+    food_log_dates = sorted(list(food_log.keys()), reverse=True)
     today = parser.isoparse(date).date()
     date_str = today.strftime('%Y-%m-%d')
     num_days = 0

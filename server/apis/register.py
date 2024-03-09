@@ -2,7 +2,7 @@ import json
 from apis import utilities
 
 
-def register_user(authentication, data, instance) -> (str, int):
+def register_user(authentication, data, instance) -> tuple[dict, int]:
     # get email and password from authentication
     status, email, password = utilities.create_email_password(authentication, instance, 0)
     if status != 200:

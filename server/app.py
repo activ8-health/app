@@ -109,6 +109,7 @@ def v1activity_recommendation():
     utilities.update_location(email_or_error_message, exercise_args, instance)
     return exercise.get_activity_recommendation(email_or_error_message, datetime.now().isoformat())
 
+
 @app.route("/v1/getHomeView", methods=['GET'])
 def v1get_home_view():
     instance = manage_instance.ProfileManager.instance()

@@ -6,6 +6,7 @@ import "package:activ8/managers/app_state.dart";
 import "package:activ8/managers/food_manager.dart";
 import "package:activ8/managers/health_manager.dart";
 import "package:activ8/managers/location_manager.dart";
+import "package:activ8/notifications.dart";
 import "package:activ8/shorthands/padding.dart";
 import "package:activ8/types/health_data.dart";
 import "package:activ8/view/home_page/home_page.dart";
@@ -29,6 +30,7 @@ class _EntryPointState extends State<EntryPoint> {
     final bool hasUser = await AppState.instance.initialize();
     await initHyphenation();
     await FoodManager.instance.initialize();
+    await Notifications.instance.setup();
 
     if (hasUser) {
       unawaited(_updateHealthData());

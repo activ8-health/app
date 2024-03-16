@@ -56,15 +56,6 @@
         - `reminder_time`: time of day (int minutes since 12:00 AM)
         - `step_goal`: int
     - `location`: (nullable) tuple of coordinates
-    - TODO: this should also include the following, but since that was not specified at the time of writing, we can leave it off for now
-    - `food_log`
-        - list, each item contains:
-            - `entry_id`: UUIDv4
-            - `food_id`: ID
-            - `date`: ISO 8601 date
-            - `portion_eaten`: float, multiplier of serving size
-            - `rating`: integer 1-5
-            - `location`: (nullable) tuple of coordinates
 - Output (JSON)
     - 200 if success
         - N/A
@@ -126,9 +117,6 @@
         - `message`: string (some motivational message)
     - 401 authentication error  (if email is invalid OR password is incorrect)
         - `error_message`: the error message to show the user
-- Notes
-    - Calculating this should honestly not take too long
-    - If it does, we can move to preprocessing
 
 ## Sleep
 
@@ -145,13 +133,8 @@
         - `ideal_sleep_range`
             - `start`: time of day (int minutes since 12:00 AM)
             - `end`: time of day (int minutes since 12:00 AM)
-        - `message`: string (some motivational message about sleep)
-            - @jennifer Quach I’m thinking of removing this, unless you have ideas of what messages to tell the user
     - 401 authentication error  (if email is invalid OR password is incorrect)
         - `error_message`: the error message to show the user
-- Notes
-    - Calculating this should honestly not take too long
-    - If it does, we can move to preprocessing
 
 ## Food
 
@@ -173,9 +156,6 @@
         - `message`: string (message about how much the user is eating)
     - 401 authentication error  (if email is invalid OR password is incorrect)
         - `error_message`: the error message to show the user
-- Notes
-    - For now, we can try running the ML on query time and see where it takes us
-    - If it takes too long, we can move to preprocessing
 
 ### `/v1/addFoodLogEntry`
 
@@ -238,11 +218,6 @@
         - `message`: string (message about the user’s progress based on Weather data)
     - 401 authentication error  (if email is invalid OR password is incorrect)
         - `error_message`: the error message to show the user
-- Notes
-    - I believe most calculates can be done on the fly
-        - Weather data might take longer (expect ~400ms delay)
-    - Stretch goal
-        - Maybe we can cache weather data and only re-fetch if the weather if the location changed a lot OR weather is older than like 12 hours
 
 ## Background
 
@@ -267,10 +242,6 @@
     - Should trigger a rebuild in exercise recommendations (calorie goal updates)
 
 # Structures
-
-These structures are just for organization and so I don’t have to repeat myself
-
-The names don’t mean anything and won’t show up in the request
 
 ## `UserProfile`
 

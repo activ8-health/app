@@ -1,0 +1,13 @@
+{
+  "food_recommendations_": [],
+  "food_recommendations": [
+    "Chicken Parmesan",
+    "Southwest Egg & Ham Pizza",
+    "Hawaiian BBQ  Pizza"
+  ],
+  "calories": {
+    "daily_target": 2100,
+    "consumed_today": 1400
+  },
+  "message": "You should eat a little more if you want to gain weight!"
+}

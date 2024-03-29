@@ -1,0 +1,37 @@
+{
+  "user_profile": {
+    "name": "Tristan",
+    "age": 16,
+    "height": 144.78,
+    "weight": 15.875732950000002,
+    "sex": 1
+  },
+  "sleep_preferences": {
+    "core_hours": {
+      "start": 660,
+      "end": 1200
+    }
+  },
+  "food_preferences": {
+    "weight_goal": 0,
+    "dietary": {
+      "vegan": false,
+      "vegetarian": true,
+      "kosher": false,
+      "halal": true,
+      "pescetarian": true,
+      "sesame_free": false,
+      "soy_free": false,
+      "gluten_free": false,
+      "lactose_intolerance": false,
+      "nut_allergy": false,
+      "peanut_allergy": false,
+      "shellfish_allergy": false,
+      "wheat_allergy": false
+    }
+  },
+  "exercise_preferences": {
+    "reminder_time": 820,
+    "step_goal": 23000
+  }
+}

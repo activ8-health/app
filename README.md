@@ -24,19 +24,25 @@ Using this information, Activ8:
 
 ## Screenshots
 
-<img width="120" src="https://github.com/tristanphan/cs125/assets/10486660/c7bb99dc-4a97-4893-ba7c-127c99c5a18d" />
+<img width="120" src="https://github.com/activ8-health/app/assets/10486660/c7bb99dc-4a97-4893-ba7c-127c99c5a18d" />
 
-<img width="120" src="https://github.com/tristanphan/cs125/assets/10486660/4fd877ba-9dbb-470b-a420-cde13aac5bb1" />
+<img width="120" src="https://github.com/activ8-health/app/assets/10486660/4fd877ba-9dbb-470b-a420-cde13aac5bb1" />
 
-<img width="120" src="https://github.com/tristanphan/cs125/assets/10486660/29dadee7-69e8-47a0-ac26-c3e89071df38" />
+<img width="120" src="https://github.com/activ8-health/app/assets/10486660/29dadee7-69e8-47a0-ac26-c3e89071df38" />
 
-<img width="120" src="https://github.com/tristanphan/cs125/assets/10486660/df3917c8-15e8-48a5-a89a-da09a928ba9e" />
+<img width="120" src="https://github.com/activ8-health/app/assets/10486660/df3917c8-15e8-48a5-a89a-da09a928ba9e" />
 
-<img width="120" src="https://github.com/tristanphan/cs125/assets/10486660/6c7bd724-1a50-4a65-a188-1f993926cc81" />
+<img width="120" src="https://github.com/activ8-health/app/assets/10486660/6c7bd724-1a50-4a65-a188-1f993926cc81" />
 
 <br/>
 
-<img width="240" src="https://github.com/tristanphan/cs125/assets/10486660/d0633fa8-3ffb-48cd-a830-d860dad01a7c" />
+<img width="240" src="https://github.com/activ8-health/app/assets/10486660/d0633fa8-3ffb-48cd-a830-d860dad01a7c" />
+
+### Video Demo
+
+<a href="https://github.com/activ8-health/app/assets/10486660/26636f32-de25-46c5-8f2b-a29c5b324db9" target="_blank" rel="noreferrer noopener">
+  <img width="360" src="https://github.com/activ8-health/app/assets/10486660/d7367ebf-0ea3-4dc6-8258-4d41029f5a6a" />
+</a>
 
 ## Runbooks
 
@@ -54,3 +60,30 @@ We also provide the definitions of the API, which acts as the interface between 
 If you'd like to see more details about implementation and exactly what Activ8 does, please check out the project overview for more details:
 
 - [Project Overview](PROJECT.md)
+
+## Team
+
+<table>
+<tbody>
+    <tr>
+        <td align="center" valign="top">
+            <a href="https://github.com/tristanphan">
+            <img src="https://avatars.githubusercontent.com/u/10486660" width="100px;"/>
+            <br />
+            <b>Tristan Phan</b>
+        </td>
+        <td align="center" valign="top">
+            <a href="https://github.com/jenniq1461">
+            <img src="https://avatars.githubusercontent.com/u/147354257" width="100px;"/>
+            <br />
+            <b>Jennifer Quach</b>
+        </td>
+        <td align="center" valign="top">
+            <a href="https://github.com/v74c63t">
+            <img src="https://avatars.githubusercontent.com/u/78942001" width="100px;"/>
+            <br />
+            <b>Vanessa Tang</b>
+        </td>
+    </tr>
+</tbody>
+</table>

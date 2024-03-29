@@ -46,13 +46,13 @@ Our food recommendations suggest foods from Anteatery (655 items). We prefilter 
 
 We use the user’s caloric needs and food log to make sure the user is eating enough, according to their height/weight/gender and their weight goal (which they specified).
 
-<img src="https://github.com/tristanphan/cs125/assets/10486660/3a16e97b-9b44-444d-bb1d-a5fc13e38cf0" height=400px />
+<img src="https://github.com/activ8-health/app/assets/10486660/3a16e97b-9b44-444d-bb1d-a5fc13e38cf0" height=400px />
 
 ### Exercise Recommendations
 
 Our exercise recommendations give weather-sensitive cardio suggestions and encouragement, which are accessible in the app and through recurring local notifications. Depending on the user’s progress (from HealthKit) towards their step goal (which they selected) and their current weather, we suggest users either an exercise or advice. Some examples of recommendations are to go outside on a sunny day, go to the gym on a rainy day, encouragement if they’re close, and congratulations if they met their goal.
 
-<img src="https://github.com/tristanphan/cs125/assets/10486660/8917b084-3eed-428f-a35b-30ce86512845" height=400px />
+<img src="https://github.com/activ8-health/app/assets/10486660/8917b084-3eed-428f-a35b-30ce86512845" height=400px />
 
 ### Sleep Recommendations
 
@@ -60,7 +60,7 @@ Our sleep recommendations suggest users a set time that they should go to sleep.
 
 These recommendations are updated daily with their sleep log, so we implicitly consider how the user reacts to our recommendation (whether they accepted it or not).
 
-<img src="https://github.com/tristanphan/cs125/assets/10486660/02b8badb-d30b-4fc8-b696-b3f134fa5013" height=400px />
+<img src="https://github.com/activ8-health/app/assets/10486660/02b8badb-d30b-4fc8-b696-b3f134fa5013" height=400px />
 
 ## System Architecture & API
 
@@ -70,6 +70,6 @@ Our app and server communicate through an API, which is defined here:
 
 Here is the context in which the APIs are called:
 
-<img src="https://github.com/tristanphan/cs125/assets/10486660/49805a43-2270-4abe-99b4-42eeb9018b81" height=400px />
+<img src="https://github.com/activ8-health/app/assets/10486660/49805a43-2270-4abe-99b4-42eeb9018b81" height=400px />
 
 

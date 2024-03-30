@@ -18,7 +18,7 @@ To build for iOS, you need to have macOS and Xcode set up.
     - Use `flutter doctor -v` to make sure everything works
 2. Clone this repository and enter the directory
     - `git clone https://github.com/activ8-health/app`
-    - `cd cs125/app/`
+    - `cd app/app/`
 3. Get dependencies with `flutter pub get`
 4. Generate injectables with `flutter pub run build_runner build`
 5. Build or Run (use `--debug` and `--release` as necessary)
